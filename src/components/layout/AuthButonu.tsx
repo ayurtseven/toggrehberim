@@ -56,14 +56,17 @@ export default function AuthButonu() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="hidden text-xs text-neutral-400 sm:block">
-        {kisaIsim}
-      </span>
+      <Link
+        href="/admin"
+        className="hidden rounded-lg border border-white/10 px-3 py-1.5 text-sm font-medium text-slate-400 transition hover:border-white/20 hover:text-white sm:block"
+      >
+        Admin
+      </Link>
       <button
         onClick={cikisYap}
         className="rounded-lg border border-white/10 px-3 py-1.5 text-sm font-medium text-neutral-400 transition hover:border-red-500/40 hover:text-red-400"
       >
-        Çıkış
+        {kisaIsim} · Çıkış
       </button>
     </div>
   );
