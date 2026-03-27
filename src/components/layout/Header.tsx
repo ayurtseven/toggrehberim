@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AramaButonu from "@/components/ui/AramaButonu";
 import AuthButonu from "@/components/layout/AuthButonu";
+import ModelSeciciChip from "@/components/ui/ModelSeciciChip";
 
 const navLinks = [
   { href: "/rehber", label: "Rehber" },
@@ -35,6 +36,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ModelSeciciChip />
           <AramaButonu />
           <AuthButonu />
         </div>
