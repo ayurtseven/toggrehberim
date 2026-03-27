@@ -82,7 +82,13 @@ export default function AdminPage() {
               {taslaklar.length} taslak · {yayinlananlar.length} yayında
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <Link
+              href="/admin/tarama"
+              className="rounded-lg border border-white/10 bg-yellow-500/10 px-4 py-2 text-sm text-yellow-400 hover:bg-yellow-500/20"
+            >
+              🔍 Tarama
+            </Link>
             <Link
               href="/admin/deneyimler"
               className="rounded-lg border border-white/10 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-400 hover:bg-emerald-500/20"
