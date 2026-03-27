@@ -3,8 +3,8 @@ import Link from "next/link";
 const SENARYOLAR = [
   {
     emoji: "🔴",
-    baslik: "Araçta ikaz lambası yandı",
-    aciklama: "Hangi sembol, ne anlama geliyor, ne yapmalıyım?",
+    baslik: "Ekranda ışık yandı",
+    microcopy: "Korkma, çoğu ikaz kritik değil.",
     href: "/ikaz-arama",
     border: "border-red-500/40",
     bg: "bg-red-500/8",
@@ -15,8 +15,8 @@ const SENARYOLAR = [
   },
   {
     emoji: "🔋",
-    baslik: "Şarj bulamıyorum / Menzil bitecek",
-    aciklama: "Menzil hesapla, en yakın istasyona rota al",
+    baslik: "Şarjım bitiyor",
+    microcopy: "2 dakikada en yakın istasyonu buluruz.",
     href: "/sarj-hesaplayici",
     border: "border-yellow-500/30",
     bg: "bg-yellow-500/6",
@@ -27,8 +27,8 @@ const SENARYOLAR = [
   },
   {
     emoji: "❄️",
-    baslik: "Kışta menzil düştü",
-    aciklama: "Soğukta batarya davranışı ve pratik çözümler",
+    baslik: "Menzil düştü",
+    microcopy: "Bu normal, soğukta batarya böyle davranır.",
     href: "/rehber/sarj/kisin-togg-sarj-etme-soguk-hava-batarya-ve-menzil-uzerindeki-etkisi",
     border: "border-blue-500/30",
     bg: "bg-blue-500/6",
@@ -39,8 +39,8 @@ const SENARYOLAR = [
   },
   {
     emoji: "🚨",
-    baslik: "Yolda kaldım / Acil durum",
-    aciklama: "Ne yapmalısın, kime aramalısın?",
+    baslik: "Yolda kaldım",
+    microcopy: "Yalnız değilsin, hemen yardım çağıralım.",
     href: "/rehber/bakim/acil-durum-ve-kurtarma",
     border: "border-orange-500/30",
     bg: "bg-orange-500/6",
@@ -52,7 +52,7 @@ const SENARYOLAR = [
   {
     emoji: "📲",
     baslik: "OTA güncelleme geldi",
-    aciklama: "Ne değişti, güncellemeden önce ne yapmalıyım?",
+    microcopy: "Ne değişti, önce bunu oku.",
     href: "/rehber/yazilim/togg-ota-guncellemesi-nasil-yapilir-guncelleme-oncesi-kontrol-listesi",
     border: "border-purple-500/30",
     bg: "bg-purple-500/6",
@@ -64,7 +64,7 @@ const SENARYOLAR = [
   {
     emoji: "🗺️",
     baslik: "Uzun yola çıkacağım",
-    aciklama: "Şarj planlaması ve menzil optimizasyonu",
+    microcopy: "Şarj planlaması yaparak rahat git.",
     href: "/rehber/suruculuk/togg-t10x-ile-uzun-yolculuk-planlama-sarj-duraklarini-nasil-ayarlarsin",
     border: "border-emerald-500/30",
     bg: "bg-emerald-500/6",
@@ -77,8 +77,8 @@ const SENARYOLAR = [
 
 export default function PanikButonu() {
   return (
-    <section className="relative bg-neutral-950 px-4 py-14 overflow-hidden">
-      {/* Subtle red ambient glow top-left */}
+    <section className="relative bg-slate-950 px-4 py-14 overflow-hidden">
+      {/* Ambient glow */}
       <div className="pointer-events-none absolute -top-20 -left-20 h-[350px] w-[350px] rounded-full bg-red-600/6 blur-[100px]" />
 
       <div className="relative mx-auto max-w-5xl">
@@ -94,7 +94,7 @@ export default function PanikButonu() {
             </span>
           </div>
           <h2 className="text-2xl font-bold md:text-3xl">Şu an ne yaşıyorsun?</h2>
-          <p className="mt-2 text-sm text-neutral-500">Durumunu seç, tek tıkla cevaba ulaş</p>
+          <p className="mt-2 text-sm text-slate-400">Durumunu seç, tek tıkla cevaba ulaş</p>
         </div>
 
         {/* Senaryo grid */}
@@ -103,7 +103,8 @@ export default function PanikButonu() {
             <Link
               key={s.href}
               href={s.href}
-              className={`group flex items-center gap-4 rounded-2xl border ${s.border} ${s.bg} ${s.hoverBorder} ${s.hoverBg} px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg`}
+              className={`group flex items-center gap-4 rounded-2xl border ${s.border} ${s.bg} ${s.hoverBorder} ${s.hoverBg} px-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg`}
+              style={{ minHeight: "72px", paddingTop: "14px", paddingBottom: "14px" }}
             >
               {/* Emoji badge */}
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 text-2xl">
@@ -115,8 +116,8 @@ export default function PanikButonu() {
                 <p className={`font-semibold leading-snug ${s.pulsing ? s.textColor : "text-white"}`}>
                   {s.baslik}
                 </p>
-                <p className="mt-0.5 text-xs leading-relaxed text-neutral-500 group-hover:text-neutral-400 transition-colors">
-                  {s.aciklama}
+                <p className="mt-0.5 text-xs leading-relaxed text-slate-400 group-hover:text-slate-300 transition-colors">
+                  {s.microcopy}
                 </p>
               </div>
 
@@ -132,6 +133,14 @@ export default function PanikButonu() {
             </Link>
           ))}
         </div>
+
+        {/* Alt güven metni */}
+        <p className="mt-6 text-center text-xs text-slate-600">
+          Acil durumda Togg Care:{" "}
+          <a href="tel:08502228644" className="text-slate-400 hover:text-white transition-colors">
+            0 850 222 86 44
+          </a>
+        </p>
       </div>
     </section>
   );

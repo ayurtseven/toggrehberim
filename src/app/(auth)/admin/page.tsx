@@ -73,12 +73,12 @@ export default function AdminPage() {
   const yayinlananlar = icerikler.filter((i) => !i.taslak);
 
   return (
-    <div className="min-h-screen bg-neutral-950 px-4 py-8 text-white">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">İçerik Yönetimi</h1>
-            <p className="mt-1 text-sm text-neutral-400">
+            <p className="mt-1 text-sm text-slate-400">
               {taslaklar.length} taslak · {yayinlananlar.length} yayında
             </p>
           </div>
@@ -103,7 +103,7 @@ export default function AdminPage() {
             </Link>
             <Link
               href="/"
-              className="rounded-lg border border-white/10 px-4 py-2 text-sm text-neutral-400 hover:text-white"
+              className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-400 hover:text-white"
             >
               ← Siteye dön
             </Link>
@@ -152,8 +152,8 @@ function IcerikSatiri({ ic }: { ic: IcerikKarti }) {
       <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${renkSinif}`}>
         {etiket}
       </span>
-      <span className="flex-1 truncate text-sm text-neutral-200">{ic.baslik}</span>
-      <span className="shrink-0 text-xs text-neutral-500">{ic.tarih}</span>
+      <span className="flex-1 truncate text-sm text-slate-200">{ic.baslik}</span>
+      <span className="shrink-0 text-xs text-slate-500">{ic.tarih}</span>
       <Link
         href={editUrl}
         className="shrink-0 rounded-lg bg-white/8 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/15"

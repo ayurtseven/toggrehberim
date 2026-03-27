@@ -15,17 +15,17 @@ const OFFLINE_SAYFALAR = [
 export default function OfflineSayfasi() {
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-16 text-center">
-      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-neutral-900 text-4xl">
+      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-slate-900 text-4xl">
         📡
       </div>
 
       <h1 className="mb-2 text-2xl font-bold">İnternet Bağlantısı Yok</h1>
-      <p className="mb-10 max-w-sm text-sm text-neutral-500">
+      <p className="mb-10 max-w-sm text-sm text-slate-500">
         Bağlantı kesildi. Daha önce ziyaret ettiğin sayfalar önbellekten yüklenebilir.
       </p>
 
       <div className="w-full max-w-sm space-y-3">
-        <p className="mb-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-600">
+        <p className="mb-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
           Önbellekteki Sayfalar
         </p>
         {OFFLINE_SAYFALAR.map((s) => (
@@ -39,13 +39,13 @@ export default function OfflineSayfasi() {
             </svg>
             <div className="text-left">
               <p className={`text-sm font-semibold ${s.renk}`}>{s.label}</p>
-              <p className="text-xs text-neutral-500">{s.aciklama}</p>
+              <p className="text-xs text-slate-500">{s.aciklama}</p>
             </div>
           </Link>
         ))}
       </div>
 
-      <p className="mt-8 text-xs text-neutral-700">
+      <p className="mt-8 text-xs text-slate-700">
         Bağlantı geri geldiğinde sayfa otomatik güncellenecek.
       </p>
     </div>

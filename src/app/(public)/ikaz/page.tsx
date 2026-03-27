@@ -35,18 +35,18 @@ export default function IkazSozlukSayfasi() {
   })).filter((g) => g.semboller.length > 0);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto max-w-3xl px-4 py-10">
         {/* Başlık */}
         <div className="mb-8">
-          <nav className="mb-4 flex items-center gap-2 text-sm text-neutral-500">
+          <nav className="mb-4 flex items-center gap-2 text-sm text-slate-500">
             <Link href="/" className="hover:text-neutral-200 transition-colors">Ana Sayfa</Link>
             <span>/</span>
             <span className="text-neutral-300">İkaz Lambaları</span>
           </nav>
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-[var(--togg-red)]">El Kitabı 6.2.2</p>
           <h1 className="text-3xl font-bold">Togg İkaz Lambaları Sözlüğü</h1>
-          <p className="mt-2 text-neutral-400">
+          <p className="mt-2 text-slate-400">
             T10X ve T10F&apos;in tüm {TUM_IKAZ_SEMBOLLERI.length} ikaz sembolü — anlamları ve çözümleri.
           </p>
           <Link
@@ -85,9 +85,9 @@ export default function IkazSozlukSayfasi() {
                         )}
                       </div>
                       <p className="text-sm font-semibold text-white">{s.ad}</p>
-                      <p className="mt-0.5 line-clamp-1 text-xs text-neutral-500">{s.anlami}</p>
+                      <p className="mt-0.5 line-clamp-1 text-xs text-slate-500">{s.anlami}</p>
                     </div>
-                    <svg className="h-4 w-4 shrink-0 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-4 w-4 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>

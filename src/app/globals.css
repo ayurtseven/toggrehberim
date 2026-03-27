@@ -5,7 +5,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --togg-red: #e8002d;
-  --togg-dark: #0f0f0f;
+  --togg-dark: #0f172a;
 }
 
 @theme inline {
@@ -21,8 +21,8 @@
 /* Araç içi kullanım için dark mode varsayılan */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;
+    --foreground: #e2e8f0;
   }
 }
 

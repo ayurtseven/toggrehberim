@@ -12,7 +12,7 @@ const navLinks = [
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link
           href="/"
@@ -27,7 +27,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-md px-3 py-2 text-sm font-medium text-neutral-300 transition-colors hover:bg-white/10 hover:text-white"
+              className="rounded-md px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
             >
               {link.label}
             </Link>
@@ -46,7 +46,7 @@ export default function Header() {
           <Link
             key={link.href}
             href={link.href}
-            className="shrink-0 rounded-md px-3 py-2 text-sm font-medium text-neutral-400 hover:text-white"
+            className="shrink-0 rounded-md px-3 py-2 text-sm font-medium text-slate-400 hover:text-white"
           >
             {link.label}
           </Link>

@@ -47,7 +47,7 @@ export default async function OneriPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-neutral-950 px-4 py-8 text-white">
+      <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
         <div className="mx-auto max-w-5xl">
           <p className="text-red-400">Veri yüklenemedi: {error.message}</p>
         </div>
@@ -65,19 +65,19 @@ export default async function OneriPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 px-4 py-8 text-white">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-5xl">
         {/* Başlık */}
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Kullanıcı Önerileri</h1>
-            <p className="mt-1 text-sm text-neutral-400">
+            <p className="mt-1 text-sm text-slate-400">
               Toplam {liste.length} öneri
             </p>
           </div>
           <a
             href="/admin"
-            className="rounded-lg border border-white/10 px-4 py-2 text-sm text-neutral-400 hover:text-white"
+            className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-400 hover:text-white"
           >
             ← Admin
           </a>
@@ -100,14 +100,14 @@ export default async function OneriPage() {
               <div className="text-2xl font-bold text-white">
                 {sayimlar[key]}
               </div>
-              <div className="mt-1 text-xs text-neutral-400">{label}</div>
+              <div className="mt-1 text-xs text-slate-400">{label}</div>
             </div>
           ))}
         </div>
 
         {/* Tablo */}
         {liste.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center text-neutral-500">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-12 text-center text-slate-500">
             Henüz öneri yok.
           </div>
         ) : (
@@ -115,19 +115,19 @@ export default async function OneriPage() {
             <table className="w-full text-sm">
               <thead className="border-b border-white/10 bg-white/5">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-neutral-400">
+                  <th className="px-4 py-3 text-left font-medium text-slate-400">
                     Başlık
                   </th>
-                  <th className="hidden px-4 py-3 text-left font-medium text-neutral-400 sm:table-cell">
+                  <th className="hidden px-4 py-3 text-left font-medium text-slate-400 sm:table-cell">
                     Kategori
                   </th>
-                  <th className="hidden px-4 py-3 text-left font-medium text-neutral-400 md:table-cell">
+                  <th className="hidden px-4 py-3 text-left font-medium text-slate-400 md:table-cell">
                     Model
                   </th>
-                  <th className="hidden px-4 py-3 text-left font-medium text-neutral-400 lg:table-cell">
+                  <th className="hidden px-4 py-3 text-left font-medium text-slate-400 lg:table-cell">
                     Tarih
                   </th>
-                  <th className="px-4 py-3 text-left font-medium text-neutral-400">
+                  <th className="px-4 py-3 text-left font-medium text-slate-400">
                     Durum
                   </th>
                 </tr>
@@ -136,13 +136,13 @@ export default async function OneriPage() {
                 {liste.map((oneri) => (
                   <tr
                     key={oneri.id}
-                    className="bg-neutral-900 transition hover:bg-white/5"
+                    className="bg-slate-900 transition hover:bg-white/5"
                   >
                     <td className="max-w-xs px-4 py-3">
                       <div className="truncate font-medium text-white">
                         {oneri.baslik}
                       </div>
-                      <div className="mt-0.5 truncate text-xs text-neutral-500">
+                      <div className="mt-0.5 truncate text-xs text-slate-500">
                         {oneri.icerik}
                       </div>
                     </td>
@@ -153,10 +153,10 @@ export default async function OneriPage() {
                         {oneri.kategori}
                       </span>
                     </td>
-                    <td className="hidden px-4 py-3 text-neutral-400 md:table-cell">
+                    <td className="hidden px-4 py-3 text-slate-400 md:table-cell">
                       {oneri.model}
                     </td>
-                    <td className="hidden px-4 py-3 text-neutral-500 lg:table-cell">
+                    <td className="hidden px-4 py-3 text-slate-500 lg:table-cell">
                       {tarihFormatla(oneri.created_at)}
                     </td>
                     <td className="px-4 py-3">

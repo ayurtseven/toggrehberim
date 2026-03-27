@@ -63,7 +63,7 @@ function Pill({
       className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
         active
           ? "bg-white text-black"
-          : "bg-white/8 text-neutral-400 hover:bg-white/12 hover:text-white"
+          : "bg-white/8 text-slate-400 hover:bg-white/12 hover:text-white"
       }`}
     >
       {dot && (
@@ -109,7 +109,7 @@ function BaglantiSatiri({ b }: { b: Baglanti }) {
             </span>
           )}
         </div>
-        <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-neutral-500">
+        <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
           {b.gucKW && <span className="font-medium text-white/70">{b.gucKW} kW</span>}
           <span>{b.adet} soket</span>
           <span className={`flex items-center gap-1 ${durum.text}`}>
@@ -134,7 +134,7 @@ function IstasyonDetay({
   const durum = durumRenk(ist.durum);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-neutral-950">
+    <div className="flex h-full flex-col overflow-hidden bg-slate-950">
       {/* Başlık */}
       <div className="flex items-start gap-3 border-b border-white/8 p-4">
         <div
@@ -143,14 +143,14 @@ function IstasyonDetay({
         />
         <div className="min-w-0 flex-1">
           <h2 className="text-sm font-bold leading-snug text-white">{ist.ad}</h2>
-          <p className="mt-0.5 text-xs text-neutral-500">
+          <p className="mt-0.5 text-xs text-slate-500">
             {ist.operator}
             {ist.sehir && <> · {ist.sehir}</>}
           </p>
         </div>
         <button
           onClick={onKapat}
-          className="shrink-0 rounded-full p-1 text-neutral-500 transition-colors hover:text-white"
+          className="shrink-0 rounded-full p-1 text-slate-500 transition-colors hover:text-white"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -164,7 +164,7 @@ function IstasyonDetay({
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             {ist.adres && (
-              <p className="text-xs text-neutral-400 truncate">{ist.adres}</p>
+              <p className="text-xs text-slate-400 truncate">{ist.adres}</p>
             )}
           </div>
           <span
@@ -185,26 +185,26 @@ function IstasyonDetay({
         <div className="grid grid-cols-3 gap-2 rounded-xl border border-white/6 bg-white/[0.02] p-3">
           <div className="text-center">
             <p className="text-lg font-bold">{ist.maxKW > 0 ? `${ist.maxKW}` : "—"}</p>
-            <p className="text-[10px] text-neutral-500">Maks. kW</p>
+            <p className="text-[10px] text-slate-500">Maks. kW</p>
           </div>
           <div className="text-center">
             <p className="text-lg font-bold">
               {ist.baglantilar.reduce((s, b) => s + b.adet, 0)}
             </p>
-            <p className="text-[10px] text-neutral-500">Soket</p>
+            <p className="text-[10px] text-slate-500">Soket</p>
           </div>
           <div className="text-center">
             <p className="text-lg font-bold">
               {ist.hasDC ? "DC" : "AC"}
             </p>
-            <p className="text-[10px] text-neutral-500">Şarj Tipi</p>
+            <p className="text-[10px] text-slate-500">Şarj Tipi</p>
           </div>
         </div>
 
         {/* Bağlantılar */}
         {ist.baglantilar.length > 0 && (
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-600">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Bağlantılar
             </p>
             <div className="space-y-2">
@@ -226,7 +226,7 @@ function IstasyonDetay({
 
         {/* Operatör aksiyonları */}
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-600">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
             Anlık Durum & Fiyat
           </p>
           <div className="space-y-2">
@@ -238,7 +238,7 @@ function IstasyonDetay({
                 className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-medium text-white transition-all hover:border-white/15 hover:bg-white/[0.06]"
               >
                 <span>{op.yazi} Uygulaması →</span>
-                <svg className="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
@@ -248,10 +248,10 @@ function IstasyonDetay({
                 href={op.fiyatUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-medium text-neutral-400 transition-all hover:border-white/15 hover:text-white"
+                className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-medium text-slate-400 transition-all hover:border-white/15 hover:text-white"
               >
                 <span>Tarife & Fiyatlar →</span>
-                <svg className="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
@@ -414,10 +414,10 @@ export default function SarjHaritasiClient() {
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="relative flex h-full w-full overflow-hidden bg-neutral-950 text-white">
+    <div className="relative flex h-full w-full overflow-hidden bg-slate-950 text-white">
 
       {/* ── Filtre çubuğu ── */}
-      <div className="absolute left-0 right-0 top-0 z-[1000] border-b border-white/8 bg-black/80 backdrop-blur-md">
+      <div className="absolute left-0 right-0 top-0 z-[1000] border-b border-white/8 bg-slate-950/80 backdrop-blur-md">
         <div className="flex items-center gap-2 overflow-x-auto px-4 py-2.5 scrollbar-hide">
           {/* Operatör filtreleri */}
           <Pill active={filtreler.operator === "tumu"} onClick={() => setFiltre({ operator: "tumu" })}>
@@ -458,10 +458,10 @@ export default function SarjHaritasiClient() {
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
               filtreler.sadecAktif
                 ? "bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40"
-                : "bg-white/8 text-neutral-400 hover:bg-white/12"
+                : "bg-white/8 text-slate-400 hover:bg-white/12"
             }`}
           >
-            <span className={`h-1.5 w-1.5 rounded-full ${filtreler.sadecAktif ? "bg-emerald-500" : "bg-neutral-600"}`} />
+            <span className={`h-1.5 w-1.5 rounded-full ${filtreler.sadecAktif ? "bg-emerald-500" : "bg-slate-600"}`} />
             Sadece Aktif
           </button>
         </div>
@@ -503,9 +503,9 @@ export default function SarjHaritasiClient() {
       </div>
 
       {/* ── Alt istatistik rozeti ── */}
-      <div className="absolute bottom-8 left-1/2 z-[1000] -translate-x-1/2 flex items-center gap-3 rounded-full border border-white/12 bg-black/85 px-4 py-2 text-xs backdrop-blur-md">
+      <div className="absolute bottom-8 left-1/2 z-[1000] -translate-x-1/2 flex items-center gap-3 rounded-full border border-white/12 bg-slate-950/85 px-4 py-2 text-xs backdrop-blur-md">
         {yukleniyor ? (
-          <span className="flex items-center gap-2 text-neutral-500">
+          <span className="flex items-center gap-2 text-slate-500">
             <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -517,29 +517,29 @@ export default function SarjHaritasiClient() {
         ) : (
           <>
             <span className="font-semibold text-white">{stats.toplam}</span>
-            <span className="text-neutral-500">istasyon</span>
+            <span className="text-slate-500">istasyon</span>
             <span className="h-3 w-px bg-white/15" />
             <span className="font-semibold text-emerald-400">{stats.aktif}</span>
-            <span className="text-neutral-500">aktif</span>
+            <span className="text-slate-500">aktif</span>
             <span className="h-3 w-px bg-white/15" />
             <span className="font-semibold text-[var(--togg-red)]">{stats.dcSoket}</span>
-            <span className="text-neutral-500">DC</span>
+            <span className="text-slate-500">DC</span>
             <span className="font-semibold text-blue-400">{stats.acSoket}</span>
-            <span className="text-neutral-500">AC soket</span>
+            <span className="text-slate-500">AC soket</span>
           </>
         )}
       </div>
 
       {/* ── Mobil seçim ipucu ── */}
       {!secili && !yukleniyor && !hata && (
-        <div className="absolute bottom-20 left-1/2 z-[1000] -translate-x-1/2 rounded-full border border-white/10 bg-black/70 px-4 py-1.5 text-xs text-neutral-500 backdrop-blur-sm md:hidden">
+        <div className="absolute bottom-20 left-1/2 z-[1000] -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/70 px-4 py-1.5 text-xs text-slate-500 backdrop-blur-sm md:hidden">
           İstasyona tıklayarak detay görüntüleyin
         </div>
       )}
 
       {/* ── Renk açıklaması (legend) ── */}
-      <div className="absolute bottom-8 right-4 z-[1000] hidden rounded-xl border border-white/8 bg-black/85 p-3 backdrop-blur-md md:block">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-neutral-600">
+      <div className="absolute bottom-8 right-4 z-[1000] hidden rounded-xl border border-white/8 bg-slate-950/85 p-3 backdrop-blur-md md:block">
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
           Güç Seviyesi
         </p>
         <div className="space-y-1.5">
@@ -553,11 +553,11 @@ export default function SarjHaritasiClient() {
                 className={`${l.size} shrink-0 rounded-full border border-white/20`}
                 style={{ background: l.color, opacity: 0.85 }}
               />
-              <span className="text-[11px] text-neutral-400">{l.label}</span>
+              <span className="text-[11px] text-slate-400">{l.label}</span>
             </div>
           ))}
         </div>
-        <div className="mt-3 border-t border-white/8 pt-2 text-[10px] text-neutral-600">
+        <div className="mt-3 border-t border-white/8 pt-2 text-[10px] text-slate-600">
           Koyu = pasif / Parlak = aktif
         </div>
       </div>

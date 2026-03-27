@@ -14,7 +14,7 @@ const RENK_DARK: Record<IkazSembolu["renk"], { border: string; bg: string; badge
   sari:    { border: "border-yellow-500/30", bg: "bg-yellow-500/8", badge: "bg-yellow-500/15 text-yellow-400", text: "text-yellow-400" },
   mavi:    { border: "border-blue-500/30",   bg: "bg-blue-500/8",   badge: "bg-blue-500/15 text-blue-400",   text: "text-blue-400"   },
   yesil:   { border: "border-emerald-500/30",bg: "bg-emerald-500/8",badge: "bg-emerald-500/15 text-emerald-400",text: "text-emerald-400"},
-  beyaz:   { border: "border-white/20",      bg: "bg-white/5",      badge: "bg-white/10 text-neutral-300",   text: "text-white"      },
+  beyaz:   { border: "border-white/20",      bg: "bg-white/5",      badge: "bg-white/10 text-slate-300",   text: "text-white"      },
 };
 
 const ACILIYET_DARK: Record<IkazSembolu["aciliyet"], { cls: string; label: string }> = {
@@ -91,16 +91,16 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-slate-950 text-white">
         <div className="mx-auto max-w-2xl px-4 py-10">
 
           {/* Breadcrumb */}
-          <nav className="mb-6 overflow-hidden text-sm text-neutral-500 whitespace-nowrap">
-            <Link href="/" className="hover:text-neutral-200 transition-colors">Ana Sayfa</Link>
+          <nav className="mb-6 overflow-hidden text-sm text-slate-500 whitespace-nowrap">
+            <Link href="/" className="hover:text-slate-200 transition-colors">Ana Sayfa</Link>
             <span className="mx-2">/</span>
-            <Link href="/ikaz-arama" className="hover:text-neutral-200 transition-colors">İkaz Lambası</Link>
+            <Link href="/ikaz-arama" className="hover:text-slate-200 transition-colors">İkaz Lambası</Link>
             <span className="mx-2">/</span>
-            <span className="text-neutral-300">{sembol.ad}</span>
+            <span className="text-slate-300">{sembol.ad}</span>
           </nav>
 
           {/* Başlık kartı */}
@@ -119,11 +119,11 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
               )}
             </div>
             <h1 className={`text-2xl font-bold md:text-3xl ${renk.text}`}>{sembol.ad}</h1>
-            <p className="mt-3 text-neutral-300">{sembol.anlami}</p>
+            <p className="mt-3 text-slate-300">{sembol.anlami}</p>
           </div>
 
           {/* Ne yapmalıyım */}
-          <div className="mb-5 rounded-2xl border border-white/10 bg-neutral-900 p-5">
+          <div className="mb-5 rounded-2xl border border-white/10 bg-slate-900 p-5">
             <h2 className="mb-4 text-lg font-bold">Ne Yapmalıyım?</h2>
             <ol className="space-y-3">
               {sembol.yapilacaklar.map((adim, i) => (
@@ -131,7 +131,7 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--togg-red)]/15 text-xs font-bold text-[var(--togg-red)]">
                     {i + 1}
                   </span>
-                  <span className="text-sm leading-relaxed text-neutral-200">{adim}</span>
+                  <span className="text-sm leading-relaxed text-slate-200">{adim}</span>
                 </li>
               ))}
             </ol>
@@ -139,12 +139,12 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
 
           {/* Nedenler */}
           {sembol.nedenler.length > 0 && (
-            <div className="mb-5 rounded-2xl border border-white/10 bg-neutral-900 p-5">
+            <div className="mb-5 rounded-2xl border border-white/10 bg-slate-900 p-5">
               <h2 className="mb-4 text-lg font-bold">Olası Nedenler</h2>
               <ul className="space-y-2">
                 {sembol.nedenler.map((neden, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-neutral-300">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-600" />
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-600" />
                     {neden}
                   </li>
                 ))}
@@ -193,7 +193,7 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
             </Link>
             <Link
               href="/ikaz"
-              className="flex-1 rounded-xl border border-white/10 py-3 text-center text-sm font-semibold text-neutral-300 transition hover:border-white/20 hover:text-white"
+              className="flex-1 rounded-xl border border-white/10 py-3 text-center text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:text-white"
             >
               Tüm İkazlar
             </Link>

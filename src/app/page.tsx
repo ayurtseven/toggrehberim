@@ -74,7 +74,7 @@ export default function AnaSayfa() {
   const haberler = getTumHaberler();
 
   return (
-    <div className="bg-black text-white">
+    <div className="bg-slate-950 text-white">
 
       {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative flex min-h-[72vh] flex-col items-center justify-end overflow-hidden pb-16 text-center">
@@ -146,10 +146,10 @@ export default function AnaSayfa() {
       <StatsTicker />
 
       {/* ─── 2. MODEL KARTLARI ───────────────────────────────────────────────── */}
-      <section className="bg-neutral-950 px-4 py-16">
+      <section className="bg-slate-950 px-4 py-16">
         <div className="mx-auto max-w-5xl">
           <AnimatedSection>
-            <p className="mb-1.5 text-center text-xs font-bold uppercase tracking-[0.3em] text-neutral-600">
+            <p className="mb-1.5 text-center text-xs font-bold uppercase tracking-[0.3em] text-slate-600">
               Türkiye&apos;nin Yerli Elektrikli Otomobili
             </p>
             <h2 className="mb-8 text-center text-2xl font-bold md:text-3xl">İki Model, Bir Vizyon</h2>
@@ -158,7 +158,7 @@ export default function AnaSayfa() {
           <div className="grid gap-5 md:grid-cols-2">
             {/* T10X */}
             <AnimatedSection delay={50}>
-              <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 transition-all duration-300 hover:border-white/20">
+              <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 transition-all duration-300 hover:border-white/20">
                 <div className="relative h-52 w-full overflow-hidden">
                   <Image
                     src={IMG.t10x}
@@ -173,7 +173,7 @@ export default function AnaSayfa() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <p className="mb-3 text-sm text-neutral-400">Tek Motor · RWD · Togg&apos;un ilk modeli</p>
+                  <p className="mb-3 text-sm text-slate-400">Tek Motor · RWD · Togg&apos;un ilk modeli</p>
                   <div className="mb-4 flex gap-4">
                     {[
                       { val: "523 km", lbl: "Menzil" },
@@ -182,7 +182,7 @@ export default function AnaSayfa() {
                     ].map((s) => (
                       <div key={s.lbl}>
                         <p className="text-lg font-bold">{s.val}</p>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-600">{s.lbl}</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">{s.lbl}</p>
                       </div>
                     ))}
                   </div>
@@ -195,7 +195,7 @@ export default function AnaSayfa() {
                     </Link>
                     <Link
                       href="/rehber?model=t10x"
-                      className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-neutral-400 transition hover:text-white hover:border-white/20"
+                      className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-slate-400 transition hover:text-white hover:border-white/20"
                     >
                       T10X Rehberi
                     </Link>
@@ -206,7 +206,7 @@ export default function AnaSayfa() {
 
             {/* T10F */}
             <AnimatedSection delay={120}>
-              <div className="group relative overflow-hidden rounded-2xl border border-[var(--togg-red)]/20 bg-neutral-900 transition-all duration-300 hover:border-[var(--togg-red)]/35">
+              <div className="group relative overflow-hidden rounded-2xl border border-[var(--togg-red)]/20 bg-slate-900 transition-all duration-300 hover:border-[var(--togg-red)]/35">
                 <div className="relative h-52 w-full overflow-hidden">
                   <Image
                     src={IMG.t10f}
@@ -226,7 +226,7 @@ export default function AnaSayfa() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <p className="mb-3 text-sm text-neutral-400">Çift Motor · AWD · Maksimum Performans</p>
+                  <p className="mb-3 text-sm text-slate-400">Çift Motor · AWD · Maksimum Performans</p>
                   <div className="mb-4 flex gap-4">
                     {[
                       { val: "623 km", lbl: "Menzil" },
@@ -235,7 +235,7 @@ export default function AnaSayfa() {
                     ].map((s) => (
                       <div key={s.lbl}>
                         <p className="text-lg font-bold">{s.val}</p>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-600">{s.lbl}</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">{s.lbl}</p>
                       </div>
                     ))}
                   </div>
@@ -248,7 +248,7 @@ export default function AnaSayfa() {
                     </Link>
                     <Link
                       href="/modeller/karsilastir"
-                      className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-neutral-400 transition hover:text-white hover:border-white/20"
+                      className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-slate-400 transition hover:text-white hover:border-white/20"
                     >
                       Karşılaştır
                     </Link>
@@ -261,7 +261,7 @@ export default function AnaSayfa() {
       </section>
 
       {/* ─── 3. BENTO FEATURES ───────────────────────────────────────────────── */}
-      <section className="relative bg-neutral-950 px-4 py-20 overflow-hidden">
+      <section className="relative bg-slate-950 px-4 py-20 overflow-hidden">
         <div className="pointer-events-none absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-[var(--togg-red)]/8 blur-[160px]" />
         <div className="pointer-events-none absolute -bottom-40 -right-20 h-[500px] w-[500px] rounded-full bg-blue-600/8 blur-[140px]" />
         <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-purple-600/6 blur-[120px]" />
@@ -282,7 +282,7 @@ export default function AnaSayfa() {
             <AnimatedSection className="md:col-span-3 md:row-span-2" delay={50}>
               <SpotlightCard
                 spotlightColor="rgba(232,0,45,0.12)"
-                className="group h-full rounded-2xl border border-[var(--togg-red)]/20 bg-neutral-900 p-8 transition-all duration-300 hover:border-[var(--togg-red)]/40"
+                className="group h-full rounded-2xl border border-[var(--togg-red)]/20 bg-slate-900 p-8 transition-all duration-300 hover:border-[var(--togg-red)]/40"
               >
                 <div className="flex h-full flex-col">
                   <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--togg-red)]/15 text-[var(--togg-red)]">
@@ -291,7 +291,7 @@ export default function AnaSayfa() {
                     </svg>
                   </div>
                   <h3 className="mb-3 text-2xl font-bold">AI İkaz Tanıma</h3>
-                  <p className="mb-6 text-sm leading-relaxed text-neutral-300">
+                  <p className="mb-6 text-sm leading-relaxed text-slate-300">
                     Dashboard&apos;da yanan sembolü fotoğrafla ya da tanımla — yapay zeka saniyeler içinde ne olduğunu ve ne yapman gerektiğini söylesin.
                   </p>
                   <div className="mt-auto">
@@ -303,7 +303,7 @@ export default function AnaSayfa() {
                       ].map((s) => (
                         <div key={s.label} className={`flex flex-1 flex-col gap-1.5 rounded-xl ${s.bg} border border-white/8 p-3`}>
                           <div className={`h-2 w-2 rounded-full ${s.dot}`} />
-                          <p className="text-xs text-neutral-400">{s.label}</p>
+                          <p className="text-xs text-slate-400">{s.label}</p>
                           <p className="text-lg font-bold">{s.count}</p>
                         </div>
                       ))}
@@ -326,7 +326,7 @@ export default function AnaSayfa() {
             <AnimatedSection className="md:col-span-2" delay={150}>
               <SpotlightCard
                 spotlightColor="rgba(59,130,246,0.12)"
-                className="group h-full rounded-2xl border border-blue-500/20 bg-neutral-900 p-7 transition-all duration-300 hover:border-blue-500/40"
+                className="group h-full rounded-2xl border border-blue-500/20 bg-slate-900 p-7 transition-all duration-300 hover:border-blue-500/40"
               >
                 <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/15 text-blue-400">
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -334,7 +334,7 @@ export default function AnaSayfa() {
                   </svg>
                 </div>
                 <h3 className="mb-2 text-xl font-bold">Kapsamlı Rehberler</h3>
-                <p className="text-sm leading-relaxed text-neutral-300">
+                <p className="text-sm leading-relaxed text-slate-300">
                   Şarj, yazılım, kış sürüşü ve bakım için gerçek deneyime dayalı içerikler.
                 </p>
                 <Link
@@ -353,7 +353,7 @@ export default function AnaSayfa() {
             <AnimatedSection className="md:col-span-2" delay={200}>
               <SpotlightCard
                 spotlightColor="rgba(16,185,129,0.12)"
-                className="group h-full rounded-2xl border border-emerald-500/20 bg-neutral-900 p-7 transition-all duration-300 hover:border-emerald-500/40"
+                className="group h-full rounded-2xl border border-emerald-500/20 bg-slate-900 p-7 transition-all duration-300 hover:border-emerald-500/40"
               >
                 <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,7 +361,7 @@ export default function AnaSayfa() {
                   </svg>
                 </div>
                 <h3 className="mb-2 text-xl font-bold">T10X vs T10F</h3>
-                <p className="text-sm leading-relaxed text-neutral-300">
+                <p className="text-sm leading-relaxed text-slate-300">
                   İki modeli tüm teknik özellikleriyle yan yana karşılaştır.
                 </p>
                 <Link
@@ -380,7 +380,7 @@ export default function AnaSayfa() {
       </section>
 
       {/* ─── 4. REHBer KATEGORİLERİ ──────────────────────────────────────────── */}
-      <section className="bg-neutral-950 px-4 py-16">
+      <section className="bg-slate-950 px-4 py-16">
         <div className="mx-auto max-w-6xl">
           <AnimatedSection>
             <h2 className="mb-8 text-2xl font-bold">Rehber Kategorileri</h2>
@@ -390,7 +390,7 @@ export default function AnaSayfa() {
               <AnimatedSection key={kat.slug} delay={i * 60}>
                 <SpotlightCard
                   spotlightColor="rgba(255,255,255,0.06)"
-                  className="group h-full rounded-2xl border bg-neutral-900 p-5 transition-all duration-300"
+                  className="group h-full rounded-2xl border bg-slate-900 p-5 transition-all duration-300"
                   style={{ borderColor: kat.border } as React.CSSProperties}
                 >
                   <div
@@ -400,7 +400,7 @@ export default function AnaSayfa() {
                     {kat.icon}
                   </div>
                   <p className="font-bold">{kat.label}</p>
-                  <p className="mt-1.5 text-sm leading-snug text-neutral-400">{kat.aciklama}</p>
+                  <p className="mt-1.5 text-sm leading-snug text-slate-400">{kat.aciklama}</p>
                   <Link href={`/rehber/${kat.slug}`} className="absolute inset-0" aria-label={kat.label} />
                 </SpotlightCard>
               </AnimatedSection>
@@ -411,7 +411,7 @@ export default function AnaSayfa() {
 
       {/* ─── 5. SON REHBERLER ────────────────────────────────────────────────── */}
       {sonRehberler.length > 0 && (
-        <section className="relative bg-neutral-950 px-4 py-16 overflow-hidden">
+        <section className="relative bg-slate-950 px-4 py-16 overflow-hidden">
           <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-blue-600/6 blur-[120px]" />
           <div className="relative mx-auto max-w-6xl">
             <AnimatedSection>
@@ -425,9 +425,9 @@ export default function AnaSayfa() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {sonRehberler.map((rehber, i) => (
                 <AnimatedSection key={`${rehber.kategori}/${rehber.slug}`} delay={i * 50}>
-                  <SpotlightCard className="group h-full rounded-2xl border border-white/10 bg-neutral-900 p-6 transition-all duration-300 hover:border-white/20">
+                  <SpotlightCard className="group h-full rounded-2xl border border-white/10 bg-slate-900 p-6 transition-all duration-300 hover:border-white/20">
                     <div className="mb-3 flex items-center gap-2">
-                      <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium capitalize text-neutral-300">
+                      <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium capitalize text-slate-300">
                         {rehber.kategori}
                       </span>
                       {rehber.model !== "hepsi" && (
@@ -439,11 +439,11 @@ export default function AnaSayfa() {
                     <h3 className="font-bold leading-snug transition-colors group-hover:text-[var(--togg-red)]">
                       {rehber.baslik}
                     </h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-neutral-400">
+                    <p className="mt-2 line-clamp-2 text-sm text-slate-400">
                       {rehber.ozet}
                     </p>
                     {rehber.sure && (
-                      <p className="mt-4 text-xs text-neutral-500">{rehber.sure} dk okuma</p>
+                      <p className="mt-4 text-xs text-slate-500">{rehber.sure} dk okuma</p>
                     )}
                     <Link href={`/rehber/${rehber.kategori}/${rehber.slug}`} className="absolute inset-0" aria-label={rehber.baslik} />
                   </SpotlightCard>
@@ -455,7 +455,7 @@ export default function AnaSayfa() {
       )}
 
       {/* ─── 6. HABERLER ─────────────────────────────────────────────────────── */}
-      <div className="border-t border-white/12 bg-neutral-950">
+      <div className="border-t border-white/12 bg-slate-950">
         <HaberlerSlider haberler={haberler} />
       </div>
 

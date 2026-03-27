@@ -17,7 +17,7 @@ export default function AramaIstemci({ rehberler }: { rehberler: RehberMeta[] })
     <>
       <div className="relative mb-6">
         <svg
-          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500"
+          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -30,12 +30,12 @@ export default function AramaIstemci({ rehberler }: { rehberler: RehberMeta[] })
           value={sorgu}
           onChange={(e) => setSorgu(e.target.value)}
           autoFocus
-          className="w-full rounded-xl border border-white/15 bg-neutral-900 py-4 pl-12 pr-4 text-base text-white placeholder:text-neutral-600 outline-none transition-colors focus:border-white/30"
+          className="w-full rounded-xl border border-white/15 bg-slate-900 py-4 pl-12 pr-4 text-base text-white placeholder:text-slate-600 outline-none transition-colors focus:border-white/30"
         />
       </div>
 
       {sorgu && (
-        <p className="mb-4 text-sm text-neutral-500">
+        <p className="mb-4 text-sm text-slate-500">
           {sonuclar.length} sonuç bulundu
         </p>
       )}
@@ -45,10 +45,10 @@ export default function AramaIstemci({ rehberler }: { rehberler: RehberMeta[] })
           <Link
             key={`${rehber.kategori}/${rehber.slug}`}
             href={`/rehber/${rehber.kategori}/${rehber.slug}`}
-            className="group block rounded-xl border border-white/10 bg-neutral-900 p-4 transition-colors hover:border-white/20 hover:bg-neutral-800"
+            className="group block rounded-xl border border-white/10 bg-slate-900 p-4 transition-colors hover:border-white/20 hover:bg-slate-800"
           >
             <div className="mb-1 flex items-center gap-2">
-              <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs capitalize text-neutral-400">
+              <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs capitalize text-slate-400">
                 {rehber.kategori}
               </span>
               {rehber.model !== "hepsi" && (
@@ -60,14 +60,14 @@ export default function AramaIstemci({ rehberler }: { rehberler: RehberMeta[] })
             <p className="font-semibold text-white group-hover:text-[var(--togg-red)] transition-colors">
               {rehber.baslik}
             </p>
-            <p className="mt-1 text-sm text-neutral-500 line-clamp-1">
+            <p className="mt-1 text-sm text-slate-500 line-clamp-1">
               {rehber.ozet}
             </p>
           </Link>
         ))}
 
         {sorgu && sonuclar.length === 0 && (
-          <p className="rounded-xl border border-dashed border-white/10 p-8 text-center text-neutral-600">
+          <p className="rounded-xl border border-dashed border-white/10 p-8 text-center text-slate-600">
             &quot;{sorgu}&quot; için sonuç bulunamadı.
           </p>
         )}

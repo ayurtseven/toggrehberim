@@ -94,7 +94,7 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
       <h2 className="mb-5 text-lg font-bold">
         Kullanıcı Deneyimleri
         {!yukleniyor && deneyimler.length > 0 && (
-          <span className="ml-2 text-sm font-normal text-neutral-500">
+          <span className="ml-2 text-sm font-normal text-slate-500">
             ({deneyimler.length})
           </span>
         )}
@@ -112,10 +112,10 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
           {deneyimler.map((d) => (
             <div
               key={d.id}
-              className="rounded-xl border border-white/8 bg-neutral-900 px-4 py-4"
+              className="rounded-xl border border-white/8 bg-slate-900 px-4 py-4"
             >
               <div className="mb-2 flex items-center gap-2">
-                <span className="text-sm font-semibold text-neutral-200">
+                <span className="text-sm font-semibold text-slate-200">
                   {d.kullanici_adi}
                 </span>
                 {d.model !== "hepsi" && (
@@ -123,16 +123,16 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
                     {d.model}
                   </span>
                 )}
-                <span className="ml-auto text-xs text-neutral-600">
+                <span className="ml-auto text-xs text-slate-600">
                   {tarihFormatla(d.created_at)}
                 </span>
               </div>
-              <p className="text-sm leading-relaxed text-neutral-300">{d.metin}</p>
+              <p className="text-sm leading-relaxed text-slate-300">{d.metin}</p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="mb-6 text-sm text-neutral-600">
+        <p className="mb-6 text-sm text-slate-600">
           Henüz deneyim paylaşılmamış. İlk sen yaz!
         </p>
       )}
@@ -145,8 +145,8 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
             <p className="text-sm text-emerald-300">Deneyimin paylaşıldı, teşekkürler!</p>
           </div>
         ) : (
-          <form onSubmit={gonder} className="rounded-xl border border-white/10 bg-neutral-900 p-4">
-            <p className="mb-3 text-sm font-medium text-neutral-300">
+          <form onSubmit={gonder} className="rounded-xl border border-white/10 bg-slate-900 p-4">
+            <p className="mb-3 text-sm font-medium text-slate-300">
               Bu ikazı yaşadın mı? Deneyimini paylaş
             </p>
 
@@ -154,7 +154,7 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
               <select
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                className="rounded-lg border border-white/10 bg-neutral-800 px-3 py-2 text-sm text-white outline-none focus:border-white/25"
+                className="rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-white/25"
               >
                 <option value="hepsi">Model seç</option>
                 <option value="t10x">T10X</option>
@@ -167,13 +167,13 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
               onChange={(e) => { setMetin(e.target.value); setHata(""); }}
               placeholder="Ne zaman yandı? Ne yaptın? Nasıl çözüldü?"
               rows={3}
-              className="w-full resize-none rounded-lg border border-white/10 bg-neutral-800 px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-white/25"
+              className="w-full resize-none rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 outline-none focus:border-white/25"
             />
 
             {hata && <p className="mt-1.5 text-xs text-red-400">{hata}</p>}
 
             <div className="mt-3 flex items-center justify-between">
-              <span className="text-xs text-neutral-600">{kullanici.adi} olarak paylaşılacak</span>
+              <span className="text-xs text-slate-600">{kullanici.adi} olarak paylaşılacak</span>
               <button
                 type="submit"
                 disabled={gonderiyor || !metin.trim()}
@@ -187,7 +187,7 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
       ) : (
         <a
           href={`/giris?next=/ikaz/${ikazId}`}
-          className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-neutral-900 py-3 text-sm text-neutral-400 transition hover:border-white/20 hover:text-white"
+          className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900 py-3 text-sm text-neutral-400 transition hover:border-white/20 hover:text-white"
         >
           Deneyimini paylaşmak için giriş yap →
         </a>

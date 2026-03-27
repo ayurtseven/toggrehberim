@@ -41,7 +41,7 @@ export default function OneriFormu() {
 
   if (durum === "basarili") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
         <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
             <svg
@@ -59,7 +59,7 @@ export default function OneriFormu() {
             </svg>
           </div>
           <h2 className="mb-2 text-xl font-bold text-white">Önerini aldık!</h2>
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-slate-400">
             Katkın için teşekkürler. En kısa sürede inceleyeceğiz.
           </p>
           <button
@@ -80,24 +80,24 @@ export default function OneriFormu() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 px-4 py-12 text-white">
+    <div className="min-h-screen bg-slate-950 px-4 py-12 text-white">
       <div className="mx-auto max-w-lg">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-white">
             İçerik <span className="text-[var(--togg-red)]">Öner</span>
           </h1>
-          <p className="mt-2 text-sm text-neutral-400">
+          <p className="mt-2 text-sm text-slate-400">
             Rehberde görmek istediğin bir konuyu bizimle paylaş.
           </p>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="space-y-5 rounded-2xl border border-white/10 bg-neutral-900 p-6"
+          className="space-y-5 rounded-2xl border border-white/10 bg-slate-900 p-6"
         >
           {/* Başlık */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-neutral-300">
+            <label className="mb-1.5 block text-sm font-medium text-slate-300">
               Başlık
             </label>
             <input
@@ -112,7 +112,7 @@ export default function OneriFormu() {
 
           {/* İçerik */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-neutral-300">
+            <label className="mb-1.5 block text-sm font-medium text-slate-300">
               Açıklama
             </label>
             <textarea
@@ -128,13 +128,13 @@ export default function OneriFormu() {
           {/* Kategori + Model */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-neutral-300">
+              <label className="mb-1.5 block text-sm font-medium text-slate-300">
                 Kategori
               </label>
               <select
                 value={kategori}
                 onChange={(e) => setKategori(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-neutral-800 px-4 py-3 text-sm text-white outline-none transition focus:border-[var(--togg-red)] focus:ring-1 focus:ring-[var(--togg-red)]"
+                className="w-full rounded-xl border border-white/10 bg-slate-800 px-4 py-3 text-sm text-white outline-none transition focus:border-[var(--togg-red)] focus:ring-1 focus:ring-[var(--togg-red)]"
               >
                 <option value="sarj">Şarj</option>
                 <option value="yazilim">Yazılım</option>
@@ -145,13 +145,13 @@ export default function OneriFormu() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-neutral-300">
+              <label className="mb-1.5 block text-sm font-medium text-slate-300">
                 Model
               </label>
               <select
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-neutral-800 px-4 py-3 text-sm text-white outline-none transition focus:border-[var(--togg-red)] focus:ring-1 focus:ring-[var(--togg-red)]"
+                className="w-full rounded-xl border border-white/10 bg-slate-800 px-4 py-3 text-sm text-white outline-none transition focus:border-[var(--togg-red)] focus:ring-1 focus:ring-[var(--togg-red)]"
               >
                 <option value="hepsi">Hepsi</option>
                 <option value="t10x">T10X</option>

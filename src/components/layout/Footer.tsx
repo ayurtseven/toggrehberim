@@ -25,7 +25,7 @@ const links = {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/8 bg-black">
+    <footer className="border-t border-white/8 bg-slate-950">
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="mb-10 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div>
@@ -33,7 +33,7 @@ export default function Footer() {
               <span className="text-[var(--togg-red)]">Togg</span>
               <span className="text-white">Rehberim</span>
             </Link>
-            <p className="mt-2 max-w-xs text-sm text-neutral-500">
+            <p className="mt-2 max-w-xs text-sm text-slate-500">
               T10X ve T10F sahipleri için bağımsız kullanıcı rehberi ve topluluk portalı.
             </p>
           </div>
@@ -42,7 +42,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {Object.entries(links).map(([group, items]) => (
             <div key={group}>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-600">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-600">
                 {group}
               </p>
               <ul className="space-y-2.5">
@@ -50,7 +50,7 @@ export default function Footer() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="text-sm text-neutral-500 transition-colors hover:text-white"
+                      className="text-sm text-slate-500 transition-colors hover:text-white"
                     >
                       {item.label}
                     </Link>
@@ -62,7 +62,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/8 pt-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-xs text-neutral-600">
+          <p className="text-xs text-slate-600">
             © {new Date().getFullYear()} ToggRehberim.com — Bağımsız kullanıcı rehberi. Togg A.Ş. ile resmi bağlantısı yoktur.
           </p>
           <div className="flex gap-1">

@@ -40,25 +40,25 @@ export default async function DeneyimlerPage() {
   const onaylanan = deneyimler.filter((d) => d.onaylandi).length;
 
   return (
-    <div className="min-h-screen bg-neutral-950 px-4 py-8 text-white">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">İkaz Deneyimleri</h1>
-            <p className="mt-1 text-sm text-neutral-400">
+            <p className="mt-1 text-sm text-slate-400">
               {onaylanan} onaylı · {deneyimler.length - onaylanan} beklemede
             </p>
           </div>
           <Link
             href="/admin"
-            className="rounded-lg border border-white/10 px-4 py-2 text-sm text-neutral-400 hover:text-white"
+            className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-400 hover:text-white"
           >
             ← Admin
           </Link>
         </div>
 
         {deneyimler.length === 0 ? (
-          <div className="flex h-40 items-center justify-center rounded-xl border border-white/8 text-sm text-neutral-600">
+          <div className="flex h-40 items-center justify-center rounded-xl border border-white/8 text-sm text-slate-600">
             Henüz deneyim yok
           </div>
         ) : (
@@ -70,7 +70,7 @@ export default async function DeneyimlerPage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="mb-1 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-mono text-neutral-300">
+                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-mono text-slate-300">
                       {d.ikaz_id}
                     </span>
                     <span className="text-sm font-medium text-white">{d.kullanici_adi}</span>
@@ -86,13 +86,13 @@ export default async function DeneyimlerPage() {
                     }`}>
                       {d.onaylandi ? "onaylı" : "beklemede"}
                     </span>
-                    <span className="ml-auto text-xs text-neutral-600">{tarihFormatla(d.created_at)}</span>
+                    <span className="ml-auto text-xs text-slate-600">{tarihFormatla(d.created_at)}</span>
                   </div>
-                  <p className="text-sm text-neutral-300">{d.metin}</p>
+                  <p className="text-sm text-slate-300">{d.metin}</p>
                 </div>
                 <Link
                   href={`/ikaz/${d.ikaz_id}`}
-                  className="shrink-0 rounded-lg bg-white/8 px-3 py-1.5 text-xs text-neutral-300 hover:bg-white/15"
+                  className="shrink-0 rounded-lg bg-white/8 px-3 py-1.5 text-xs text-slate-300 hover:bg-white/15"
                 >
                   Sayfaya git
                 </Link>

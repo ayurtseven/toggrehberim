@@ -23,7 +23,7 @@ export default function GirisIstemci() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-8 text-center">
@@ -38,7 +38,7 @@ export default function GirisIstemci() {
           <h1 className="mb-2 text-center text-xl font-bold text-white">
             Hesabına giriş yap
           </h1>
-          <p className="mb-8 text-center text-sm text-neutral-400">
+          <p className="mb-8 text-center text-sm text-slate-400">
             İçerik önermek için giriş yapman gerekiyor
           </p>
 

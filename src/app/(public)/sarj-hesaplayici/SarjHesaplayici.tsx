@@ -27,8 +27,8 @@ const DURUM_RENK: Record<FavoriIstasyon["durum"], { cls: string; label: string }
   musait:     { cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25", label: "Müsait" },
   kismi:      { cls: "bg-yellow-500/15 text-yellow-400 border-yellow-500/25",    label: "Kısmi" },
   megul:      { cls: "bg-red-500/15 text-red-400 border-red-500/25",             label: "Meşgul" },
-  kapali:     { cls: "bg-neutral-700/40 text-neutral-400 border-neutral-600/25", label: "Kapalı" },
-  bilinmiyor: { cls: "bg-white/5 text-neutral-500 border-white/10",              label: "Bilinmiyor" },
+  kapali:     { cls: "bg-slate-700/40 text-slate-400 border-neutral-600/25", label: "Kapalı" },
+  bilinmiyor: { cls: "bg-white/5 text-slate-500 border-white/10",              label: "Bilinmiyor" },
 };
 
 export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIstasyon[] }) {
@@ -92,8 +92,8 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
     <div className="space-y-5">
 
       {/* Model seçimi */}
-      <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">Araç Modeli</p>
+      <div className="rounded-2xl border border-white/10 bg-slate-900 p-5">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Araç Modeli</p>
         <div className="grid grid-cols-2 gap-3">
           {(["t10x", "t10f"] as const).map((m) => (
             <button
@@ -108,17 +108,17 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
               <p className={`text-lg font-bold ${model === m ? "text-[var(--togg-red)]" : "text-white"}`}>
                 {MODEL_BILGI[m].ad}
               </p>
-              <p className="text-xs text-neutral-500">{MODEL_BILGI[m].tanim}</p>
-              <p className="mt-1 text-xs font-medium text-neutral-400">{MODEL_BILGI[m].wltp} km WLTP</p>
+              <p className="text-xs text-slate-500">{MODEL_BILGI[m].tanim}</p>
+              <p className="mt-1 text-xs font-medium text-slate-400">{MODEL_BILGI[m].wltp} km WLTP</p>
             </button>
           ))}
         </div>
       </div>
 
       {/* Batarya seviyesi */}
-      <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
+      <div className="rounded-2xl border border-white/10 bg-slate-900 p-5">
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Mevcut Batarya</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Mevcut Batarya</p>
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -126,9 +126,9 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
               max={100}
               value={batarya}
               onChange={(e) => setBatarya(Math.min(100, Math.max(1, Number(e.target.value))))}
-              className="w-16 rounded-lg border border-white/15 bg-neutral-800 px-2 py-1 text-center text-sm font-bold text-white focus:outline-none focus:border-white/30"
+              className="w-16 rounded-lg border border-white/15 bg-slate-800 px-2 py-1 text-center text-sm font-bold text-white focus:outline-none focus:border-white/30"
             />
-            <span className="text-sm text-neutral-400">%</span>
+            <span className="text-sm text-slate-400">%</span>
           </div>
         </div>
 
@@ -150,16 +150,16 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
             style={{ width: `${bataryaYuzde}%` }}
           />
         </div>
-        <div className="mt-1 flex justify-between text-[10px] text-neutral-700">
+        <div className="mt-1 flex justify-between text-[10px] text-slate-700">
           <span>0%</span>
-          <span className="text-neutral-500">Optimal şarj: %20–80</span>
+          <span className="text-slate-500">Optimal şarj: %20–80</span>
           <span>100%</span>
         </div>
       </div>
 
       {/* Koşullar */}
-      <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">Sürüş Koşulları</p>
+      <div className="rounded-2xl border border-white/10 bg-slate-900 p-5">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Sürüş Koşulları</p>
         <div className="grid grid-cols-2 gap-3">
           {/* Hava */}
           <button
@@ -175,7 +175,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
               <p className={`text-sm font-semibold ${soguk ? "text-blue-400" : "text-white"}`}>
                 {soguk ? "Soğuk Hava" : "Normal Hava"}
               </p>
-              <p className="text-xs text-neutral-600">{soguk ? "−%25 menzil" : "WLTP koşulları"}</p>
+              <p className="text-xs text-slate-600">{soguk ? "−%25 menzil" : "WLTP koşulları"}</p>
             </div>
           </button>
 
@@ -193,7 +193,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
               <p className={`text-sm font-semibold ${eko ? "text-emerald-400" : "text-white"}`}>
                 {eko ? "Ekonomik" : "Normal Sürüş"}
               </p>
-              <p className="text-xs text-neutral-600">{eko ? "+%8 menzil" : "Standart"}</p>
+              <p className="text-xs text-slate-600">{eko ? "+%8 menzil" : "Standart"}</p>
             </div>
           </button>
         </div>
@@ -205,10 +205,10 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
         menzil > 80  ? "border-yellow-500/25 bg-yellow-500/5" :
                        "border-red-500/25 bg-red-500/5"
       }`}>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">Tahmini Menzil</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Tahmini Menzil</p>
         <div className="mb-4 flex items-end gap-2">
           <span className={`text-6xl font-extrabold tabular-nums ${menzilRenk}`}>{menzil}</span>
-          <span className="mb-2 text-xl font-semibold text-neutral-400">km</span>
+          <span className="mb-2 text-xl font-semibold text-slate-400">km</span>
         </div>
 
         {/* Menzil çubuğu */}
@@ -221,7 +221,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
 
         {/* Bilgi satırları */}
         <div className="space-y-2 text-sm">
-          <div className="flex items-center justify-between text-neutral-400">
+          <div className="flex items-center justify-between text-slate-400">
             <span>WLTP tam menzil</span>
             <span className="font-semibold text-white">{wltp} km</span>
           </div>
@@ -244,7 +244,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
               <span className="text-xs font-semibold">Batarya kritik seviyede! Hemen şarj et.</span>
             </div>
           ) : sarj20deMesafe > 0 ? (
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2.5 text-neutral-400">
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2.5 text-slate-400">
               <span>💡</span>
               <span className="text-xs">
                 <strong className="text-white">~{sarj20deMesafe} km</strong> sonra şarjı düşün (%20 eşiği)
@@ -255,7 +255,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
       </div>
 
       {/* İstasyonlar */}
-      <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
+      <div className="rounded-2xl border border-white/10 bg-slate-900 p-5">
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm font-semibold">
             {konum ? "Size En Yakın İstasyonlar" : "Favori İstasyonlar"}
@@ -284,7 +284,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
         )}
 
         {istasyonlarSirali.length === 0 ? (
-          <p className="py-6 text-center text-sm text-neutral-600">İstasyon bulunamadı.</p>
+          <p className="py-6 text-center text-sm text-slate-600">İstasyon bulunamadı.</p>
         ) : (
           <div className="space-y-2">
             {istasyonlarSirali.map((ist) => {
@@ -311,7 +311,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
                         )}
                       </div>
                       <p className="truncate text-sm font-semibold text-white">{ist.ad}</p>
-                      <p className="text-xs text-neutral-600">{ist.ilce && `${ist.ilce}, `}{ist.sehir}</p>
+                      <p className="text-xs text-slate-600">{ist.ilce && `${ist.ilce}, `}{ist.sehir}</p>
                     </div>
                     <a
                       href={gmaps}
@@ -330,7 +330,7 @@ export default function SarjHesaplayici({ istasyonlar }: { istasyonlar: FavoriIs
 
         <Link
           href="/sarj-haritasi"
-          className="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-white/10 py-2.5 text-sm text-neutral-400 transition hover:text-white hover:border-white/20"
+          className="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-white/10 py-2.5 text-sm text-slate-400 transition hover:text-white hover:border-white/20"
         >
           Tüm İstasyonları Gör →
         </Link>
