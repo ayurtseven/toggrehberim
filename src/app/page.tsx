@@ -14,58 +14,60 @@ const IMG = {
   t10f: "https://www.togg.com.tr/assets/img/68e3d6389c2e690c9497ead8_T10F_4More_Section_BG.webp",
 };
 
-const kategoriler = [
+const SIKKONULAR = [
   {
-    slug: "sarj",
-    label: "Şarj & Batarya",
-    aciklama: "Evde ve yolda şarj, Trugo ağı, batarya ömrü",
-    icon: (
-      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    ),
-    color: "rgba(234,179,8,0.15)",
-    border: "rgba(234,179,8,0.35)",
+    soru: "Şarjım neden bu kadar yavaş?",
+    ipucu: "AC/DC farkı, şarj hızını etkileyen faktörler",
+    href: "/rehber/sarj",
+    emoji: "⚡",
+    color: "rgba(234,179,8,0.12)",
+    border: "rgba(234,179,8,0.30)",
     text: "text-yellow-400",
   },
   {
-    slug: "yazilim",
-    label: "Yazılım & T-UI",
-    aciklama: "OTA güncellemeler, T-UI ipuçları, uygulama",
-    icon: (
-      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
-    color: "rgba(139,92,246,0.15)",
-    border: "rgba(139,92,246,0.35)",
+    soru: "Kışın menzil neden düşüyor?",
+    ipucu: "Soğukta batarya davranışı ve pratik önlemler",
+    href: "/rehber/sarj/kisin-togg-sarj-etme-soguk-hava-batarya-ve-menzil-uzerindeki-etkisi",
+    emoji: "❄️",
+    color: "rgba(59,130,246,0.12)",
+    border: "rgba(59,130,246,0.30)",
+    text: "text-blue-400",
+  },
+  {
+    soru: "OTA güncellemek güvenli mi?",
+    ipucu: "Güncelleme öncesi kontrol listesi ve süreç",
+    href: "/rehber/yazilim/togg-ota-guncellemesi-nasil-yapilir-guncelleme-oncesi-kontrol-listesi",
+    emoji: "📲",
+    color: "rgba(139,92,246,0.12)",
+    border: "rgba(139,92,246,0.30)",
     text: "text-violet-400",
   },
   {
-    slug: "bakim",
-    label: "Bakım & Servis",
-    aciklama: "Periyodik bakım, servis ağı, öneriler",
-    icon: (
-      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
-      </svg>
-    ),
-    color: "rgba(249,115,22,0.15)",
-    border: "rgba(249,115,22,0.35)",
+    soru: "Periyodik bakım ne zaman gerekli?",
+    ipucu: "Elektrikli araçta bakım takvimi ve servis",
+    href: "/rehber/bakim",
+    emoji: "🔧",
+    color: "rgba(249,115,22,0.12)",
+    border: "rgba(249,115,22,0.30)",
     text: "text-orange-400",
   },
   {
-    slug: "suruculuk",
-    label: "Sürüş İpuçları",
-    aciklama: "Menzil optimizasyonu, kış sürüşü, uzun yol",
-    icon: (
-      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-      </svg>
-    ),
-    color: "rgba(34,197,94,0.15)",
-    border: "rgba(34,197,94,0.35)",
+    soru: "Uzun yolda nasıl plan yapmalıyım?",
+    ipucu: "Şarj durakları, menzil hesabı, pratik tüyolar",
+    href: "/rehber/suruculuk/togg-t10x-ile-uzun-yolculuk-planlama-sarj-duraklarini-nasil-ayarlarsin",
+    emoji: "🗺️",
+    color: "rgba(34,197,94,0.12)",
+    border: "rgba(34,197,94,0.30)",
     text: "text-emerald-400",
+  },
+  {
+    soru: "T10X mi, T10F mi almalıyım?",
+    ipucu: "İki modelin tüm farkları yan yana",
+    href: "/modeller/karsilastir",
+    emoji: "⚖️",
+    color: "rgba(236,72,153,0.12)",
+    border: "rgba(236,72,153,0.30)",
+    text: "text-pink-400",
   },
 ];
 
@@ -145,117 +147,42 @@ export default function AnaSayfa() {
       {/* ─── STATS TICKER ────────────────────────────────────────────────────── */}
       <StatsTicker />
 
-      {/* ─── 2. MODEL KARTLARI ───────────────────────────────────────────────── */}
+      {/* ─── SIK SORULAN KONULAR ─────────────────────────────────────────────── */}
       <section className="bg-slate-950 px-4 py-16">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <AnimatedSection>
             <p className="mb-1.5 text-center text-xs font-bold uppercase tracking-[0.3em] text-slate-600">
-              Türkiye&apos;nin Yerli Elektrikli Otomobili
+              En Çok Merak Edilenler
             </p>
-            <h2 className="mb-8 text-center text-2xl font-bold md:text-3xl">İki Model, Bir Vizyon</h2>
+            <h2 className="mb-2 text-center text-2xl font-bold md:text-3xl">Sık Sorulan Konular</h2>
+            <p className="mb-8 text-center text-sm text-slate-500">Togg sahiplerinin en çok sorduğu sorular için hazır rehberler</p>
           </AnimatedSection>
-
-          <div className="grid gap-5 md:grid-cols-2">
-            {/* T10X */}
-            <AnimatedSection delay={50}>
-              <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 transition-all duration-300 hover:border-white/20">
-                <div className="relative h-52 w-full overflow-hidden">
-                  <Image
-                    src={IMG.t10x}
-                    alt="Togg T10X"
-                    fill
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/30 to-transparent" />
-                  <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-bold backdrop-blur-sm">
-                    T10X
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {SIKKONULAR.map((k, i) => (
+              <AnimatedSection key={k.href} delay={i * 50}>
+                <Link
+                  href={k.href}
+                  className="group relative flex items-start gap-4 rounded-2xl border bg-slate-900 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                  style={{ borderColor: k.border }}
+                >
+                  <div
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl"
+                    style={{ background: k.color }}
+                  >
+                    {k.emoji}
                   </div>
-                </div>
-                <div className="p-5">
-                  <p className="mb-3 text-sm text-slate-400">Tek Motor · RWD · Togg&apos;un ilk modeli</p>
-                  <div className="mb-4 flex gap-4">
-                    {[
-                      { val: "523 km", lbl: "Menzil" },
-                      { val: "218 PS", lbl: "Güç" },
-                      { val: "7.4 sn", lbl: "0–100" },
-                    ].map((s) => (
-                      <div key={s.lbl}>
-                        <p className="text-lg font-bold">{s.val}</p>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">{s.lbl}</p>
-                      </div>
-                    ))}
+                  <div className="min-w-0 flex-1">
+                    <p className={`font-semibold leading-snug ${k.text}`}>{k.soru}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-500 group-hover:text-slate-400 transition-colors">
+                      {k.ipucu}
+                    </p>
                   </div>
-                  <div className="flex gap-2">
-                    <Link
-                      href="/modeller/t10x"
-                      className="flex-1 rounded-xl bg-white/8 py-2 text-center text-sm font-semibold text-white transition hover:bg-white/15"
-                    >
-                      Model Detayı
-                    </Link>
-                    <Link
-                      href="/rehber?model=t10x"
-                      className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-slate-400 transition hover:text-white hover:border-white/20"
-                    >
-                      T10X Rehberi
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-
-            {/* T10F */}
-            <AnimatedSection delay={120}>
-              <div className="group relative overflow-hidden rounded-2xl border border-[var(--togg-red)]/20 bg-slate-900 transition-all duration-300 hover:border-[var(--togg-red)]/35">
-                <div className="relative h-52 w-full overflow-hidden">
-                  <Image
-                    src={IMG.t10f}
-                    alt="Togg T10F AWD"
-                    fill
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/30 to-transparent" />
-                  <div className="absolute left-4 top-4 flex items-center gap-2">
-                    <div className="rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-bold backdrop-blur-sm">
-                      T10F
-                    </div>
-                    <div className="rounded-full bg-[var(--togg-red)]/80 px-2.5 py-1 text-[10px] font-bold backdrop-blur-sm">
-                      4More · AWD
-                    </div>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <p className="mb-3 text-sm text-slate-400">Çift Motor · AWD · Maksimum Performans</p>
-                  <div className="mb-4 flex gap-4">
-                    {[
-                      { val: "623 km", lbl: "Menzil" },
-                      { val: "435 PS", lbl: "Güç" },
-                      { val: "4.1 sn", lbl: "0–100" },
-                    ].map((s) => (
-                      <div key={s.lbl}>
-                        <p className="text-lg font-bold">{s.val}</p>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">{s.lbl}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Link
-                      href="/modeller/t10f"
-                      className="flex-1 rounded-xl bg-[var(--togg-red)]/15 py-2 text-center text-sm font-semibold text-[var(--togg-red)] transition hover:bg-[var(--togg-red)]/25"
-                    >
-                      Model Detayı
-                    </Link>
-                    <Link
-                      href="/modeller/karsilastir"
-                      className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-slate-400 transition hover:text-white hover:border-white/20"
-                    >
-                      Karşılaştır
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
+                  <svg className={`h-4 w-4 shrink-0 mt-0.5 ${k.text} opacity-50 group-hover:opacity-100 transition-all group-hover:translate-x-0.5`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>
@@ -379,36 +306,6 @@ export default function AnaSayfa() {
         </div>
       </section>
 
-      {/* ─── 4. REHBer KATEGORİLERİ ──────────────────────────────────────────── */}
-      <section className="bg-slate-950 px-4 py-16">
-        <div className="mx-auto max-w-6xl">
-          <AnimatedSection>
-            <h2 className="mb-8 text-2xl font-bold">Rehber Kategorileri</h2>
-          </AnimatedSection>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {kategoriler.map((kat, i) => (
-              <AnimatedSection key={kat.slug} delay={i * 60}>
-                <SpotlightCard
-                  spotlightColor="rgba(255,255,255,0.06)"
-                  className="group h-full rounded-2xl border bg-slate-900 p-5 transition-all duration-300"
-                  style={{ borderColor: kat.border } as React.CSSProperties}
-                >
-                  <div
-                    className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl ${kat.text}`}
-                    style={{ background: kat.color }}
-                  >
-                    {kat.icon}
-                  </div>
-                  <p className="font-bold">{kat.label}</p>
-                  <p className="mt-1.5 text-sm leading-snug text-slate-400">{kat.aciklama}</p>
-                  <Link href={`/rehber/${kat.slug}`} className="absolute inset-0" aria-label={kat.label} />
-                </SpotlightCard>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ─── 5. SON REHBERLER ────────────────────────────────────────────────── */}
       {sonRehberler.length > 0 && (
         <section className="relative bg-slate-950 px-4 py-16 overflow-hidden">
@@ -454,7 +351,106 @@ export default function AnaSayfa() {
         </section>
       )}
 
-      {/* ─── 6. HABERLER ─────────────────────────────────────────────────────── */}
+      {/* ─── 6. MODEL KARTLARI ───────────────────────────────────────────────── */}
+      <section className="bg-slate-950 px-4 pb-16">
+        <div className="mx-auto max-w-5xl">
+          <AnimatedSection>
+            <p className="mb-1.5 text-center text-xs font-bold uppercase tracking-[0.3em] text-slate-600">
+              Türkiye&apos;nin Yerli Elektrikli Otomobili
+            </p>
+            <h2 className="mb-8 text-center text-2xl font-bold md:text-3xl">İki Model, Bir Vizyon</h2>
+          </AnimatedSection>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            {/* T10X */}
+            <AnimatedSection delay={50}>
+              <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 transition-all duration-300 hover:border-white/20">
+                <div className="relative h-52 w-full overflow-hidden">
+                  <Image
+                    src={IMG.t10x}
+                    alt="Togg T10X"
+                    fill
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/30 to-transparent" />
+                  <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-bold backdrop-blur-sm">
+                    T10X
+                  </div>
+                </div>
+                <div className="p-5">
+                  <p className="mb-3 text-sm text-slate-400">Tek Motor · RWD · Togg&apos;un ilk modeli</p>
+                  <div className="mb-4 flex gap-4">
+                    {[
+                      { val: "523 km", lbl: "Menzil" },
+                      { val: "218 PS", lbl: "Güç" },
+                      { val: "7.4 sn", lbl: "0–100" },
+                    ].map((s) => (
+                      <div key={s.lbl}>
+                        <p className="text-lg font-bold">{s.val}</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">{s.lbl}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <Link href="/modeller/t10x" className="flex-1 rounded-xl bg-white/8 py-2 text-center text-sm font-semibold text-white transition hover:bg-white/15">
+                      Model Detayı
+                    </Link>
+                    <Link href="/rehber?model=t10x" className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-slate-400 transition hover:text-white hover:border-white/20">
+                      T10X Rehberi
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+
+            {/* T10F */}
+            <AnimatedSection delay={120}>
+              <div className="group relative overflow-hidden rounded-2xl border border-[var(--togg-red)]/20 bg-slate-900 transition-all duration-300 hover:border-[var(--togg-red)]/35">
+                <div className="relative h-52 w-full overflow-hidden">
+                  <Image
+                    src={IMG.t10f}
+                    alt="Togg T10F AWD"
+                    fill
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/30 to-transparent" />
+                  <div className="absolute left-4 top-4 flex items-center gap-2">
+                    <div className="rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-bold backdrop-blur-sm">T10F</div>
+                    <div className="rounded-full bg-[var(--togg-red)]/80 px-2.5 py-1 text-[10px] font-bold backdrop-blur-sm">4More · AWD</div>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <p className="mb-3 text-sm text-slate-400">Çift Motor · AWD · Maksimum Performans</p>
+                  <div className="mb-4 flex gap-4">
+                    {[
+                      { val: "623 km", lbl: "Menzil" },
+                      { val: "435 PS", lbl: "Güç" },
+                      { val: "4.1 sn", lbl: "0–100" },
+                    ].map((s) => (
+                      <div key={s.lbl}>
+                        <p className="text-lg font-bold">{s.val}</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">{s.lbl}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <Link href="/modeller/t10f" className="flex-1 rounded-xl bg-[var(--togg-red)]/15 py-2 text-center text-sm font-semibold text-[var(--togg-red)] transition hover:bg-[var(--togg-red)]/25">
+                      Model Detayı
+                    </Link>
+                    <Link href="/modeller/karsilastir" className="flex-1 rounded-xl border border-white/10 py-2 text-center text-sm font-semibold text-slate-400 transition hover:text-white hover:border-white/20">
+                      Karşılaştır
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 7. HABERLER ─────────────────────────────────────────────────────── */}
       <div className="border-t border-white/12 bg-slate-950">
         <HaberlerSlider haberler={haberler} />
       </div>
