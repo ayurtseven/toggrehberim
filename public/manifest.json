@@ -1,0 +1,48 @@
+{
+  "name": "Togg Rehberim",
+  "short_name": "ToggRehberim",
+  "description": "Togg T10X ve T10F sahipleri için rehber, ikaz tanı ve şarj platformu",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#e8002d",
+  "orientation": "portrait-primary",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "İkaz Lambası Tanı",
+      "short_name": "İkaz Tanı",
+      "url": "/ikaz-arama",
+      "description": "Araç ikazını yapay zeka ile tanı"
+    },
+    {
+      "name": "Şarj İstasyonları",
+      "short_name": "Şarj Haritası",
+      "url": "/sarj-haritasi",
+      "description": "Favori şarj istasyonları"
+    },
+    {
+      "name": "Rehberler",
+      "short_name": "Rehberler",
+      "url": "/rehber",
+      "description": "Tüm Togg rehberleri"
+    }
+  ],
+  "categories": ["automotive", "utilities", "reference"],
+  "screenshots": []
+}

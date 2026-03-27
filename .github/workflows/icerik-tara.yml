@@ -1,0 +1,121 @@
+name: Haftalık İçerik Tarama
+
+on:
+  schedule:
+    # Her Pazartesi sabah 08:00 UTC (11:00 Türkiye saati)
+    - cron: "0 8 * * 1"
+  # Manuel tetikleme (Actions sekmesinden çalıştırılabilir)
+  workflow_dispatch:
+    inputs:
+      mod:
+        description: "Tarama modu"
+        required: false
+        default: "hepsi"
+        type: choice
+        options:
+          - hepsi
+          - rss
+          - youtube
+          - rehber
+
+jobs:
+  icerik-tara:
+    name: İçerik Tara ve PR Oluştur
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodu indir
+        uses: actions/checkout@v4
+
+      - name: Node.js kurulumu
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Bağımlılıkları yükle
+        run: npm ci
+
+      - name: İçerik taramasını çalıştır
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          MOD="${{ github.event.inputs.mod || 'hepsi' }}"
+          if [ "$MOD" = "rss" ]; then
+            npm run tara:rss
+          elif [ "$MOD" = "youtube" ]; then
+            npm run tara:youtube
+          elif [ "$MOD" = "rehber" ]; then
+            npm run tara:rehber
+          else
+            npm run tara
+          fi
+
+      - name: Yeni taslak var mı kontrol et
+        id: kontrol
+        run: |
+          if [ -n "$(git status --porcelain content/draft/)" ]; then
+            SAYI=$(git status --porcelain content/draft/ | wc -l | tr -d ' ')
+            echo "degisiklik=var" >> $GITHUB_OUTPUT
+            echo "sayi=$SAYI" >> $GITHUB_OUTPUT
+          else
+            echo "degisiklik=yok" >> $GITHUB_OUTPUT
+            echo "sayi=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Değişiklikleri commit et
+        if: steps.kontrol.outputs.degisiklik == 'var'
+        run: |
+          git config user.name "ToggRehberim Bot"
+          git config user.email "bot@toggrehberim.com"
+          TARIH=$(date +"%Y-%m-%d")
+          BRANCH="icerik/haftalik-tarama-$TARIH"
+          git checkout -b "$BRANCH"
+          git add content/draft/
+          git commit -m "🤖 Haftalık tarama: ${{ steps.kontrol.outputs.sayi }} yeni taslak ($TARIH)"
+          git push origin "$BRANCH"
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+        id: commit
+
+      - name: Pull Request oluştur
+        if: steps.kontrol.outputs.degisiklik == 'var'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TARIH=$(date +"%Y-%m-%d")
+          gh pr create \
+            --title "🤖 Haftalık İçerik: ${{ steps.kontrol.outputs.sayi }} yeni taslak ($TARIH)" \
+            --body "$(cat <<'PREOF'
+## İçerik Özeti
+
+Bu PR otomatik oluşturuldu. Taslaklar `content/draft/` altında.
+
+## Gözden Geçirme Adımları
+
+1. `content/draft/haberler/` ve `content/draft/rehber/` klasörlerine bak
+2. Beğendiğin dosyaları `content/haberler/` veya `content/rehber/[kategori]/` altına taşı
+3. İstemediğin taslakları sil
+4. PR'ı merge et → site otomatik yeniden derlenir
+
+Veya lokalde:
+\`\`\`bash
+git fetch && git checkout icerik/haftalik-tarama-TARIH
+npm run tara -- --listele
+npm run tara -- --yayinla
+\`\`\`
+
+---
+🤖 [ToggRehberim İçerik Botu](https://github.com/features/actions) tarafından oluşturuldu
+PREOF
+)" \
+            --base main \
+            --head "icerik/haftalik-tarama-$TARIH"
+
+      - name: Özet
+        run: |
+          if [ "${{ steps.kontrol.outputs.degisiklik }}" = "var" ]; then
+            echo "✅ ${{ steps.kontrol.outputs.sayi }} yeni taslak → PR açıldı"
+          else
+            echo "ℹ️  Bu hafta yeni Togg içeriği bulunamadı"
+          fi

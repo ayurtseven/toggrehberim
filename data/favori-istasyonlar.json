@@ -1,0 +1,55 @@
+[
+  {
+    "id": "trugo-istanbul-havalimani",
+    "ad": "Trugo — İstanbul Havalimanı",
+    "sehir": "İstanbul",
+    "ilce": "Arnavutköy",
+    "adres": "İstanbul Havalimanı Otopark P1",
+    "lat": 41.2753,
+    "lng": 28.7519,
+    "operator": "trugo",
+    "baglantilar": [
+      { "tip": "CCS Type 2", "tipSinifi": "dc", "gucKW": 180, "adet": 6 },
+      { "tip": "Type 2 (AC)", "tipSinifi": "ac", "gucKW": 22, "adet": 4 }
+    ],
+    "not": "P1 otoparkı giriş katı, uzun süreli şarj için uygun",
+    "durum": "bilinmiyor",
+    "durumNot": "",
+    "durumGuncelleme": null
+  },
+  {
+    "id": "trugo-saw-havalimani",
+    "ad": "Trugo — Sabiha Gökçen Havalimanı",
+    "sehir": "İstanbul",
+    "ilce": "Pendik",
+    "adres": "SAW Havalimanı Kapalı Otopark",
+    "lat": 40.8983,
+    "lng": 29.3092,
+    "operator": "trugo",
+    "baglantilar": [
+      { "tip": "CCS Type 2", "tipSinifi": "dc", "gucKW": 180, "adet": 4 },
+      { "tip": "Type 2 (AC)", "tipSinifi": "ac", "gucKW": 22, "adet": 2 }
+    ],
+    "not": "Kapalı otopark zemin kat",
+    "durum": "bilinmiyor",
+    "durumNot": "",
+    "durumGuncelleme": null
+  },
+  {
+    "id": "trugo-ankara-akmerkez",
+    "ad": "Trugo — Ankara AKM Otopark",
+    "sehir": "Ankara",
+    "ilce": "Çankaya",
+    "adres": "Atatürk Kültür Merkezi Otopark, Çankaya",
+    "lat": 39.9032,
+    "lng": 32.8597,
+    "operator": "trugo",
+    "baglantilar": [
+      { "tip": "CCS Type 2", "tipSinifi": "dc", "gucKW": 150, "adet": 4 }
+    ],
+    "not": "",
+    "durum": "bilinmiyor",
+    "durumNot": "",
+    "durumGuncelleme": null
+  }
+]

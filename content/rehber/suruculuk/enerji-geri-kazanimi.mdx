@@ -1,0 +1,79 @@
+---
+baslik: "Togg'da Enerji Geri Kazanımı (Frenleme ile Şarj) Nedir ve Nasıl Kullanılır?"
+ozet: "Elektrikli araçlara özgü bu özellik, frenleme ve hız kesmede aracın kendini şarj etmesini sağlar. Doğru kullanımla menzili %10-15 artırabilirsiniz."
+kategori: suruculuk
+model: hepsi
+etiketler: ["enerji geri kazanımı", "rejeneratif frenleme", "menzil", "verimlilik", "tek pedal sürüşü"]
+tarih: "2025-03-17"
+sure: 6
+---
+
+Togg T10X ve T10F, fren pedalına bastığınızda veya gaz pedalını bıraktığınızda motoru bir **jeneratöre** dönüştürür.
+Bu sayede yavaşlama enerjisi elektriğe çevrilip bataryaya geri kazandırılır — hem frenleme mesafesi kısalır hem de menzil uzar.
+
+---
+
+## Enerji Geri Kazanımı Nasıl Çalışır?
+
+Geleneksel araçlarda frenlediğinizde kinetik enerji ısıya dönüşerek boşa harcar.
+Togg'da bu enerji elektrik motoruna aktarılır, motor jeneratör gibi çalışır ve ürettiği elektriği bataryaya gönderir.
+
+**Sonuç:** Her yavaşlamada biraz şarj geri alırsınız.
+
+---
+
+## Seviyeleri ve Kullanımı
+
+T-UI üzerinden geri kazanım seviyesini ayarlayabilirsiniz:
+
+| Seviye | Hissi | Ne zaman kullanılır? |
+|---|---|---|
+| **Düşük** | Neredeyse gaz pedalı bırakılınca kayar gibi | Otoban sürüşü |
+| **Orta** | Belirgin yavaşlama hissi | Karma kullanım |
+| **Yüksek** | Sert yavaşlama, az fren gerekir | Şehir içi, trafik |
+
+**Nasıl ayarlanır?**
+1. Direksiyon üzerindeki kürek (paddle) vites kollarını kullanın (sağ = artır, sol = azalt)
+2. Veya T-UI → Sürüş → Enerji Geri Kazanımı menüsünden ayarlayın
+
+---
+
+## Tek Pedal Sürüşü
+
+Geri kazanım en yüksek seviyedeyken gaz pedalını bıraktığınızda araç çoğu durumda fren pedalına gerek kalmadan durabilir.
+Bu tekniğe **tek pedal sürüşü** denir ve şehir içinde büyük menzil kazancı sağlar.
+
+> 🚨 **Kritik:** Acil frenlemede her zaman fren pedalını kullanın. Tek pedal sürüşü yalnızca yavaş trafik ve düşük hızlar için idealdir.
+
+---
+
+## Menzile Etkisi
+
+Enerji geri kazanımını etkin kullandığınızda gerçek menzilde %10-15 artış görülür.
+
+Bunu maksimize etmek için:
+- **Şehir içinde** yüksek seviye seçin — her trafik lambası ve yavaşlama şarj getirir
+- **Uzun iniş yollarında** orta/yüksek seviye seçin — iniş boyunca araç kendini şarj eder
+- **Otobanda** düşük seviye seçin — gereksiz sürükleme direnci yaratmaz
+
+---
+
+## TruOS 1.7.2 Sonrası İyileştirmeler
+
+Togg, TruOS 1.7.2 güncellemesiyle frenleme ve yol tutuşu yazılımında iyileştirmeler yaptı.
+Bu güncelleme, enerji geri kazanım algoritmasının daha doğal ve verimli çalışmasını sağladı.
+
+> 🚨 **Kritik:** Islak veya karlı yolda yüksek geri kazanım seviyesi kullanırken dikkatli olun. Ani tork değişimi yol tutuşunu azaltabilir. Kaygan zeminde orta seviye önerilir.
+
+---
+
+## Sıkça Sorulan Sorular
+
+**Fren balatası ne zaman aşınır, enerji geri kazanımı yeterince fren sağlamıyor mu?**
+Togg'da fren balatası enerji geri kazanımı sayesinde çok daha az kullanılır. Normal sürüşte fren sistemi yalnızca acil durumlarda ve durma anında devreye girer — bu nedenle balata ömrü içten yanmalı araçlara kıyasla çok daha uzundur.
+
+**Geri kazanım seviyesi her sürüşte sıfırlanır mı?**
+Hayır. Seçtiğiniz seviye sürücü profilinize kaydedilir ve bir sonraki sürüşte aynı ayarla başlarsınız.
+
+**Geri kazanım batarya doluyken de çalışır mı?**
+%100 dolu bataryada sistem geri kazanımı azaltır veya devre dışı bırakır, çünkü bataryaya daha fazla enerji kabul edemez. Bu nedenle menzil verimliliği için %80'den fazla şarj önerilmez.

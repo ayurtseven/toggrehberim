@@ -1,0 +1,117 @@
+---
+baslik: "Togg Sürücü Yardım Sistemleri (ADAS) Rehberi: Tüm Özellikler Nasıl Çalışır?"
+ozet: "Togg T10X ve T10F'deki adaptif hız sabitleyici, şerit takip, yorgunluk algılama ve diğer aktif güvenlik sistemlerinin tam açıklaması."
+kategori: suruculuk
+model: hepsi
+etiketler: ["ADAS", "sürücü yardım", "ACC", "adaptif hız sabitleyici", "şerit takip", "güvenlik"]
+tarih: "2025-03-16"
+sure: 8
+---
+
+Togg T10X ve T10F, Euro NCAP 5 yıldız güvenlik sertifikasına sahip gelişmiş sürücü yardım sistemleriyle donatılmıştır.
+Bu rehber, hangi sistemin ne işe yaradığını ve nasıl kullanılacağını sade bir dille açıklar.
+
+---
+
+## Aktif Olan Sistemler
+
+### Adaptif Akıllı Hız Sabitleyici (ACC)
+
+Klasik hız sabitleyiciden farklı olarak ACC, önünüzdeki aracı radar ile takip eder.
+Araç yavaşlarsa Togg da yavaşlar, hızlanırsa sizin ayarladığınız hıza kadar hızlanır.
+
+**Nasıl aktif edilir:**
+1. Direksiyondaki **ACC** butonuna basın
+2. Hedef hızı ok tuşlarıyla ayarlayın
+3. Takip mesafesini T-UI üzerinden veya direksiyon düğmesiyle ayarlayın (1–4 çubuk)
+
+> 🚨 **Kritik:** ACC bir sürücü yardım sistemidir, otonom sürüş değildir. Trafiği sürekli takip edin ve direksiyona her zaman el koyun.
+
+---
+
+### Dur-Kalk Fonksiyonu (Stop & Go)
+
+TruOS güncellemesiyle gelen bu özellik, trafik durduğunda ACC'nin aracı tamamen durdurmasını ve trafik açıldığında yeniden hareket etmesini sağlar.
+
+Şehir içi ve yoğun otoyol trafiğinde yorgunluğu önemli ölçüde azaltır.
+
+---
+
+### Yoğun Trafik Pilotu (Rush Hour Pilot)
+
+Saatte 60 km'nin altındaki hızlarda hem hız hem de şerit takibini birlikte yönetir.
+Akıllı telefonu kontrol etmek veya T-UI'ya bakmak için kısa süre direksiyon üzerindeki baskıyı hafifletebilirsiniz.
+
+> 🚨 **Kritik:** Yoğun Trafik Pilotu ve benzeri sistemler aktifken gözleriniz yoldan ayrılmamalıdır. Sistem her koşulda müdahaleye hazır olmayı gerektiren bir yardımcı sistemdir.
+
+---
+
+### Sürücü Yorgunluk Algılama
+
+Yüz tanıma kamerası sürücünün göz kırpma sıklığını, baş pozisyonunu ve dikkati izler.
+Yorgunluk veya dikkatsizlik algılandığında görsel ve sesli uyarı verir.
+
+TruOS 1.7.2 ile bu sistemin doğruluğu ve tepki hızı geliştirildi.
+
+---
+
+### Ön Çarpışma Uyarısı ve Otomatik Acil Frenleme
+
+Önünüzde ani fren yapan bir araç veya yaya algılandığında:
+1. Önce görsel ve sesli **uyarı** verilir
+2. Yanıt yoksa sistem otomatik **acil frenleme** başlatır
+
+---
+
+### 360° Çevre Kamera Sistemi
+
+Park manevralarında araç çevresinin kuşbakışı görüntüsünü sağlar.
+TruOS 1.7.2 ile görüntü kalitesi ve gecikme süresi iyileştirildi.
+
+**Nasıl aktif edilir:**
+- Geri vitese geçince otomatik açılır
+- İleri giderken T-UI'dan manuel olarak da açılabilir
+
+---
+
+### T10F'ye Özel: Yaya Koruma Aktif Sistemi
+
+T10F, T10X'te bulunmayan **yaya algılama ve aktif koruma** sistemiyle donatılmıştır.
+Araç düşük hızda bir yayaya yaklaştığında otomatik frenleme devreye girer.
+
+---
+
+## Gelecek Güncellemelerle Gelecek Özellikler
+
+Bu özellikler donanımsal olarak araçta mevcut, ancak henüz OTA ile aktif edilmemiştir:
+
+| Özellik | Açıklama |
+|---|---|
+| Uzun far asistanı | Karşıdan araç gelince otomatik kısa far |
+| Arka trafik çarpışma uyarısı | Park çıkışında arkadan gelen araç uyarısı |
+| Adaptif sürücü asistanı | Trafik işaretlerine göre hız önerisi |
+
+---
+
+## Gösterge Panelindeki ADAS Simgeleri
+
+| Simge/Kısaltma | Anlamı |
+|---|---|
+| **ADA** | Sürücü yardım sistemi aktif |
+| **ACC** | Adaptif hız sabitleyici aktif |
+| **LIM** | Hız limiti modu aktif |
+| **OTS** | Trafik işareti tanıma aktif |
+| **RHP** | Rush Hour Pilot (Yoğun Trafik Pilotu) aktif |
+
+---
+
+## Sıkça Sorulan Sorular
+
+**ACC yağmurlu havada güvenilir midir?**
+Radar tabanlı ACC şiddetli yağmur veya yoğun karda performans kaybedebilir. Kötü hava koşullarında sisteme güvenmek yerine manuel sürüş tercih edin.
+
+**Sürücü yorgunluk algılama her sürücü için ayrı profil tutar mı?**
+Evet. T-UI'daki her sürücü profili ayrı yüz verisi saklar, sistem ilgili sürücüyü otomatik tanır.
+
+**ADAS sistemlerini tamamen kapatabilir miyim?**
+Evet, T-UI → Güvenlik → Sürücü Yardım Sistemleri menüsünden isteğe bağlı sistemleri devre dışı bırakabilirsiniz. Ancak yasal olarak zorunlu bazı sistemler (acil fren vb.) kapatılamaz.
