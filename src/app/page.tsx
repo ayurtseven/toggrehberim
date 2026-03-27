@@ -8,6 +8,7 @@ import StatsTicker from "@/components/ui/StatsTicker";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import PanikButonu from "@/components/ui/PanikButonu";
 import HeroArama from "@/components/ui/HeroArama";
+import SonRehberlerIstemci from "@/components/rehber/SonRehberlerIstemci";
 
 const IMG = {
   hero: "https://www.togg.com.tr/assets/img/670514f6bb5c7ba993aec863_T10X-More-than-a-car.webp",
@@ -323,34 +324,16 @@ export default function AnaSayfa() {
                 </Link>
               </div>
             </AnimatedSection>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {sonRehberler.map((rehber, i) => (
-                <AnimatedSection key={`${rehber.kategori}/${rehber.slug}`} delay={i * 50}>
-                  <SpotlightCard className="group h-full rounded-2xl border border-white/10 bg-slate-900 p-6 transition-all duration-300 hover:border-white/20">
-                    <div className="mb-3 flex items-center gap-2">
-                      <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium capitalize text-slate-300">
-                        {rehber.kategori}
-                      </span>
-                      {rehber.model !== "hepsi" && (
-                        <span className="rounded-full bg-[var(--togg-red)]/15 px-2.5 py-0.5 text-xs font-medium uppercase text-[var(--togg-red)]">
-                          {rehber.model}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-bold leading-snug transition-colors group-hover:text-[var(--togg-red)]">
-                      {rehber.baslik}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-slate-400">
-                      {rehber.ozet}
-                    </p>
-                    {rehber.sure && (
-                      <p className="mt-4 text-xs text-slate-500">{rehber.sure} dk okuma</p>
-                    )}
-                    <Link href={`/rehber/${rehber.kategori}/${rehber.slug}`} className="absolute inset-0" aria-label={rehber.baslik} />
-                  </SpotlightCard>
-                </AnimatedSection>
-              ))}
-            </div>
+            <SonRehberlerIstemci
+              rehberler={sonRehberler.map((r) => ({
+                slug: r.slug,
+                kategori: r.kategori,
+                baslik: r.baslik,
+                ozet: r.ozet,
+                model: r.model ?? "hepsi",
+                sure: r.sure,
+              }))}
+            />
           </div>
         </section>
       )}
