@@ -52,7 +52,7 @@ export default function AramaButonu() {
   const listRef = useRef<HTMLUListElement>(null);
   const router = useRouter();
 
-  // Cmd+K kısayolu
+  // Cmd+K kısayolu + hero'dan gelen event
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -60,8 +60,13 @@ export default function AramaButonu() {
         setAcik((v) => !v);
       }
     }
+    function onHeroClick() { setAcik(true); }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("togg:open-search", onHeroClick);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("togg:open-search", onHeroClick);
+    };
   }, []);
 
   // Modal açıldığında

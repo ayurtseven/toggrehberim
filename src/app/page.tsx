@@ -7,6 +7,7 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 import StatsTicker from "@/components/ui/StatsTicker";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import PanikButonu from "@/components/ui/PanikButonu";
+import HeroArama from "@/components/ui/HeroArama";
 
 const IMG = {
   hero: "https://www.togg.com.tr/assets/img/670514f6bb5c7ba993aec863_T10X-More-than-a-car.webp",
@@ -119,11 +120,14 @@ export default function AnaSayfa() {
               Şekilde Kullanın
             </span>
           </h1>
-          <p className="mb-7 text-base text-white/60 md:text-lg">
+          <p className="mb-6 text-base text-white/60 md:text-lg">
             T10X ve T10F sahipleri için şarj, yazılım, bakım ve sürüş rehberleri.
             <br className="hidden md:block" />
             Gerçek sahipten, gerçek deneyimle.
           </p>
+          <div className="mb-6 flex justify-center">
+            <HeroArama />
+          </div>
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/rehber"
