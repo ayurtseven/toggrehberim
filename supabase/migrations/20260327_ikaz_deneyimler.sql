@@ -16,9 +16,11 @@ CREATE INDEX IF NOT EXISTS ikaz_deneyimler_created_at_idx ON ikaz_deneyimler (cr
 ALTER TABLE ikaz_deneyimler ENABLE ROW LEVEL SECURITY;
 
 -- Herkes onaylananları okuyabilir
+DROP POLICY IF EXISTS "okuma_herkese" ON ikaz_deneyimler;
 CREATE POLICY "okuma_herkese" ON ikaz_deneyimler
   FOR SELECT USING (onaylandi = true);
 
 -- Giriş yapanlar yazabilir
+DROP POLICY IF EXISTS "yazma_giris_yapanlara" ON ikaz_deneyimler;
 CREATE POLICY "yazma_giris_yapanlara" ON ikaz_deneyimler
   FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);

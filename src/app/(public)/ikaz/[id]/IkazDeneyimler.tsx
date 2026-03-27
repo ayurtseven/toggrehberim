@@ -57,6 +57,10 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
 
   async function gonder(e: React.FormEvent) {
     e.preventDefault();
+    if (!kullanici) {
+      window.location.href = `/giris?next=/ikaz/${ikazId}`;
+      return;
+    }
     if (!metin.trim() || metin.trim().length < 10) {
       setHata("En az 10 karakter yazmalısın.");
       return;
@@ -137,60 +141,53 @@ export default function IkazDeneyimler({ ikazId }: { ikazId: string }) {
         </p>
       )}
 
-      {/* Form veya giriş CTA */}
-      {kullanici ? (
-        basarili ? (
-          <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/8 px-4 py-3">
-            <span className="text-emerald-400">✓</span>
-            <p className="text-sm text-emerald-300">Deneyimin paylaşıldı, teşekkürler!</p>
-          </div>
-        ) : (
-          <form onSubmit={gonder} className="rounded-xl border border-white/10 bg-slate-900 p-4">
-            <p className="mb-3 text-sm font-medium text-slate-300">
-              Bu ikazı yaşadın mı? Deneyimini paylaş
-            </p>
-
-            <div className="mb-3">
-              <select
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                className="rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-white/25"
-              >
-                <option value="hepsi">Model seç</option>
-                <option value="t10x">T10X</option>
-                <option value="t10f">T10F</option>
-              </select>
-            </div>
-
-            <textarea
-              value={metin}
-              onChange={(e) => { setMetin(e.target.value); setHata(""); }}
-              placeholder="Ne zaman yandı? Ne yaptın? Nasıl çözüldü?"
-              rows={3}
-              className="w-full resize-none rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 outline-none focus:border-white/25"
-            />
-
-            {hata && <p className="mt-1.5 text-xs text-red-400">{hata}</p>}
-
-            <div className="mt-3 flex items-center justify-between">
-              <span className="text-xs text-slate-600">{kullanici.adi} olarak paylaşılacak</span>
-              <button
-                type="submit"
-                disabled={gonderiyor || !metin.trim()}
-                className="rounded-lg bg-[var(--togg-red)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-40"
-              >
-                {gonderiyor ? "Gönderiliyor..." : "Paylaş"}
-              </button>
-            </div>
-          </form>
-        )
+      {/* Form */}
+      {basarili ? (
+        <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/8 px-4 py-3">
+          <span className="text-emerald-400">✓</span>
+          <p className="text-sm text-emerald-300">Deneyimin paylaşıldı, teşekkürler!</p>
+        </div>
       ) : (
-        <a
-          href={`/giris?next=/ikaz/${ikazId}`}
-          className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900 py-3 text-sm text-neutral-400 transition hover:border-white/20 hover:text-white"
-        >
-          Deneyimini paylaşmak için giriş yap →
-        </a>
+        <form onSubmit={gonder} className="rounded-xl border border-white/10 bg-slate-900 p-4">
+          <p className="mb-3 text-sm font-medium text-slate-300">
+            Bu ikazı yaşadın mı? Deneyimini paylaş
+          </p>
+
+          <div className="mb-3">
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-white/25"
+            >
+              <option value="hepsi">Model seç</option>
+              <option value="t10x">T10X</option>
+              <option value="t10f">T10F</option>
+            </select>
+          </div>
+
+          <textarea
+            value={metin}
+            onChange={(e) => { setMetin(e.target.value); setHata(""); }}
+            placeholder="Ne zaman yandı? Ne yaptın? Nasıl çözüldü?"
+            rows={3}
+            className="w-full resize-none rounded-lg border border-white/10 bg-slate-800 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 outline-none focus:border-white/25"
+          />
+
+          {hata && <p className="mt-1.5 text-xs text-red-400">{hata}</p>}
+
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-xs text-slate-600">
+              {kullanici ? `${kullanici.adi} olarak paylaşılacak` : "Paylaşmak için giriş gerekli"}
+            </span>
+            <button
+              type="submit"
+              disabled={gonderiyor || !metin.trim()}
+              className="rounded-lg bg-[var(--togg-red)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-40"
+            >
+              {gonderiyor ? "Gönderiliyor..." : kullanici ? "Paylaş" : "Giriş yap & Paylaş"}
+            </button>
+          </div>
+        </form>
       )}
     </div>
   );

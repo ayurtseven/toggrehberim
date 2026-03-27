@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import Fuse from "fuse.js";
+import IkazDeneyimler from "@/app/(public)/ikaz/[id]/IkazDeneyimler";
 import {
   TUM_IKAZ_SEMBOLLERI,
   RENK_SINIF,
@@ -52,9 +53,11 @@ function RenkBadge({ renk }: { renk: IkazSembolu["renk"] }) {
 function IkazDetayKarti({
   sembol,
   guven,
+  ikazId,
 }: {
   sembol: IkazSembolu | IkazTanimaYaniti["sonuc"];
   guven?: "yuksek" | "orta" | "dusuk";
+  ikazId?: string;
 }) {
   // Normalize: hem veritabanı objesi hem de AI yanıtı gelebilir
   const isDbSembol = sembol && "id" in sembol;
@@ -167,6 +170,9 @@ function IkazDetayKarti({
           <p className="text-xs text-red-200">7/24 — ücretsiz yol yardımı</p>
         </div>
       )}
+
+      {/* Kullanıcı deneyimleri */}
+      {ikazId && <IkazDeneyimler ikazId={ikazId} />}
     </div>
   );
 }
@@ -446,7 +452,7 @@ export default function IkazArama() {
                   Kapat
                 </button>
               </div>
-              <IkazDetayKarti sembol={secilenSembol} />
+              <IkazDetayKarti sembol={secilenSembol} ikazId={secilenSembol.id} />
             </div>
           )}
 

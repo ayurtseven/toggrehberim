@@ -43,12 +43,15 @@ ALTER TABLE page_views        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE station_interactions ENABLE ROW LEVEL SECURITY;
 
 -- Herkes ekleyebilir (INSERT), ama okuyamaz (sadece service_role)
+DROP POLICY IF EXISTS "insert_only" ON search_logs;
 CREATE POLICY "insert_only" ON search_logs
   FOR INSERT TO anon WITH CHECK (true);
 
+DROP POLICY IF EXISTS "insert_only" ON page_views;
 CREATE POLICY "insert_only" ON page_views
   FOR INSERT TO anon WITH CHECK (true);
 
+DROP POLICY IF EXISTS "insert_only" ON station_interactions;
 CREATE POLICY "insert_only" ON station_interactions
   FOR INSERT TO anon WITH CHECK (true);
 

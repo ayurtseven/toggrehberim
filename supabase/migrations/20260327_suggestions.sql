@@ -12,8 +12,10 @@ CREATE TABLE IF NOT EXISTS suggestions (
 ALTER TABLE suggestions ENABLE ROW LEVEL SECURITY;
 
 -- Kullanıcı kendi önerilerini ekleyebilir ve görebilir
+DROP POLICY IF EXISTS "kendi_oneri_ekle" ON suggestions;
 CREATE POLICY "kendi_oneri_ekle" ON suggestions
   FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "kendi_oneri_goster" ON suggestions;
 CREATE POLICY "kendi_oneri_goster" ON suggestions
   FOR SELECT TO authenticated USING (auth.uid() = user_id);
