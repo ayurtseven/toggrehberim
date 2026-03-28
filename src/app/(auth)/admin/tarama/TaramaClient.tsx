@@ -230,7 +230,16 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
     });
     const data = await res.json();
     if (res.ok) {
-      setKaydetMesaj(`✓ Kaydedildi: ${data.dosya}`);
+      // MDX dosyasını tarayıcıdan indir
+      const blob = new Blob([data.mdx], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = data.dosya_adi;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      setKaydetMesaj(`✓ İndirildi: ${data.dosya} — dosyayı content/draft/ klasörüne taşı`);
       setSonuc((s) => s ? { ...s, durum: "kaydedildi" } : s);
       setGecmis((prev) => prev.map((g) => g.id === sonuc.id ? { ...g, durum: "kaydedildi" } : g));
     } else {
