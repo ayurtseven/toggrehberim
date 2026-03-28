@@ -248,6 +248,23 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
     setKaydediliyor(false);
   }
 
+  async function gecmisTikla(id: number) {
+    setHata("");
+    setKaydetMesaj("");
+    setYukleniyor(true);
+    try {
+      const res = await fetch(`/api/admin/tarama/${id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setSonuc({ ...data, mdx_taslak: data.mdx_taslak });
+        setDosyaAdi(slugify(data.baslik));
+        setSekme("gecmis");
+      }
+    } finally {
+      setYukleniyor(false);
+    }
+  }
+
   async function reddet(id: number) {
     if (!id) return;
     await fetch(`/api/admin/tarama/${id}`, {
@@ -481,7 +498,11 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
             ) : (
               <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
                 {gecmis.map((g) => (
-                  <div key={g.id} className="rounded-xl border border-white/8 bg-white/3 px-3 py-2.5">
+                  <div
+                    key={g.id}
+                    onClick={() => gecmisTikla(g.id)}
+                    className="cursor-pointer rounded-xl border border-white/8 bg-white/3 px-3 py-2.5 transition hover:border-white/15 hover:bg-white/6"
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-medium text-slate-200 line-clamp-1">{g.baslik}</p>
                       <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${DURUM_RENK[g.durum] ?? "bg-white/10 text-white"}`}>{g.durum}</span>
@@ -490,7 +511,12 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
                       <span className={`rounded-full px-2 py-0.5 text-[10px] ${KAT_RENK[g.kategori] ?? "bg-white/8 text-slate-400"}`}>{g.kategori}</span>
                       <span className="text-[10px] text-slate-600">{g.kaynak_adi || g.kaynak_tur} · {new Date(g.created_at).toLocaleDateString("tr-TR")}</span>
                       {g.durum === "taslak" && (
-                        <button onClick={() => reddet(g.id)} className="ml-auto text-[10px] text-slate-600 hover:text-red-400">Reddet</button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); reddet(g.id); }}
+                          className="ml-auto text-[10px] text-slate-600 hover:text-red-400"
+                        >
+                          Reddet
+                        </button>
                       )}
                     </div>
                   </div>

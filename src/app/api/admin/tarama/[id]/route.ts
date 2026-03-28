@@ -8,6 +8,18 @@ function serviceClient() {
   );
 }
 
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const sb = serviceClient();
+  const { data, error } = await sb
+    .from("icerik_taramalari")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error || !data) return NextResponse.json({ hata: "Bulunamadı" }, { status: 404 });
+  return NextResponse.json(data);
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { eylem, dosya_adi } = await req.json();
