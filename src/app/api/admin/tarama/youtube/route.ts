@@ -137,19 +137,11 @@ Kurallar:
 - İçeriği birebir çevirmek YASAK — özgün, okunaklı makale yaz
 - Togg T10X/T10F sahipleri için pratik çıkarımları öne çıkar
 - Türkçe teknik terimleri doğru kullan
-- Video kaynağına atıfta bulun
 
-Çıktıyı JSON:
-{
-  "baslik": "SEO başlığı (60 kar altı)",
-  "ozet": "Meta description (150 kar altı)",
-  "kategori": "sarj | yazilim | bakim | suruculuk | sss | haber",
-  "model": "t10x | t10f | hepsi",
-  "etiketler": ["etiket1", "etiket2"],
-  "mdx": "---\\nbaslik: \\"BAŞLIK\\"\\nozet: \\"ÖZET\\"\\nkategori: KATEGORİ\\nmodel: MODEL\\netiketler: [...]\\ntarih: ${new Date().toISOString().slice(0, 10)}\\nsure: 5\\nkaynak: \\"https://youtube.com/watch?v=${videoId}\\"\\n---\\n\\n## Giriş\\n\\n...\\n\\n## Detaylar\\n\\n...\\n\\n> Kaynak: [${videoBaslik || "YouTube"}](https://youtube.com/watch?v=${videoId})"
-}
+Şu JSON formatında yanıt ver (MDX alanı YOK, sadece metin):
+{"baslik":"SEO başlığı max 60 karakter","ozet":"meta description max 150 karakter","kategori":"sarj veya yazilim veya bakim veya suruculuk veya sss veya haber","model":"t10x veya t10f veya hepsi","etiketler":["etiket1","etiket2"],"giris":"Giriş paragrafı","bolumler":[{"baslik":"Bölüm Başlığı","icerik":"Bölüm içeriği"}]}
 
-Sadece JSON yaz.`;
+Sadece tek satır JSON yaz, içinde satır sonu karakteri kullanma.`;
 
   try {
     const msg = await anthropic.messages.create({
@@ -159,12 +151,55 @@ Sadece JSON yaz.`;
     });
 
     const text = msg.content[0].type === "text" ? msg.content[0].text : "";
+
+    // JSON bloğunu çıkar
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("JSON yok");
-    const parsed = JSON.parse(jsonMatch[0]);
+    if (!jsonMatch) throw new Error("JSON bulunamadı: " + text.slice(0, 200));
+
+    let ai: { baslik: string; ozet: string; kategori: string; model: string; etiketler?: string[]; giris?: string; bolumler?: { baslik: string; icerik: string }[] };
+    try {
+      ai = JSON.parse(jsonMatch[0]);
+    } catch {
+      ai = {
+        baslik: text.match(/"baslik"\s*:\s*"([^"]+)"/)?.[1] ?? videoBaslik ?? "Video İçeriği",
+        ozet: text.match(/"ozet"\s*:\s*"([^"]+)"/)?.[1] ?? "",
+        kategori: text.match(/"kategori"\s*:\s*"([^"]+)"/)?.[1] ?? "haber",
+        model: text.match(/"model"\s*:\s*"([^"]+)"/)?.[1] ?? "hepsi",
+        giris: icerik.slice(0, 500),
+      };
+    }
+
+    // MDX'i burada oluştur
+    const tarih = new Date().toISOString().slice(0, 10);
+    const etiketStr = ai.etiketler?.length ? `[${ai.etiketler.map((e) => `"${e}"`).join(", ")}]` : '[]';
+    const bolumlerMdx = (ai.bolumler ?? [])
+      .map((b) => `## ${b.baslik}\n\n${b.icerik}`)
+      .join("\n\n");
+    const mdx = [
+      `---`,
+      `baslik: "${ai.baslik}"`,
+      `ozet: "${ai.ozet}"`,
+      `kategori: ${ai.kategori}`,
+      `model: ${ai.model}`,
+      `etiketler: ${etiketStr}`,
+      `tarih: ${tarih}`,
+      `sure: 5`,
+      `kaynak: "https://youtube.com/watch?v=${videoId}"`,
+      `---`,
+      ``,
+      ai.giris ?? "",
+      ``,
+      bolumlerMdx,
+      ``,
+      `> Kaynak: [${videoBaslik || "YouTube"}](https://youtube.com/watch?v=${videoId})`,
+    ].join("\n");
 
     return NextResponse.json({
-      ...parsed,
+      baslik: ai.baslik,
+      ozet: ai.ozet,
+      kategori: ai.kategori,
+      model: ai.model,
+      mdx,
       video_id: videoId,
       video_url: `https://youtube.com/watch?v=${videoId}`,
       video_baslik: videoBaslik,
@@ -172,7 +207,8 @@ Sadece JSON yaz.`;
       kaynak_tur: "youtube",
       kaynak_adi: "YouTube",
     });
-  } catch {
-    return NextResponse.json({ hata: "AI içerik oluşturamadı." }, { status: 500 });
+  } catch (err) {
+    const mesaj = err instanceof Error ? err.message : "Bilinmeyen hata";
+    return NextResponse.json({ hata: `AI içerik oluşturamadı: ${mesaj}` }, { status: 500 });
   }
 }
