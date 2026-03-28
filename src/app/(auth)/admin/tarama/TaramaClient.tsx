@@ -288,7 +288,10 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
     });
     const data = await res.json();
     if (res.ok) {
-      setKaydetMesaj(`✓ Yayınlandı: ${data.dosya} — Vercel deploy başladı`);
+      const sayfaUrl = data.dosya?.includes("haberler")
+        ? `/haberler/${dosyaAdi}`
+        : `/rehber/${sonuc.kategori}/${dosyaAdi}`;
+      setKaydetMesaj(`✓ Yayınlandı → ${sayfaUrl} (Vercel deploy ~1 dk)`);
       setSonuc((s) => s ? { ...s, durum: "kaydedildi" } : s);
       setGecmis((prev) => prev.map((g) => g.id === sonuc.id ? { ...g, durum: "kaydedildi" } : g));
     } else {

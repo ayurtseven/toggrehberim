@@ -112,7 +112,7 @@ export default function RehberFiltreli({ rehberler, gosterKategoriGrubu = false 
           {kategoriler.map((kat) => (
             <section key={kat.slug}>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+                <h2 className="flex items-center gap-2 text-xl font-bold text-slate-100">
                   <span>{kat.icon}</span>
                   {kat.label}
                 </h2>
@@ -183,10 +183,10 @@ function RehberKart({
   return (
     <Link
       href={`/rehber/${rehber.kategori}/${rehber.slug}`}
-      className={`group relative rounded-xl border p-5 transition-all hover:shadow-md ${
+      className={`group relative rounded-xl border p-5 transition-all ${
         uyumlu
-          ? "border-white/15 bg-slate-900 hover:border-white/25"
-          : "border-white/8 bg-slate-900/70 hover:border-white/15"
+          ? "border-white/10 bg-slate-900/60 hover:border-white/20"
+          : "border-white/6 bg-slate-900/40 hover:border-white/12"
       }`}
     >
       {/* "Senin için" işareti */}
@@ -220,12 +220,12 @@ function RehberKart({
 
       <h3
         className={`font-semibold leading-snug transition-colors group-hover:text-[var(--togg-red)] ${
-          uyumlu ? "text-white" : "text-slate-300"
+          uyumlu ? "text-slate-100" : "text-slate-300"
         }`}
       >
         {rehber.baslik}
       </h3>
-      <p className="mt-2 line-clamp-2 text-sm text-slate-500 group-hover:text-slate-400 transition-colors">
+      <p className="mt-2 line-clamp-2 text-sm text-slate-500 transition-colors">
         {rehber.ozet}
       </p>
       <div className="mt-4 flex items-center gap-4 text-xs text-slate-600">
