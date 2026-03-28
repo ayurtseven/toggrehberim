@@ -87,53 +87,43 @@ export async function POST(req: NextRequest) {
   );
 
   if (teksilSonuclar.length === 0) {
-    return NextResponse.json({ hata: "Sonuç bulunamadı. TAVILY_API_KEY ayarlandı mı?" }, { status: 500 });
+    return NextResponse.json({ hata: "Tavily sonuç döndürmedi. API key Vercel'e eklendi mi?" }, { status: 500 });
   }
 
-  // Claude ile alaka/haber değeri skorla
-  const skorlamaPrompt = `Aşağıdaki makaleleri toggrehberim.com sitesi için değerlendir.
-
-Site perspektifi: Togg T10X ve T10F sahibi Türk kullanıcılar için rehber portalı.
-Kullanıcı profili: Aracını aktif kullanan, teknik merak eden, şarj/yazılım/bakım konularında bilgi arayan Togg sahipleri.
-
-Her makale için 0-10 arası alaka puanı ver:
-- 8-10: Togg sahipleri için doğrudan faydalı (şarj, yazılım, bakım, yeni özellik)
-- 5-7: EV dünyasından ilgili bilgi (batarya teknolojisi, şarj altyapısı)
-- 2-4: Genel EV haberi, dolaylı ilgi
-- 0-1: Alakasız
-
-Makaleler:
-${teksilSonuclar.map((s, i) => `[${i}] ${s.baslik}\n${s.ozet}`).join("\n\n")}
-
-JSON dizisi döndür: [{"index": 0, "puan": 8, "konu_etiketi": "şarj"}, ...]
-Sadece JSON yaz.`;
-
-  let skorlar: { index: number; puan: number; konu_etiketi: string }[] = [];
+  // Claude ile alaka puanı ver — başarısız olursa tüm sonuçları göster
   try {
+    const skorlamaPrompt = `Aşağıdaki makaleleri toggrehberim.com için değerlendir.
+Site: Togg T10X/T10F sahipleri için Türkçe rehber portalı.
+
+Her makale için 1-10 puan ver (1=alakasız, 10=çok alakalı).
+Togg haberleri ve EV teknolojisi 5+ puan almalı.
+
+${teksilSonuclar.map((s, i) => `[${i}] ${s.baslik}`).join("\n")}
+
+Sadece JSON: [{"index":0,"puan":7,"konu":"sarj"}, ...]`;
+
     const msg = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 512,
+      max_tokens: 300,
       messages: [{ role: "user", content: skorlamaPrompt }],
     });
     const text = msg.content[0].type === "text" ? msg.content[0].text : "[]";
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    if (jsonMatch) skorlar = JSON.parse(jsonMatch[0]);
+    const jsonMatch = text.match(/\[[\s\S]*?\]/);
+    if (jsonMatch) {
+      const skorlar: { index: number; puan: number; konu: string }[] = JSON.parse(jsonMatch[0]);
+      skorlar.forEach(({ index, puan, konu }) => {
+        if (teksilSonuclar[index]) {
+          teksilSonuclar[index].puan = puan;
+          if (konu) teksilSonuclar[index].konu = konu;
+        }
+      });
+    }
   } catch {
-    // Skorlama başarısız olsa bile devam et
+    // Skorlama başarısız — tüm sonuçları 5 puanla göster
+    teksilSonuclar.forEach((s) => { s.puan = 5; });
   }
 
-  // Puanları uygula
-  skorlar.forEach(({ index, puan, konu_etiketi }) => {
-    if (teksilSonuclar[index]) {
-      teksilSonuclar[index].puan = puan;
-      teksilSonuclar[index].konu = konu_etiketi || teksilSonuclar[index].konu;
-    }
-  });
-
-  // Puana göre sırala, 3 altını filtrele
-  const filtrelenmis = teksilSonuclar
-    .filter((s) => s.puan >= 3)
-    .sort((a, b) => b.puan - a.puan);
-
-  return NextResponse.json(filtrelenmis);
+  // Puana göre sırala, hepsini döndür
+  teksilSonuclar.sort((a, b) => b.puan - a.puan);
+  return NextResponse.json(teksilSonuclar);
 }
