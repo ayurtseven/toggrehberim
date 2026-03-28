@@ -90,7 +90,9 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
   const [sonuc, setSonuc] = useState<TaramaSonucu | null>(null);
   const [gecmis, setGecmis] = useState(ilkGecmis);
   const [dosyaAdi, setDosyaAdi] = useState("");
+  const [mdxDuzenlendi, setMdxDuzenlendi] = useState("");
   const [kaydediliyor, setKaydediliyor] = useState(false);
+  const [yayinlaniyor, setYayinlaniyor] = useState(false);
   const [kaydetMesaj, setKaydetMesaj] = useState("");
 
   // ── AI Arama ──────────────────────────────────────────────────────────────
@@ -157,6 +159,7 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
       const taramaData = await taramaRes.json();
       if (taramaRes.ok) {
         setSonuc({ ...taramaData, mdx_taslak: ytData.mdx });
+        setMdxDuzenlendi(ytData.mdx ?? "");
         setDosyaAdi(slugify(ytData.baslik));
         setGecmis((prev) => [{ ...taramaData }, ...prev]);
       } else {
@@ -174,6 +177,7 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
           durum: "taslak",
           created_at: new Date().toISOString(),
         });
+        setMdxDuzenlendi(ytData.mdx ?? "");
         setDosyaAdi(slugify(ytData.baslik));
       }
     } finally {
@@ -210,6 +214,7 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
       const data = await res.json();
       if (!res.ok) { setHata(data.hata || "Hata oluştu"); return; }
       setSonuc(data);
+      setMdxDuzenlendi(data.mdx_taslak ?? "");
       setDosyaAdi(slugify(data.baslik));
       setGecmis((prev) => [{ ...data }, ...prev]);
     } finally {
@@ -256,13 +261,40 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
       const res = await fetch(`/api/admin/tarama/${id}`);
       const data = await res.json();
       if (res.ok) {
-        setSonuc({ ...data, mdx_taslak: data.mdx_taslak });
+        setSonuc(data);
+        setMdxDuzenlendi(data.mdx_taslak ?? "");
         setDosyaAdi(slugify(data.baslik));
         setSekme("gecmis");
       }
     } finally {
       setYukleniyor(false);
     }
+  }
+
+  async function yayinla() {
+    if (!sonuc) return;
+    setYayinlaniyor(true);
+    setKaydetMesaj("");
+    const res = await fetch("/api/admin/tarama/yayinla", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tarama_id: sonuc.id || undefined,
+        mdx: mdxDuzenlendi,
+        dosya_adi: dosyaAdi,
+        kategori: sonuc.kategori,
+        tur: sonuc.kategori === "haber" ? "haber" : "rehber",
+      }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setKaydetMesaj(`✓ Yayınlandı: ${data.dosya} — Vercel deploy başladı`);
+      setSonuc((s) => s ? { ...s, durum: "kaydedildi" } : s);
+      setGecmis((prev) => prev.map((g) => g.id === sonuc.id ? { ...g, durum: "kaydedildi" } : g));
+    } else {
+      setKaydetMesaj(`⚠ ${data.hata}`);
+    }
+    setYayinlaniyor(false);
   }
 
   async function reddet(id: number) {
@@ -557,27 +589,38 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
               )}
             </div>
             <div>
-              <p className="mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">MDX Taslak</p>
-              <pre className="max-h-80 overflow-y-auto rounded-xl border border-white/8 bg-slate-950 p-4 text-xs text-slate-300 whitespace-pre-wrap font-mono leading-relaxed">
-                {sonuc.mdx_taslak}
-              </pre>
+              <p className="mb-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">MDX İçerik</p>
+              <textarea
+                value={mdxDuzenlendi}
+                onChange={(e) => setMdxDuzenlendi(e.target.value)}
+                rows={16}
+                spellCheck={false}
+                className="w-full resize-y rounded-xl border border-white/8 bg-slate-950 p-4 text-xs text-slate-300 font-mono leading-relaxed outline-none focus:border-white/20"
+              />
             </div>
-            {sonuc.durum === "taslak" && sonuc.id > 0 && (
+            {sonuc.durum !== "reddedildi" && (
               <div className="space-y-2">
                 <input type="text" value={dosyaAdi} onChange={(e) => setDosyaAdi(e.target.value)}
                   placeholder="dosya-adi (slug)"
                   className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600 outline-none focus:border-white/25 font-mono" />
                 <div className="flex gap-2">
-                  <button onClick={kaydet} disabled={kaydediliyor}
-                    className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-500 disabled:opacity-50">
-                    {kaydediliyor ? "Kaydediliyor..." : "Taslak Olarak Kaydet"}
+                  <button
+                    onClick={yayinla}
+                    disabled={yayinlaniyor || !mdxDuzenlendi}
+                    className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-500 disabled:opacity-50"
+                  >
+                    {yayinlaniyor ? "Yayınlanıyor..." : "🚀 Yayınla"}
                   </button>
                   <button onClick={() => reddet(sonuc.id)}
                     className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-400 hover:text-red-400">
                     Reddet
                   </button>
                 </div>
-                {kaydetMesaj && <p className="text-sm text-emerald-400">{kaydetMesaj}</p>}
+                {kaydetMesaj && (
+                  <p className={`text-sm ${kaydetMesaj.startsWith("✓") ? "text-emerald-400" : "text-red-400"}`}>
+                    {kaydetMesaj}
+                  </p>
+                )}
               </div>
             )}
           </div>
