@@ -23,15 +23,13 @@ function istasyonlariOku(): FavoriIstasyon[] {
 export default function SarjHesaplayiciSayfasi() {
   const istasyonlar = istasyonlariOku();
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="mx-auto max-w-2xl px-4 py-10">
-        <div className="mb-8">
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-[var(--togg-red)]">Araç Aracı</p>
-          <h1 className="text-3xl font-bold">Şarj Hesaplayıcı</h1>
-          <p className="mt-2 text-neutral-400">Kalan batarya ve koşullara göre tahmini menzilini hesapla.</p>
-        </div>
-        <SarjHesaplayici istasyonlar={istasyonlar} />
+    <div className="mx-auto max-w-2xl px-4 py-10">
+      <div className="mb-8">
+        <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-[var(--togg-red)]">Araç</p>
+        <h1 className="text-3xl font-bold text-slate-100">Şarj Hesaplayıcı</h1>
+        <p className="mt-2 text-slate-400">Kalan batarya ve koşullara göre tahmini menzilini hesapla.</p>
       </div>
+      <SarjHesaplayici istasyonlar={istasyonlar} />
     </div>
   );
 }

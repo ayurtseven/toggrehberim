@@ -40,9 +40,9 @@ export default function IkazSozlukSayfasi() {
         {/* Başlık */}
         <div className="mb-8">
           <nav className="mb-4 flex items-center gap-2 text-sm text-slate-500">
-            <Link href="/" className="hover:text-neutral-200 transition-colors">Ana Sayfa</Link>
+            <Link href="/" className="hover:text-slate-300 transition-colors">Ana Sayfa</Link>
             <span>/</span>
-            <span className="text-neutral-300">İkaz Lambaları</span>
+            <span className="text-slate-200">İkaz Lambaları</span>
           </nav>
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-[var(--togg-red)]">El Kitabı 6.2.2</p>
           <h1 className="text-3xl font-bold">Togg İkaz Lambaları Sözlüğü</h1>

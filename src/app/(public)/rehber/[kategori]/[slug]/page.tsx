@@ -6,6 +6,14 @@ import { getRehber, getRehberslugs } from "@/lib/content/rehber";
 
 const gecerliKategoriler = ["sarj", "yazilim", "bakim", "suruculuk", "sss"];
 
+const KATEGORI_RENK: Record<string, { label: string; text: string; badge: string; border: string }> = {
+  sarj:      { label: "Şarj & Batarya",      text: "text-blue-400",   badge: "bg-blue-500/15 text-blue-300",   border: "border-blue-500/20"   },
+  yazilim:   { label: "Yazılım & T-UI",      text: "text-purple-400", badge: "bg-purple-500/15 text-purple-300", border: "border-purple-500/20" },
+  bakim:     { label: "Bakım & Servis",      text: "text-orange-400", badge: "bg-orange-500/15 text-orange-300", border: "border-orange-500/20" },
+  suruculuk: { label: "Sürüş İpuçları",     text: "text-green-400",  badge: "bg-green-500/15 text-green-300",  border: "border-green-500/20"  },
+  sss:       { label: "Sık Sorulan Sorular", text: "text-slate-400",  badge: "bg-slate-500/15 text-slate-300",  border: "border-slate-500/20"  },
+};
+
 export async function generateStaticParams() {
   const params: { kategori: string; slug: string }[] = [];
   for (const kategori of gecerliKategoriler) {
@@ -44,63 +52,91 @@ export default async function RehberDetay({
 
   if (!rehber) notFound();
 
+  const katInfo = KATEGORI_RENK[kategori] ?? KATEGORI_RENK.sss;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-neutral-500">
-        <Link href="/rehber" className="hover:text-neutral-900 dark:hover:text-neutral-100">Rehber</Link>
-        <span>/</span>
-        <Link href={`/rehber/${kategori}`} className="capitalize hover:text-neutral-900 dark:hover:text-neutral-100">
-          {kategori}
+      <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500">
+        <Link href="/rehber" className="hover:text-slate-300 transition-colors">
+          Rehber
         </Link>
         <span>/</span>
-        <span className="text-neutral-900 dark:text-neutral-100 line-clamp-1">{rehber.baslik}</span>
+        <Link
+          href={`/rehber/${kategori}`}
+          className={`hover:text-slate-300 transition-colors ${katInfo.text}`}
+        >
+          {katInfo.label}
+        </Link>
+        <span>/</span>
+        <span className="line-clamp-1 text-slate-300">{rehber.baslik}</span>
       </nav>
 
       {/* Başlık */}
-      <header className="mb-8">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium capitalize text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
-            {rehber.kategori}
+      <header className="mb-10">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${katInfo.badge} ${katInfo.border}`}>
+            {katInfo.label}
           </span>
           {rehber.model !== "hepsi" && (
-            <span className="rounded-full bg-[var(--togg-red)]/10 px-3 py-1 text-xs font-medium uppercase text-[var(--togg-red)]">
+            <span
+              className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase ${
+                rehber.model === "t10x"
+                  ? "border-blue-500/20 bg-blue-500/15 text-blue-300"
+                  : "border-purple-500/20 bg-purple-500/15 text-purple-300"
+              }`}
+            >
               {rehber.model}
             </span>
           )}
           {rehber.model === "hepsi" && (
-            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+            <span className="rounded-full border border-slate-500/20 bg-slate-500/10 px-3 py-1 text-xs font-semibold text-slate-400">
               T10X & T10F
             </span>
           )}
         </div>
-        <h1 className="text-3xl font-bold leading-tight">{rehber.baslik}</h1>
-        <p className="mt-3 text-lg text-neutral-600 dark:text-neutral-400">
-          {rehber.ozet}
-        </p>
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-neutral-400">
-          {rehber.sure && <span>{rehber.sure} dakika okuma</span>}
-          <span>{new Date(rehber.tarih).toLocaleDateString("tr-TR", { year: "numeric", month: "long", day: "numeric" })}</span>
+
+        <h1 className="text-3xl font-bold leading-tight text-slate-100">{rehber.baslik}</h1>
+        <p className="mt-3 text-lg text-slate-400">{rehber.ozet}</p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-600">
+          {rehber.sure && (
+            <span className="flex items-center gap-1.5">
+              <span>📖</span>
+              {rehber.sure} dakika okuma
+            </span>
+          )}
+          <span>
+            {new Date(rehber.tarih).toLocaleDateString("tr-TR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
           {rehber.guncelleme && (
-            <span>Güncellendi: {new Date(rehber.guncelleme).toLocaleDateString("tr-TR")}</span>
+            <span className="rounded-full border border-slate-700 bg-slate-800/60 px-2 py-0.5 text-xs text-slate-500">
+              Güncellendi: {new Date(rehber.guncelleme).toLocaleDateString("tr-TR")}
+            </span>
           )}
         </div>
       </header>
 
       {/* MDX İçerik */}
-      <article className="prose prose-neutral prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-[var(--togg-red)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-[var(--togg-red)] prose-blockquote:bg-neutral-50 prose-blockquote:dark:bg-neutral-900 prose-blockquote:py-1 prose-blockquote:rounded-r-lg prose-code:rounded prose-code:bg-neutral-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-code:dark:bg-neutral-800">
+      <article className="prose prose-invert prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-100 prose-p:text-slate-300 prose-a:text-[var(--togg-red)] prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-100 prose-blockquote:border-[var(--togg-red)] prose-blockquote:bg-slate-900/60 prose-blockquote:py-1 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-slate-300 prose-code:rounded-lg prose-code:border prose-code:border-white/10 prose-code:bg-slate-900 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:text-slate-200 prose-code:before:content-none prose-code:after:content-none prose-li:text-slate-300 prose-hr:border-slate-800">
         <MDXRemote source={rehber.icerik} />
       </article>
 
       {/* Etiketler */}
       {rehber.etiketler && rehber.etiketler.length > 0 && (
-        <div className="mt-8 border-t border-neutral-200 pt-6 dark:border-neutral-800">
-          <p className="mb-3 text-sm font-medium text-neutral-500">Etiketler</p>
+        <div className="mt-10 border-t border-slate-800 pt-6">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-600">
+            Etiketler
+          </p>
           <div className="flex flex-wrap gap-2">
             {rehber.etiketler.map((etiket) => (
               <span
                 key={etiket}
-                className="rounded-full border border-neutral-200 px-3 py-1 text-sm dark:border-neutral-700"
+                className="rounded-full border border-white/8 bg-white/4 px-3 py-1 text-sm text-slate-400"
               >
                 {etiket}
               </span>
@@ -110,12 +146,16 @@ export default async function RehberDetay({
       )}
 
       {/* Geri dön */}
-      <div className="mt-8">
+      <div className="mt-8 flex items-center gap-4">
         <Link
           href={`/rehber/${kategori}`}
-          className="inline-flex items-center gap-2 text-sm font-medium text-[var(--togg-red)] hover:underline"
+          className={`inline-flex items-center gap-2 text-sm font-medium ${katInfo.text} hover:underline`}
         >
-          ← {kategori.charAt(0).toUpperCase() + kategori.slice(1)} rehberlerine dön
+          ← {katInfo.label} rehberlerine dön
+        </Link>
+        <span className="text-slate-700">·</span>
+        <Link href="/rehber" className="text-sm text-slate-600 hover:text-slate-300 transition-colors">
+          Tüm rehberler
         </Link>
       </div>
     </div>
