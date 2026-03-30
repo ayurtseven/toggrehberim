@@ -40,20 +40,6 @@ export default async function TaramaSayfasi() {
           </div>
         </div>
 
-        {/* İstatistik bandı */}
-        <div className="mb-6 grid grid-cols-3 gap-3">
-          {[
-            { label: "Toplam Tarama", deger: gecmis.length, renk: "text-white" },
-            { label: "Taslak", deger: gecmis.filter((g) => g.durum === "taslak").length, renk: "text-yellow-400" },
-            { label: "Kaydedildi", deger: gecmis.filter((g) => g.durum === "kaydedildi").length, renk: "text-emerald-400" },
-          ].map((s) => (
-            <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 px-4 py-3 text-center">
-              <p className={`text-2xl font-bold ${s.renk}`}>{s.deger}</p>
-              <p className="text-xs text-slate-500">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
         <TaramaClient gecmis={gecmis} />
       </div>
     </div>

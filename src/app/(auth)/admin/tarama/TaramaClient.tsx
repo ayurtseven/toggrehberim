@@ -89,6 +89,7 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
   const [hata, setHata] = useState("");
   const [sonuc, setSonuc] = useState<TaramaSonucu | null>(null);
   const [gecmis, setGecmis] = useState(ilkGecmis);
+  const [durumFiltre, setDurumFiltre] = useState<string | null>(null);
   const [dosyaAdi, setDosyaAdi] = useState("");
   const [mdxDuzenlendi, setMdxDuzenlendi] = useState("");
   const [kaydediliyor, setKaydediliyor] = useState(false);
@@ -331,7 +332,37 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
     { id: "gecmis", label: `📋 Geçmiş (${gecmis.length})` },
   ];
 
+  const taslaklar = gecmis.filter((g) => g.durum === "taslak");
+  const kaydedilenler = gecmis.filter((g) => g.durum === "kaydedildi");
+  const filtrelenmis = durumFiltre ? gecmis.filter((g) => g.durum === durumFiltre) : gecmis;
+
+  const STAT_BANDLAR = [
+    { label: "Toplam", deger: gecmis.length, renk: "text-white", filtre: null, border: "border-white/8" },
+    { label: "Taslak", deger: taslaklar.length, renk: "text-yellow-400", filtre: "taslak", border: "border-yellow-500/20" },
+    { label: "Kaydedildi", deger: kaydedilenler.length, renk: "text-emerald-400", filtre: "kaydedildi", border: "border-emerald-500/20" },
+    { label: "Reddedildi", deger: gecmis.filter((g) => g.durum === "reddedildi").length, renk: "text-red-400", filtre: "reddedildi", border: "border-red-500/20" },
+  ];
+
   return (
+    <div className="space-y-5">
+
+      {/* ── İstatistik bandı ── */}
+      <div className="grid grid-cols-4 gap-2">
+        {STAT_BANDLAR.map((s) => (
+          <button
+            key={s.label}
+            onClick={() => {
+              setDurumFiltre(durumFiltre === s.filtre ? null : s.filtre);
+              setSekme("gecmis");
+            }}
+            className={`rounded-xl border px-3 py-3 text-center transition hover:bg-white/5 ${s.border} ${durumFiltre === s.filtre && s.filtre !== null ? "bg-white/8 ring-1 ring-white/20" : "bg-white/3"}`}
+          >
+            <p className={`text-xl font-bold ${s.renk}`}>{s.deger}</p>
+            <p className="text-xs text-slate-500">{s.label}</p>
+          </button>
+        ))}
+      </div>
+
     <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
 
       {/* ── Sol panel ── */}
@@ -540,11 +571,23 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
         {/* ── Geçmiş ── */}
         {sekme === "gecmis" && (
           <div className="rounded-2xl border border-white/10 bg-slate-900 p-5">
-            {gecmis.length === 0 ? (
-              <p className="py-6 text-center text-sm text-slate-600">Henüz tarama yapılmamış.</p>
+            {durumFiltre && (
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-xs text-slate-400">
+                  Filtre: <strong className="text-white">{durumFiltre}</strong> ({filtrelenmis.length} kayıt)
+                </span>
+                <button onClick={() => setDurumFiltre(null)} className="text-xs text-slate-500 hover:text-white underline">
+                  Temizle
+                </button>
+              </div>
+            )}
+            {filtrelenmis.length === 0 ? (
+              <p className="py-6 text-center text-sm text-slate-600">
+                {durumFiltre ? `"${durumFiltre}" durumunda kayıt yok.` : "Henüz tarama yapılmamış."}
+              </p>
             ) : (
               <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
-                {gecmis.map((g) => (
+                {filtrelenmis.map((g) => (
                   <div
                     key={g.id}
                     onClick={() => gecmisTikla(g.id)}
@@ -661,6 +704,7 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }
