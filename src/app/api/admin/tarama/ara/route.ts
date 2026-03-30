@@ -4,17 +4,19 @@ import Anthropic from "@anthropic-ai/sdk";
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // Sitanin perspektifi: Togg T10X/T10F sahipleri için rehber portalı
+const YIL = new Date().getFullYear();
 const ARAMA_SORGULARI = {
   togg: [
-    "Togg T10X T10F yeni özellik güncelleme 2025",
-    "Togg elektrikli araç şarj batarya",
+    `Togg T10X T10F yeni özellik güncelleme ${YIL}`,
+    `Togg OTA yazılım güncelleme ${YIL}`,
+    "Togg elektrikli araç şarj batarya sorun",
   ],
   ev_dunya: [
-    "electric vehicle battery technology 2025",
-    "EV fast charging solid state battery",
+    `electric vehicle battery technology ${YIL}`,
+    "EV fast charging solid state battery news",
   ],
   tr_genel: [
-    "elektrikli araç bakım ipuçları menzil",
+    "elektrikli araç bakım ipuçları menzil optimizasyon",
   ],
 };
 

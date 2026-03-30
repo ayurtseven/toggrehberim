@@ -311,6 +311,13 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
     if (sonuc?.id === id) setSonuc((s) => s ? { ...s, durum: "reddedildi" } : s);
   }
 
+  async function sil(id: number) {
+    if (!confirm("Bu taramayı kalıcı olarak sil?")) return;
+    await fetch(`/api/admin/tarama/${id}`, { method: "DELETE" });
+    setGecmis((prev) => prev.filter((g) => g.id !== id));
+    if (sonuc?.id === id) setSonuc(null);
+  }
+
   const SEKMELER: { id: Sekme; label: string }[] = [
     { id: "ai-arama", label: "🤖 AI Arama" },
     { id: "youtube", label: "▶️ YouTube" },
@@ -553,6 +560,12 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
                           Reddet
                         </button>
                       )}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); sil(g.id); }}
+                        className="text-[10px] text-slate-700 hover:text-red-500"
+                      >
+                        🗑️
+                      </button>
                     </div>
                   </div>
                 ))}
