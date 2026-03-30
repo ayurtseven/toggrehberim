@@ -745,48 +745,6 @@ export default function IkazArama() {
         </div>
       )}
 
-      {/* ── Bottom Sheet: Seçilen sembol detayı ── */}
-      {secilenSembol && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
-            onClick={() => { setSecilenSembol(null); setEditSembolId(null); }}
-          />
-          {/* Panel */}
-          <div className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t border-white/10 bg-slate-950 shadow-2xl">
-            {/* Handle + başlık */}
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/8 bg-slate-950 px-5 py-4">
-              <div className="flex items-center gap-3">
-                <div className="mx-auto h-1 w-10 rounded-full bg-neutral-700" />
-                <span className="font-semibold text-slate-100">{secilenSembol.ad}</span>
-              </div>
-              <button
-                onClick={() => { setSecilenSembol(null); setEditSembolId(null); }}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/8 text-slate-400 hover:bg-white/15"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="p-4 pb-8">
-              {editSembol && editSembolId === secilenSembol.id ? (
-                <IkazEditFormu
-                  sembol={editSembol}
-                  onKaydet={(veri) => handleKaydet(editSembol.id, veri)}
-                  onIptal={() => setEditSembolId(null)}
-                />
-              ) : (
-                <IkazDetayKarti
-                  sembol={secilenSembol}
-                  ikazId={secilenSembol.id}
-                  onDuzenle={(id) => setEditSembolId(id)}
-                />
-              )}
-            </div>
-          </div>
-        </>
-      )}
-
       {/* ── Sembol Listesi Sekmesi ── */}
       {aktifSekme === "liste" && (
         <div>
@@ -813,15 +771,33 @@ export default function IkazArama() {
           ) : aramaMetni.trim() ? (
             <div className="space-y-2">
               {aramaFiltrelenmis.map((sembol) => (
-                <SembolSatiri
-                  key={sembol.id}
-                  sembol={sembol}
-                  isSecili={secilenSembol?.id === sembol.id}
-                  onClick={() => {
-                    setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol);
-                    setEditSembolId(null);
-                  }}
-                />
+                <div key={sembol.id}>
+                  <SembolSatiri
+                    sembol={sembol}
+                    isSecili={secilenSembol?.id === sembol.id}
+                    onClick={() => {
+                      setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol);
+                      setEditSembolId(null);
+                    }}
+                  />
+                  {secilenSembol?.id === sembol.id && (
+                    <div className="mt-2 mb-2">
+                      {editSembol && editSembolId === sembol.id ? (
+                        <IkazEditFormu
+                          sembol={editSembol}
+                          onKaydet={(veri) => handleKaydet(editSembol.id, veri)}
+                          onIptal={() => setEditSembolId(null)}
+                        />
+                      ) : (
+                        <IkazDetayKarti
+                          sembol={sembol}
+                          ikazId={sembol.id}
+                          onDuzenle={(id) => setEditSembolId(id)}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           ) : (
@@ -837,15 +813,33 @@ export default function IkazArama() {
                     </div>
                     <div className="space-y-2">
                       {grupSemboller.map((sembol) => (
-                        <SembolSatiri
-                          key={sembol.id}
-                          sembol={sembol}
-                          isSecili={secilenSembol?.id === sembol.id}
-                          onClick={() => {
-                            setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol);
-                            setEditSembolId(null);
-                          }}
-                        />
+                        <div key={sembol.id}>
+                          <SembolSatiri
+                            sembol={sembol}
+                            isSecili={secilenSembol?.id === sembol.id}
+                            onClick={() => {
+                              setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol);
+                              setEditSembolId(null);
+                            }}
+                          />
+                          {secilenSembol?.id === sembol.id && (
+                            <div className="mt-2 mb-2">
+                              {editSembol && editSembolId === sembol.id ? (
+                                <IkazEditFormu
+                                  sembol={editSembol}
+                                  onKaydet={(veri) => handleKaydet(editSembol.id, veri)}
+                                  onIptal={() => setEditSembolId(null)}
+                                />
+                              ) : (
+                                <IkazDetayKarti
+                                  sembol={sembol}
+                                  ikazId={sembol.id}
+                                  onDuzenle={(id) => setEditSembolId(id)}
+                                />
+                              )}
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
