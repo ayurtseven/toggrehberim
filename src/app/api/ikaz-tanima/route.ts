@@ -66,14 +66,24 @@ export async function POST(req: NextRequest): Promise<NextResponse<IkazTanimaYan
 
     const systemPrompt = `Sen bir Togg araç uzmanısın. Kullanıcıların Togg T10X ve T10F araçlarında gördükleri dashboard uyarı lambalarını tanımlayan ve açıklayan bir asistansın.
 
-Togg resmi kullanıcı el kitabı 6.2.2 bölümündeki İkaz ve Uyarı Sembolleri referanslı bilgilerle cevap ver.
+ÖNCE görseldeki sembolün şeklini ve rengini dikkatlice analiz et:
+- Kaplumbağa simgesi mi? (kırmızı kaplumbağa = "kaplumbaga-kritik", sarı kaplumbağa = "kaplumbaga-sinirli")
+- Araç silüeti mi? (ESP/ESC, ACC, şerit takip...)
+- Harf/yazı var mı? (ABS, LIM, iLIM, HAZIR, SOS...)
+- Far simgesi mi? (D şekli + çizgiler)
+- İnsan figürü mü? (emniyet kemeri, hava yastığı...)
+- Batarya simgesi mi?
+- Direksiyon simidi mi?
+- Uyarı üçgeni mi?
 
-Mevcut semboller listesi:
+Rengi önemli: kırmızı = acil/arıza, sarı = dikkat, yeşil = aktif/normal, mavi = bilgi
+
+Mevcut semboller listesi (ID | Ad | Renk | Görsel Açıklama):
 ${sembolListesi}
 
 Görevin:
-1. Görseldeki dashboard uyarı sembolünü tanımla
-2. Yukarıdaki listeden en iyi eşleşmeyi bul
+1. Görseldeki sembolün şeklini ve rengini tanımla
+2. Listeden EN YAKIN görsel eşleşmeyi seç — sadece isim benzerliğine değil, GÖRSEL ŞEKLE göre eşleştir
 3. JSON formatında yanıt ver
 
 JSON formatı:

@@ -85,6 +85,10 @@ function IkazDetayKarti({
     ? (sembol as IkazSembolu).not
     : (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).ai_aciklama.not;
 
+  const kitapcik_aciklama = isDbSembol
+    ? (sembol as IkazSembolu).kitapcik_aciklama
+    : undefined;
+
   const gorsel = isDbSembol
     ? (sembol as IkazSembolu).gorsel
     : (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).sembol_id
@@ -125,8 +129,13 @@ function IkazDetayKarti({
         </div>
       </div>
 
-      {/* Anlam */}
-      <div className="mb-5">
+      {/* Kılavuz açıklaması + detaylı anlam */}
+      <div className="mb-5 space-y-2">
+        {kitapcik_aciklama && (
+          <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 italic">
+            📖 {kitapcik_aciklama}
+          </p>
+        )}
         <p className="leading-relaxed text-neutral-700 dark:text-neutral-300">{anlami}</p>
       </div>
 
@@ -599,7 +608,7 @@ function SembolSatiri({
           </div>
           <div>
             <p className="text-sm font-semibold leading-tight">{sembol.ad}</p>
-            <p className="mt-0.5 text-xs text-neutral-500 line-clamp-1">{sembol.anlami}</p>
+            <p className="mt-0.5 text-xs text-neutral-500 line-clamp-1">{sembol.kitapcik_aciklama}</p>
           </div>
         </div>
         <span className={`shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold ${aciliyetRenk}`}>
