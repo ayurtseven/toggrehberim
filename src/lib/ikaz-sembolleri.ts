@@ -9,6 +9,7 @@ export interface IkazSembolu {
   aciliyet: AciliyetDuzeyi;
   model: ModelUyumu;
   sembol_tanimi: string; // Claude'a gönderilecek görsel açıklama
+  gorsel?: string; // /ikaz/ klasöründeki PNG dosyası
   anlami: string;
   nedenler: string[];
   yapilacaklar: string[];
@@ -49,6 +50,7 @@ const KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page1_img17.png",
     sembol_tanimi: "Kırmızı renkte daire içinde P harfi — yanıp söner",
     anlami: "Elektromekanik park freni arızası.",
     nedenler: [
@@ -70,6 +72,7 @@ const KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page1_img12.png",
     sembol_tanimi: "Kırmızı renkte, önünde yuvarlak balon olan oturan insan silüeti",
     anlami: "Hava yastığı sistem hatası. Kaza anında hava yastıkları çalışmayabilir.",
     nedenler: [
@@ -115,6 +118,7 @@ const KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "hemen_dur",
     model: "hepsi",
+    gorsel: "page2_img21.png",
     sembol_tanimi: "Kırmızı renkte uyarı üçgeni içinde yıldırım işareti",
     anlami: "Yüksek voltaj sistemi arızası. Ciddi elektrik çarpması riski.",
     nedenler: [
@@ -139,6 +143,7 @@ const KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page1_img13.png",
     sembol_tanimi: "Kırmızı renkte direksiyon simidi içinde ünlem işareti",
     anlami: "Elektrikli direksiyon hatası. Direksiyonu döndürmek çok zorlaşabilir.",
     nedenler: [
@@ -167,6 +172,7 @@ const SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page1_img16.png",
     sembol_tanimi: "Sarı renkte, kesik çizgili zemin üzerinde duran ve içinde ünlem işareti olan lastik/tekerlek kesiti simgesi",
     anlami: "Bir veya birden fazla lastiğin basıncı önerilen değerin altında.",
     nedenler: [
@@ -191,6 +197,7 @@ const SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page3_img16.png",
     sembol_tanimi: "Sarı renkte ABS yazısı, genellikle daire içinde",
     anlami: "Kilitlenme önleme fren sistemi devre dışı. Normal frenleme çalışır ama ani frende tekerlekler kilitlenebilir.",
     nedenler: [
@@ -213,6 +220,7 @@ const SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page1_img10.png",
     sembol_tanimi: "Sarı renkte kayan araç silüeti — sabit yanıyorsa arıza, yanıp sönüyorsa devreye girdi",
     anlami: "Denge kontrol sistemi müdahalede bulunuyor VEYA sistem devre dışı bırakıldı.",
     nedenler: [
@@ -235,6 +243,7 @@ const SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page1_img14.png",
     sembol_tanimi: "Sarı renkte şarj fişi/konnektör simgesi veya yıldırım işareti ile birlikte ünlem",
     anlami: "AC veya DC şarj sisteminde sorun var. Araç şarj olmayabilir.",
     nedenler: [
@@ -275,6 +284,7 @@ const SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page2_img3.png",
     sembol_tanimi: "Sarı renkte, yelpaze şeklinde sprey çıkan ön cam ve su damlaları simgesi",
     anlami: "Silecek suyu deposu boşalmak üzere.",
     nedenler: ["Depo uzun süredir doldurulmamış"],
@@ -314,6 +324,7 @@ const SARI_UYARILAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page1_img18.png",
     sembol_tanimi: "Kırmızı/sarı renkte daire içinde P harfi — sabit yanıyorsa park freni etkin veya EBD uyarısı, yanıp sönüyorsa arıza",
     anlami: "Elektromekanik park freni etkin veya Elektronik fren kuvveti dağılımı uyarısı.",
     nedenler: [
@@ -334,6 +345,7 @@ const SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page2_img18.png",
     sembol_tanimi: "Sarı/turuncu renkte motor/araç gövdesi simgesi",
     anlami: "Motor sistemi uyarısı. Performans kısıtlaması olabilir.",
     nedenler: [
@@ -360,6 +372,7 @@ const BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page1_img19.png",
     sembol_tanimi: "Yeşil renkte şarj fişi simgesi veya yıldırım işareti — kablo bağlı görseli",
     anlami: "Araç başarıyla şarja bağlandı ve şarj oluyor.",
     nedenler: ["Şarj kablosu bağlı"],
@@ -373,6 +386,7 @@ const BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "mavi",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page4_img23.png",
     sembol_tanimi: "Mavi renkte, yatay çizgilerle sola doğru yayılan far ışığı simgesi",
     anlami: "Uzun (yüksek) huzmeli farlar aktif.",
     nedenler: ["Sürücü uzun far devreye aldı veya otomatik far sistemi açtı"],
@@ -389,6 +403,7 @@ const BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page3_img4.png",
     sembol_tanimi: "Yeşil renkte, iki şerit çizgisi arasında ortalanmış araç simgesi",
     anlami: "Şerit takip asistanı aktif ve yol işaretlerini takip ediyor.",
     nedenler: ["ADAS sürücü destek sistemi açık"],
@@ -402,6 +417,7 @@ const BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page2_img8.png",
     sembol_tanimi: "Yeşil renkte hız göstergesi kadranı ve ok simgesi veya ACC yazısı",
     anlami: "Adaptif cruise control aktif. Araç önündeki araçla mesafeyi koruyarak hız ayarlıyor.",
     nedenler: ["Sürücü ACC sistemi devreye aldı"],
@@ -488,6 +504,7 @@ const ILAVE_KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "hemen_dur",
     model: "hepsi",
+    gorsel: "page1_img7.png",
     sembol_tanimi: "Kırmızı renkte oturan insan silüeti, göğüs hizasında çapraz emniyet kemeri çizgisi — sabit veya yanıp söner",
     anlami: "Emniyet kemeri takılı değil veya hata. Sabit yanıyorsa hata, yanıp sönüyorsa kemer takılmamış.",
     nedenler: [
@@ -509,6 +526,7 @@ const ILAVE_KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page1_img6.png",
     sembol_tanimi: "Kırmızı renkte dikdörtgen akü gövdesi, üstünde artı (+) ve eksi (-) terminaller",
     anlami: "Düşük voltajlı akü hatası. 12V yardımcı akü arızalı, elektronik sistemler etkilenebilir.",
     nedenler: [
@@ -530,6 +548,7 @@ const ILAVE_KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "hemen_dur",
     model: "hepsi",
+    gorsel: "page2_img22.png",
     sembol_tanimi: "Kırmızı renkte motor/ısı değiştirgeci bloğu simgesi ile ısı dalgaları",
     anlami: "Batarya veya motor soğutma sistemi kritik arızada. Aşırı ısınma riski var.",
     nedenler: [
@@ -575,6 +594,7 @@ const ILAVE_KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page4_img7.png",
     sembol_tanimi: "Kırmızı renkte SOS yazısı, bağlantı/telefon simgesiyle birlikte",
     anlami: "Araç içi acil çağrı sistemi (eCall) arızalı. Kaza anında otomatik acil çağrı yapılamaz.",
     nedenler: [
@@ -621,6 +641,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page1_img9.png",
     sembol_tanimi: "Sarı renkte daire içinde ünlem — fren hidroliği uyarısı",
     anlami: "Fren hidrolik sıvısı seviyesi düşük. Frenleme performansı etkilenebilir.",
     nedenler: [
@@ -642,6 +663,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page1_img5.png",
     sembol_tanimi: "Sarı renkte oturan yolcu figürü, üzerinde çarpı işareti veya 2 rakamı",
     anlami: "Ön yolcu koltuğu hava yastığı devre dışı bırakılmış veya arızalı.",
     nedenler: [
@@ -682,6 +704,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page1_img8.png",
     sembol_tanimi: "Sarı renkte far veya ampul simgesi, etrafında ışık ışınları ve uyarı göstergesi",
     anlami: "Araç aydınlatma sisteminde bir veya birden fazla ampul arızası.",
     nedenler: [
@@ -703,6 +726,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page1_img25.png",
     sembol_tanimi: "Sarı renkte fren diski ve yıpranmış balata göstergesi olan simge",
     anlami: "Fren balataları aşınma sınırına ulaştı. En kısa sürede değiştirilmeli.",
     nedenler: [
@@ -764,6 +788,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page1_img11.png",
     sembol_tanimi: "Sarı veya kırmızı renkte araç yan görünüm silüeti, güç/performans kısıtlama göstergesi",
     anlami: "Motor sistemi kısıtlı modda çalışıyor. Maksimum güç ve hız düşürülmüştür.",
     nedenler: [
@@ -785,6 +810,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "yakin_servis",
     model: "hepsi",
+    gorsel: "page2_img23.png",
     sembol_tanimi: "Sarı renkte motor/termal ünite simgesi, soğutucu sıvı seviye göstergesi veya termometre",
     anlami: "Batarya/motor soğutma sistemi sıvı seviyesi düşük.",
     nedenler: [
@@ -806,6 +832,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page2_img4.png",
     sembol_tanimi: "Sarı renkte araç yan görünümü, radar dalgaları veya nesne uyarı simgesiyle birlikte",
     anlami: "Kör nokta izleme sistemi yan şeritte araç tespit etti. Dikkatli şerit değiştir.",
     nedenler: [
@@ -826,6 +853,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page3_img15.png",
     sembol_tanimi: "Beyaz/sarı renkte kar tanesi veya buz kristali simgesi, yol/araç göstergesiyle",
     anlami: "Dış sıcaklık 4°C'nin altında, yol yüzeyi buzlanma riski taşıyor.",
     nedenler: [
@@ -866,6 +894,7 @@ const ILAVE_SARI_UYARILAR: IkazSembolu[] = [
     renk: "sari",
     aciliyet: "dikkat",
     model: "hepsi",
+    gorsel: "page4_img6.png",
     sembol_tanimi: "Sarı renkte göz simgesi, uyuklama tespit göstergesi",
     anlami: "Sürücü yorgunluk/uyku belirtisi gösteriyor. Mola tavsiye edilir.",
     nedenler: [
@@ -891,6 +920,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page1_img19.png",
     sembol_tanimi: "Yeşil renkte şarj kablosu/konnektör fişi simgesi",
     anlami: "Şarj kablosu araca takılı. Araç şarj modunda ya da araç kilitli değilken kablo takılı.",
     nedenler: [
@@ -910,6 +940,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page4_img19.png",
     sembol_tanimi: "Yeşil renkte HAZIR yazısı koyu arka planda",
     anlami: "Araç sürüşe hazır durumda. Motor sistemi aktif, sürüş mümkün.",
     nedenler: ["Araç çalıştırıldı ve hazır"],
@@ -923,6 +954,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page4_img2.png",
     sembol_tanimi: "Yeşil/mavi renkte, yatay çizgilerle sola doğru yayılan ve alt kısımda kesik çizgili far ışığı simgesi (kısa huzme)",
     anlami: "Düşük huzmeli (kısa) farlar aktif.",
     nedenler: ["Far sistemi açık, kısa far seçili"],
@@ -959,6 +991,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page2_img10.png",
     sembol_tanimi: "Yeşil renkte hız kadranı/göstergesi simgesi, cruise control aktif göstergesi",
     anlami: "Standart hız sabitleyici (cruise control) aktif.",
     nedenler: ["Sürücü cruise control devreye aldı"],
@@ -991,6 +1024,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page3_img17.png",
     sembol_tanimi: "Yeşil renkte sağa dönen ok işareti",
     anlami: "Sağ sinyal lambası çalışıyor.",
     nedenler: ["Sürücü sağ sinyal verdi"],
@@ -1004,6 +1038,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page3_img18.png",
     sembol_tanimi: "Yeşil renkte sola dönen ok işareti",
     anlami: "Sol sinyal lambası çalışıyor.",
     nedenler: ["Sürücü sol sinyal verdi"],
@@ -1017,6 +1052,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "mavi",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page4_img22.png",
     sembol_tanimi: "Mavi renkte, yatay çizgilerle sola doğru yayılan far ışığı ve daire içinde A harfi",
     anlami: "Otomatik uzun far sistemi aktif. Karşıdan araç gelince otomatik kısa fara geçer.",
     nedenler: ["Otomatik far sistemi açık"],
@@ -1033,6 +1069,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page4_img10.png",
     sembol_tanimi: "Yeşil veya sarı renkte, eğimli çizgilerle yayılan far simgesi ve üç yatay dalga çizgisi (sis)",
     anlami: "Ön veya arka sis farı aktif.",
     nedenler: ["Sürücü sis farını açtı"],
@@ -1049,6 +1086,7 @@ const ILAVE_BILGI_LAMBALARI: IkazSembolu[] = [
     renk: "yesil",
     aciliyet: "bilgi",
     model: "hepsi",
+    gorsel: "page4_img9.png",
     sembol_tanimi: "Yeşil renkte iki köşe ışık simgesi veya P harfi ok işaretiyle",
     anlami: "Park/konum lambaları (yan lambalar) aktif.",
     nedenler: ["Sürücü park lambalarını açtı veya otomatik sistem devrede"],
