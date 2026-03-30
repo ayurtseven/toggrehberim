@@ -85,12 +85,27 @@ function IkazDetayKarti({
     ? (sembol as IkazSembolu).not
     : (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).ai_aciklama.not;
 
+  const gorsel = isDbSembol
+    ? (sembol as IkazSembolu).gorsel
+    : (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).sembol_id
+      ? TUM_IKAZ_SEMBOLLERI.find((s) => s.id === (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).sembol_id)?.gorsel
+      : undefined;
+
   const renkSinif = RENK_SINIF[renk] ?? RENK_SINIF["sari"];
   const aciliyetEtiket = ACILIYET_ETIKETLER[aciliyet] ?? "Dikkat";
   const aciliyetRenk = ACILIYET_RENK[aciliyet] ?? ACILIYET_RENK["dikkat"];
 
   return (
     <div className={`rounded-2xl border-2 p-6 ${renkSinif.bg} ${renkSinif.border}`}>
+      {/* Sembol görseli */}
+      {gorsel && (
+        <div className="mb-5 flex justify-center">
+          <div className="flex h-24 w-24 items-center justify-center rounded-2xl border border-neutral-700 bg-neutral-950 p-3">
+            <img src={`/ikaz/${gorsel}`} alt={ad} className="h-full w-full object-contain" />
+          </div>
+        </div>
+      )}
+
       {/* Başlık */}
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -574,7 +589,9 @@ function SembolSatiri({
         <div className="flex items-center gap-3">
           {/* Sembol ikon kutucuğu — karanlık arka plan (dashboard görünümü) */}
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950 dark:border-neutral-600">
-            {IkonBileseni ? (
+            {sembol.gorsel ? (
+              <img src={`/ikaz/${sembol.gorsel}`} alt={sembol.ad} className="h-9 w-9 object-contain" />
+            ) : IkonBileseni ? (
               <IkonBileseni className={`h-7 w-7 ${renkSinif.text}`} />
             ) : (
               <span className={`h-3 w-3 rounded-full ${RENK_DOT[sembol.renk]}`} />
