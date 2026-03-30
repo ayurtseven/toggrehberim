@@ -271,7 +271,7 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
     }
   }
 
-  async function yayinla() {
+  async function gonder(taslakMi: boolean) {
     if (!sonuc) return;
     setYayinlaniyor(true);
     setKaydetMesaj("");
@@ -284,16 +284,21 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
         dosya_adi: dosyaAdi,
         kategori: sonuc.kategori,
         tur: sonuc.kategori === "haber" ? "haber" : "rehber",
+        taslak: taslakMi,
       }),
     });
     const data = await res.json();
     if (res.ok) {
-      const sayfaUrl = data.dosya?.includes("haberler")
-        ? `/haberler/${dosyaAdi}`
-        : `/rehber/${sonuc.kategori}/${dosyaAdi}`;
-      setKaydetMesaj(`✓ Yayınlandı → ${sayfaUrl} (Vercel deploy ~1 dk)`);
-      setSonuc((s) => s ? { ...s, durum: "kaydedildi" } : s);
-      setGecmis((prev) => prev.map((g) => g.id === sonuc.id ? { ...g, durum: "kaydedildi" } : g));
+      if (taslakMi) {
+        setKaydetMesaj(`✓ Taslağa kaydedildi — /admin'den yönetebilirsin`);
+      } else {
+        const sayfaUrl = data.dosya?.includes("haberler")
+          ? `/haberler/${dosyaAdi}`
+          : `/rehber/${sonuc.kategori}/${dosyaAdi}`;
+        setKaydetMesaj(`✓ Yayınlandı → ${sayfaUrl} (Vercel deploy ~1 dk)`);
+        setSonuc((s) => s ? { ...s, durum: "kaydedildi" } : s);
+        setGecmis((prev) => prev.map((g) => g.id === sonuc.id ? { ...g, durum: "kaydedildi" } : g));
+      }
     } else {
       setKaydetMesaj(`⚠ ${data.hata}`);
     }
@@ -621,15 +626,22 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
                   className="w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600 outline-none focus:border-white/25 font-mono" />
                 <div className="flex gap-2">
                   <button
-                    onClick={yayinla}
+                    onClick={() => gonder(true)}
                     disabled={yayinlaniyor || !mdxDuzenlendi}
-                    className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-500 disabled:opacity-50"
+                    className="flex-1 rounded-xl bg-blue-600 py-2.5 text-sm font-bold text-white transition hover:bg-blue-500 disabled:opacity-50"
                   >
-                    {yayinlaniyor ? "Yayınlanıyor..." : "🚀 Yayınla"}
+                    {yayinlaniyor ? "Kaydediliyor..." : "📁 Taslağa Kaydet"}
+                  </button>
+                  <button
+                    onClick={() => gonder(false)}
+                    disabled={yayinlaniyor || !mdxDuzenlendi}
+                    className="rounded-xl border border-emerald-600/50 px-4 py-2.5 text-sm font-semibold text-emerald-400 transition hover:bg-emerald-600/10 disabled:opacity-50"
+                  >
+                    🚀 Yayınla
                   </button>
                   <button onClick={() => reddet(sonuc.id)}
-                    className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-400 hover:text-red-400">
-                    Reddet
+                    className="rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-500 hover:text-red-400">
+                    ✕
                   </button>
                 </div>
                 {kaydetMesaj && (

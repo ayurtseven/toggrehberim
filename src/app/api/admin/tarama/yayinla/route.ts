@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { tarama_id, mdx, dosya_adi, kategori, tur } = await req.json();
+  const { tarama_id, mdx, dosya_adi, kategori, tur, taslak } = await req.json();
 
   if (!mdx || !dosya_adi) {
     return NextResponse.json({ hata: "mdx ve dosya_adi gerekli." }, { status: 400 });
@@ -32,10 +32,11 @@ export async function POST(req: NextRequest) {
     .replace(/^-+|-+$/g, "")
     .slice(0, 60);
 
+  const kok = taslak ? "content/draft" : "content";
   const dosyaYolu =
     tur === "haber"
-      ? `content/haberler/${temizAd}.mdx`
-      : `content/rehber/${kategori}/${temizAd}.mdx`;
+      ? `${kok}/haberler/${temizAd}.mdx`
+      : `${kok}/rehber/${kategori}/${temizAd}.mdx`;
 
   // GitHub API ile dosya oluştur
   const apiUrl = `https://api.github.com/repos/${repo}/contents/${dosyaYolu}`;
@@ -83,9 +84,9 @@ export async function POST(req: NextRequest) {
     const sb = serviceClient();
     await sb
       .from("icerik_taramalari")
-      .update({ durum: "kaydedildi", mdx_taslak: mdx })
+      .update({ durum: taslak ? "taslak" : "kaydedildi", mdx_taslak: mdx })
       .eq("id", tarama_id);
   }
 
-  return NextResponse.json({ ok: true, dosya: dosyaYolu });
+  return NextResponse.json({ ok: true, dosya: dosyaYolu, taslak: !!taslak });
 }
