@@ -95,7 +95,8 @@ const KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "yakin_servis",
     model: "hepsi",
-    sembol_tanimi: "Kırmızı renkte motor/araç gövdesi simgesi",
+    gorsel: "page2_img19.jpeg",
+    sembol_tanimi: "Kırmızı renkte araç yan silüeti gövdesi, içinde veya yanında ünlem işareti (!) — bagaj kapalı, araç tam silüeti",
     anlami: "Motor sistemi hatası. Güç kaybı yaşanabilir.",
     nedenler: [
       "Tahrik motoru aşırı ısınması",
@@ -504,7 +505,7 @@ const ILAVE_KIRMIZI_IKAZLAR: IkazSembolu[] = [
     renk: "kirmizi",
     aciliyet: "hemen_dur",
     model: "hepsi",
-    gorsel: "page1_img7.png",
+    gorsel: "page1_img24.jpeg",
     sembol_tanimi: "Kırmızı renkte oturan insan silüeti, göğüs hizasında çapraz emniyet kemeri çizgisi — sabit veya yanıp söner",
     anlami: "Emniyet kemeri takılı değil veya hata. Sabit yanıyorsa hata, yanıp sönüyorsa kemer takılmamış.",
     nedenler: [
@@ -629,6 +630,30 @@ const ILAVE_KIRMIZI_IKAZLAR: IkazSembolu[] = [
     ],
     servis_gerekli: true,
     anahtar_kelimeler: ["fren servo", "rejeneratif fren", "fren kontrol"],
+  },
+  {
+    id: "elektrikli-bagaj",
+    ad: "Elektrikli Bagaj Kapağı Arızası",
+    renk: "kirmizi",
+    aciliyet: "yakin_servis",
+    model: "hepsi",
+    gorsel: "page1_img22.jpeg",
+    sembol_tanimi: "Kırmızı renkte araç yan silüeti, arka bagaj kapağı açık konumda gösterilmiş",
+    anlami: "Elektrikli bagaj kapağı sistemi arızalı. Kapak tam kapanmıyor veya motor sistemi çalışmıyor.",
+    nedenler: [
+      "Bagaj kapağı aktüatörü arızası",
+      "Bagaj kilidi sensörü hatası",
+      "Elektrik sistemi sorunu",
+      "Mekanik engel veya hasar",
+    ],
+    yapilacaklar: [
+      "Bagajın tam kapandığını kontrol et",
+      "Manuel olarak kapat ve kilitlemeyi dene",
+      "Sürüş sırasında bagaj açıksa hemen dur",
+      "Yetkili Togg servisine git",
+    ],
+    servis_gerekli: true,
+    anahtar_kelimeler: ["bagaj", "elektrikli bagaj", "bagaj kapağı", "bagaj arıza", "arka kapak"],
   },
 ];
 
