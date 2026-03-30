@@ -38,7 +38,14 @@ interface AramaSonucu {
   dil: "tr" | "en";
   puan: number;
   konu: string;
+  tur: "haber_yap" | "rehber_yap" | "gozlemle" | "alakasiz";
 }
+
+const TUR_BADGE: Record<string, { label: string; renk: string }> = {
+  haber_yap:  { label: "📰 Haber yap",  renk: "bg-red-500/15 text-red-300 border border-red-500/20" },
+  rehber_yap: { label: "📖 Rehber yap", renk: "bg-blue-500/15 text-blue-300 border border-blue-500/20" },
+  gozlemle:   { label: "👁 Gözlemle",   renk: "bg-slate-500/15 text-slate-400 border border-slate-500/20" },
+};
 
 const DURUM_RENK: Record<string, string> = {
   taslak: "bg-yellow-500/15 text-yellow-400",
@@ -66,6 +73,7 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
   const [aramaHata, setAramaHata] = useState("");
   const [aramaListesi, setAramaListesi] = useState<AramaSonucu[]>([]);
   const [aramaYapildi, setAramaYapildi] = useState(false);
+  const [sentiment, setSentiment] = useState<{ skor: number; ozet: string } | null>(null);
 
   // YouTube state
   const [ytUrl, setYtUrl] = useState("");
@@ -109,7 +117,8 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
       });
       const data = await res.json();
       if (!res.ok) { setAramaHata(data.hata || "Arama başarısız"); return; }
-      setAramaListesi(Array.isArray(data) ? data : []);
+      setAramaListesi(data.sonuclar ?? (Array.isArray(data) ? data : []));
+      setSentiment(data.sentiment ?? null);
       setAramaYapildi(true);
     } finally {
       setAramaYukleniyor(false);
@@ -417,6 +426,23 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
 
             {aramaHata && <p className="text-sm text-red-400">{aramaHata}</p>}
 
+            {sentiment && (
+              <div className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-sm ${
+                sentiment.skor >= 4 ? "border-emerald-500/20 bg-emerald-500/8 text-emerald-300"
+                : sentiment.skor <= -4 ? "border-red-500/20 bg-red-500/8 text-red-300"
+                : "border-yellow-500/20 bg-yellow-500/8 text-yellow-300"
+              }`}>
+                <span className="text-lg shrink-0">
+                  {sentiment.skor >= 4 ? "😊" : sentiment.skor <= -4 ? "😟" : "😐"}
+                </span>
+                <div>
+                  <p className="font-semibold text-xs uppercase tracking-wide opacity-70 mb-0.5">Togg Gündem Havası</p>
+                  <p>{sentiment.ozet}</p>
+                </div>
+                <span className="ml-auto shrink-0 text-xs font-bold opacity-60">{sentiment.skor > 0 ? "+" : ""}{sentiment.skor}/10</span>
+              </div>
+            )}
+
             {aramaYapildi && aramaListesi.length === 0 && (
               <p className="py-4 text-center text-sm text-slate-600">Uygun içerik bulunamadı.</p>
             )}
@@ -427,6 +453,11 @@ export default function TaramaClient({ gecmis: ilkGecmis }: { gecmis: TaramaList
                   <div key={i} className="rounded-xl border border-white/8 bg-white/3 px-4 py-3 space-y-1.5">
                     <div className="flex items-start gap-2">
                       <div className="flex-1 min-w-0">
+                        {h.tur && TUR_BADGE[h.tur] && (
+                          <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold mb-1 ${TUR_BADGE[h.tur].renk}`}>
+                            {TUR_BADGE[h.tur].label}
+                          </span>
+                        )}
                         <p className="text-sm font-medium text-slate-200 leading-snug line-clamp-2">{h.baslik}</p>
                         <p className="mt-0.5 text-xs text-slate-500 line-clamp-1">{h.ozet}</p>
                       </div>
