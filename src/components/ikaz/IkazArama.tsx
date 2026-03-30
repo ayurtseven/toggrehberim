@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import Fuse from "fuse.js";
 import IkazDeneyimler from "@/app/(public)/ikaz/[id]/IkazDeneyimler";
 import {
@@ -13,17 +13,33 @@ import {
 import { IKAZ_IKONU } from "@/lib/ikaz-ikonlar";
 import type { IkazTanimaYaniti } from "@/app/api/ikaz-tanima/route";
 
-// ─── Fuse.js metin arama ────────────────────────────────────────────────────
+// ─── Tipler ─────────────────────────────────────────────────────────────────
 
-const fuse = new Fuse(TUM_IKAZ_SEMBOLLERI, {
-  keys: [
-    { name: "ad", weight: 0.5 },
-    { name: "anahtar_kelimeler", weight: 0.35 },
-    { name: "anlami", weight: 0.15 },
-  ],
-  threshold: 0.4,
-  includeScore: true,
-});
+type IkazOverride = {
+  sembol_id: string;
+  kitapcik_aciklama?: string;
+  anlami?: string;
+  nedenler?: string[];
+  yapilacaklar?: string[];
+  not_metni?: string;
+  // Genişletilmiş alanlar
+  ad?: string;
+  renk?: string;
+  aciliyet?: string;
+  model?: string;
+  servis_gerekli?: boolean;
+  gorsel_url?: string;
+  anahtar_kelimeler?: string[];
+  is_custom?: boolean;
+};
+
+type EditVeri = {
+  kitapcik_aciklama: string;
+  anlami: string;
+  nedenler: string[];
+  yapilacaklar: string[];
+  not_metni: string;
+};
 
 // ─── Alt bileşenler ─────────────────────────────────────────────────────────
 
@@ -50,16 +66,183 @@ function RenkBadge({ renk }: { renk: IkazSembolu["renk"] }) {
   );
 }
 
+// ─── Liste Düzenleyici (nedenler / yapılacaklar için) ────────────────────────
+
+function ListEditor({
+  items,
+  onChange,
+  placeholder,
+}: {
+  items: string[];
+  onChange: (items: string[]) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      {items.map((item, i) => (
+        <div key={i} className="flex gap-2">
+          <input
+            value={item}
+            onChange={(e) => {
+              const next = [...items];
+              next[i] = e.target.value;
+              onChange(next);
+            }}
+            className="flex-1 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            placeholder={placeholder}
+          />
+          <button
+            onClick={() => onChange(items.filter((_, j) => j !== i))}
+            className="shrink-0 rounded-lg border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/20"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+      <button
+        onClick={() => onChange([...items, ""])}
+        className="w-full rounded-lg border border-dashed border-neutral-300 py-1.5 text-xs text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 dark:border-neutral-700"
+      >
+        + Ekle
+      </button>
+    </div>
+  );
+}
+
+// ─── Edit Formu ──────────────────────────────────────────────────────────────
+
+function IkazEditFormu({
+  sembol,
+  onKaydet,
+  onIptal,
+}: {
+  sembol: IkazSembolu;
+  onKaydet: (veri: EditVeri) => Promise<void>;
+  onIptal: () => void;
+}) {
+  const [veri, setVeri] = useState<EditVeri>({
+    kitapcik_aciklama: sembol.kitapcik_aciklama,
+    anlami: sembol.anlami,
+    nedenler: [...sembol.nedenler],
+    yapilacaklar: [...sembol.yapilacaklar],
+    not_metni: sembol.not ?? "",
+  });
+  const [yukleniyor, setYukleniyor] = useState(false);
+  const [hata, setHata] = useState<string | null>(null);
+
+  const kaydet = async () => {
+    setYukleniyor(true);
+    setHata(null);
+    try {
+      await onKaydet(veri);
+    } catch (e: unknown) {
+      setHata(e instanceof Error ? e.message : "Kayıt hatası");
+    } finally {
+      setYukleniyor(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4 rounded-2xl border-2 border-blue-200 bg-blue-50 p-5 dark:border-blue-800 dark:bg-blue-950/20">
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold text-blue-700 dark:text-blue-300">✏️ Sembol Düzenle</h3>
+        <span className="text-xs text-blue-500">{sembol.id}</span>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          Kılavuz Açıklaması
+        </label>
+        <input
+          value={veri.kitapcik_aciklama}
+          onChange={(e) => setVeri({ ...veri, kitapcik_aciklama: e.target.value })}
+          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          Anlam (detaylı)
+        </label>
+        <textarea
+          value={veri.anlami}
+          onChange={(e) => setVeri({ ...veri, anlami: e.target.value })}
+          rows={3}
+          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          Neden Yanar?
+        </label>
+        <ListEditor
+          items={veri.nedenler}
+          onChange={(items) => setVeri({ ...veri, nedenler: items })}
+          placeholder="Neden..."
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          Ne Yapmalısın?
+        </label>
+        <ListEditor
+          items={veri.yapilacaklar}
+          onChange={(items) => setVeri({ ...veri, yapilacaklar: items })}
+          placeholder="Yapılacak adım..."
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          Not (isteğe bağlı)
+        </label>
+        <textarea
+          value={veri.not_metni}
+          onChange={(e) => setVeri({ ...veri, not_metni: e.target.value })}
+          rows={2}
+          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          placeholder="Özel not..."
+        />
+      </div>
+
+      {hata && (
+        <p className="text-sm font-medium text-red-600 dark:text-red-400">⚠️ {hata}</p>
+      )}
+
+      <div className="flex gap-2">
+        <button
+          onClick={kaydet}
+          disabled={yukleniyor}
+          className="flex-1 rounded-xl bg-blue-600 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
+          {yukleniyor ? "Kaydediliyor..." : "💾 Kaydet"}
+        </button>
+        <button
+          onClick={onIptal}
+          className="rounded-xl border border-neutral-200 px-4 py-2.5 text-sm font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+        >
+          İptal
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Detay Kartı ─────────────────────────────────────────────────────────────
+
 function IkazDetayKarti({
   sembol,
   guven,
   ikazId,
+  onDuzenle,
 }: {
   sembol: IkazSembolu | IkazTanimaYaniti["sonuc"];
   guven?: "yuksek" | "orta" | "dusuk";
   ikazId?: string;
+  onDuzenle?: (id: string) => void;
 }) {
-  // Normalize: hem veritabanı objesi hem de AI yanıtı gelebilir
   const isDbSembol = sembol && "id" in sembol;
 
   const ad = isDbSembol ? (sembol as IkazSembolu).ad : (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).ai_aciklama.ad;
@@ -84,7 +267,6 @@ function IkazDetayKarti({
   const not = isDbSembol
     ? (sembol as IkazSembolu).not
     : (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).ai_aciklama.not;
-
   const kitapcik_aciklama = isDbSembol
     ? (sembol as IkazSembolu).kitapcik_aciklama
     : undefined;
@@ -126,13 +308,22 @@ function IkazDetayKarti({
               {guven === "yuksek" ? "Yüksek ✓" : guven === "orta" ? "Orta" : "Düşük"}
             </span>
           )}
+          {/* Düzenle butonu — sadece DB sembolleri için */}
+          {isDbSembol && onDuzenle && (
+            <button
+              onClick={() => onDuzenle((sembol as IkazSembolu).id)}
+              className="mt-1 rounded-lg border border-neutral-200 px-2.5 py-1 text-xs font-medium text-neutral-500 hover:border-blue-300 hover:text-blue-600 dark:border-neutral-700 dark:hover:border-blue-700 dark:hover:text-blue-400"
+            >
+              ✏️ Düzenle
+            </button>
+          )}
         </div>
       </div>
 
       {/* Kılavuz açıklaması + detaylı anlam */}
       <div className="mb-5 space-y-2">
         {kitapcik_aciklama && (
-          <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 italic">
+          <p className="text-sm font-semibold italic text-neutral-500 dark:text-neutral-400">
             📖 {kitapcik_aciklama}
           </p>
         )}
@@ -211,13 +402,82 @@ export default function IkazArama() {
   const [hata, setHata] = useState<string | null>(null);
   const [aramaMetni, setAramaMetni] = useState("");
   const [secilenSembol, setSecilenSembol] = useState<IkazSembolu | null>(null);
+  const [editSembolId, setEditSembolId] = useState<string | null>(null);
+
+  // Override sistemi
+  const [semboller, setSemboller] = useState<IkazSembolu[]>(TUM_IKAZ_SEMBOLLERI);
 
   const dosyaInputRef = useRef<HTMLInputElement>(null);
   const kameraInputRef = useRef<HTMLInputElement>(null);
 
+  // Overrides + custom semboller yükle
+  useEffect(() => {
+    fetch("/api/ikaz-duzenle")
+      .then((r) => r.json())
+      .then((overrides: IkazOverride[]) => {
+        if (!Array.isArray(overrides) || overrides.length === 0) return;
+        const map = Object.fromEntries(overrides.map((o) => [o.sembol_id, o]));
+
+        // Mevcut sembollere override uygula
+        const temel = TUM_IKAZ_SEMBOLLERI.map((s) => {
+          const o = map[s.id];
+          if (!o || o.is_custom) return s;
+          return {
+            ...s,
+            ...(o.kitapcik_aciklama !== undefined && { kitapcik_aciklama: o.kitapcik_aciklama }),
+            ...(o.anlami !== undefined && { anlami: o.anlami }),
+            ...(o.nedenler !== undefined && { nedenler: o.nedenler }),
+            ...(o.yapilacaklar !== undefined && { yapilacaklar: o.yapilacaklar }),
+            ...(o.not_metni !== undefined && { not: o.not_metni }),
+            ...(o.gorsel_url !== undefined && { gorsel: o.gorsel_url }),
+          };
+        });
+
+        // is_custom = true olan yeni girişleri ekle
+        const customlar: IkazSembolu[] = overrides
+          .filter((o) => o.is_custom)
+          .map((o) => ({
+            id: o.sembol_id,
+            ad: o.ad ?? o.sembol_id,
+            renk: (o.renk ?? "sari") as IkazSembolu["renk"],
+            aciliyet: (o.aciliyet ?? "dikkat") as IkazSembolu["aciliyet"],
+            model: (o.model ?? "hepsi") as IkazSembolu["model"],
+            sembol_tanimi: "",
+            gorsel: o.gorsel_url,
+            kitapcik_aciklama: o.kitapcik_aciklama ?? "",
+            anlami: o.anlami ?? "",
+            nedenler: o.nedenler ?? [],
+            yapilacaklar: o.yapilacaklar ?? [],
+            servis_gerekli: o.servis_gerekli ?? false,
+            not: o.not_metni,
+            anahtar_kelimeler: o.anahtar_kelimeler ?? [],
+          }));
+
+        setSemboller([...temel, ...customlar]);
+      })
+      .catch(() => {
+        // Tablo henüz oluşturulmamış olabilir, sessizce geç
+      });
+  }, []);
+
+  // Fuse.js'i semboller güncellenince yeniden oluştur
+  const fuse = useMemo(
+    () =>
+      new Fuse(semboller, {
+        keys: [
+          { name: "ad", weight: 0.5 },
+          { name: "anahtar_kelimeler", weight: 0.35 },
+          { name: "anlami", weight: 0.15 },
+        ],
+        threshold: 0.4,
+        includeScore: true,
+      }),
+    [semboller]
+  );
+
   const aramaFiltrelenmis = aramaMetni.trim()
     ? fuse.search(aramaMetni).map((r) => r.item)
-    : TUM_IKAZ_SEMBOLLERI;
+    : semboller;
 
   const dosyaSec = useCallback((dosya: File) => {
     setSonuc(null);
@@ -273,6 +533,53 @@ export default function IkazArama() {
     if (kameraInputRef.current) kameraInputRef.current.value = "";
   };
 
+  // Edit: kaydet
+  const handleKaydet = useCallback(
+    async (sembolId: string, veri: EditVeri) => {
+      const res = await fetch("/api/ikaz-duzenle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sembol_id: sembolId, ...veri }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.hata || "Kayıt hatası");
+      }
+      // Local state'i güncelle
+      setSemboller((prev) =>
+        prev.map((s) =>
+          s.id === sembolId
+            ? {
+                ...s,
+                kitapcik_aciklama: veri.kitapcik_aciklama,
+                anlami: veri.anlami,
+                nedenler: veri.nedenler,
+                yapilacaklar: veri.yapilacaklar,
+                not: veri.not_metni || undefined,
+              }
+            : s
+        )
+      );
+      // secilenSembol'ü de güncelle
+      setSecilenSembol((prev) =>
+        prev?.id === sembolId
+          ? {
+              ...prev,
+              kitapcik_aciklama: veri.kitapcik_aciklama,
+              anlami: veri.anlami,
+              nedenler: veri.nedenler,
+              yapilacaklar: veri.yapilacaklar,
+              not: veri.not_metni || undefined,
+            }
+          : prev
+      );
+      setEditSembolId(null);
+    },
+    []
+  );
+
+  const editSembol = editSembolId ? semboller.find((s) => s.id === editSembolId) : null;
+
   return (
     <div>
       {/* Sekme seçici */}
@@ -303,7 +610,6 @@ export default function IkazArama() {
       {aktifSekme === "foto" && (
         <div>
           {!onizleme ? (
-            /* Upload alanı */
             <div className="mb-6">
               <div className="rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-8 text-center dark:border-neutral-700 dark:bg-neutral-900/50">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--togg-red)] text-3xl text-white">
@@ -315,7 +621,6 @@ export default function IkazArama() {
                   AI anında tanımlayıp açıklayacak.
                 </p>
 
-                {/* Kamera butonu — mobil için capture=environment */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                   <button
                     onClick={() => kameraInputRef.current?.click()}
@@ -331,7 +636,6 @@ export default function IkazArama() {
                   </button>
                 </div>
 
-                {/* Gizli dosya inputları */}
                 <input
                   ref={kameraInputRef}
                   type="file"
@@ -353,7 +657,6 @@ export default function IkazArama() {
                 </p>
               </div>
 
-              {/* İpuçları */}
               <div className="mt-4 grid grid-cols-3 gap-3">
                 {[
                   { ikon: "💡", ipucu: "Odaklanmış ve net fotoğraf çek" },
@@ -371,14 +674,12 @@ export default function IkazArama() {
               </div>
             </div>
           ) : (
-            /* Önizleme + Sonuç */
             <div>
-              {/* Seçilen görsel */}
               <div className="mb-4 flex items-center gap-4 rounded-xl border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-800 dark:bg-neutral-900">
                 <img
                   src={onizleme}
                   alt="Yüklenen görsel"
-                  className="h-20 w-20 rounded-lg object-contain bg-black"
+                  className="h-20 w-20 rounded-lg bg-black object-contain"
                 />
                 <div className="flex-1">
                   <p className="text-sm font-semibold">
@@ -396,7 +697,6 @@ export default function IkazArama() {
                 </button>
               </div>
 
-              {/* Yükleniyor */}
               {yukleniyor && (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 py-12 dark:border-neutral-800 dark:bg-neutral-900/50">
                   <div className="mb-4 h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-[var(--togg-red)]" />
@@ -405,7 +705,6 @@ export default function IkazArama() {
                 </div>
               )}
 
-              {/* Hata */}
               {hata && !yukleniyor && (
                 <div className="rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-800 dark:bg-red-950/20">
                   <p className="font-semibold text-red-700 dark:text-red-300">⚠️ {hata}</p>
@@ -418,7 +717,6 @@ export default function IkazArama() {
                 </div>
               )}
 
-              {/* Sonuç */}
               {sonuc && !yukleniyor && (
                 <>
                   {!sonuc.tanindi ? (
@@ -447,6 +745,48 @@ export default function IkazArama() {
         </div>
       )}
 
+      {/* ── Bottom Sheet: Seçilen sembol detayı ── */}
+      {secilenSembol && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            onClick={() => { setSecilenSembol(null); setEditSembolId(null); }}
+          />
+          {/* Panel */}
+          <div className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t border-white/10 bg-slate-950 shadow-2xl">
+            {/* Handle + başlık */}
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/8 bg-slate-950 px-5 py-4">
+              <div className="flex items-center gap-3">
+                <div className="mx-auto h-1 w-10 rounded-full bg-neutral-700" />
+                <span className="font-semibold text-slate-100">{secilenSembol.ad}</span>
+              </div>
+              <button
+                onClick={() => { setSecilenSembol(null); setEditSembolId(null); }}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/8 text-slate-400 hover:bg-white/15"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-4 pb-8">
+              {editSembol && editSembolId === secilenSembol.id ? (
+                <IkazEditFormu
+                  sembol={editSembol}
+                  onKaydet={(veri) => handleKaydet(editSembol.id, veri)}
+                  onIptal={() => setEditSembolId(null)}
+                />
+              ) : (
+                <IkazDetayKarti
+                  sembol={secilenSembol}
+                  ikazId={secilenSembol.id}
+                  onDuzenle={(id) => setEditSembolId(id)}
+                />
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* ── Sembol Listesi Sekmesi ── */}
       {aktifSekme === "liste" && (
         <div>
@@ -458,27 +798,12 @@ export default function IkazArama() {
               onChange={(e) => {
                 setAramaMetni(e.target.value);
                 setSecilenSembol(null);
+                setEditSembolId(null);
               }}
               placeholder="Sembol adı, rengi veya anahtar kelime ile ara..."
               className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm outline-none ring-0 transition focus:border-[var(--togg-red)] focus:ring-2 focus:ring-[var(--togg-red)]/20 dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
-
-          {/* Seçilen sembol detayı */}
-          {secilenSembol && (
-            <div className="mb-6">
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="font-semibold">Sembol Detayı</h3>
-                <button
-                  onClick={() => setSecilenSembol(null)}
-                  className="text-xs text-neutral-400 underline hover:text-neutral-600"
-                >
-                  Kapat
-                </button>
-              </div>
-              <IkazDetayKarti sembol={secilenSembol} ikazId={secilenSembol.id} />
-            </div>
-          )}
 
           {/* Sembol listesi */}
           {aramaFiltrelenmis.length === 0 ? (
@@ -486,36 +811,40 @@ export default function IkazArama() {
               Eşleşen sembol bulunamadı
             </p>
           ) : aramaMetni.trim() ? (
-            /* Arama sonuçları — düz liste */
             <div className="space-y-2">
               {aramaFiltrelenmis.map((sembol) => (
                 <SembolSatiri
                   key={sembol.id}
                   sembol={sembol}
                   isSecili={secilenSembol?.id === sembol.id}
-                  onClick={() => setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol)}
+                  onClick={() => {
+                    setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol);
+                    setEditSembolId(null);
+                  }}
                 />
               ))}
             </div>
           ) : (
-            /* Varsayılan — renk bazlı gruplar */
             <div className="space-y-6">
               {RENK_GRUPLARI.map((grup) => {
-                const semboller = TUM_IKAZ_SEMBOLLERI.filter((s) => s.renk === grup.renk);
+                const grupSemboller = semboller.filter((s) => s.renk === grup.renk);
                 return (
                   <div key={grup.renk}>
                     <div className={`mb-3 flex items-center gap-2 rounded-xl border px-4 py-2.5 ${grup.baslikSinif}`}>
                       <span className={`h-3 w-3 shrink-0 rounded-full ${grup.dot}`} />
                       <span className="text-sm font-bold">{grup.baslik}</span>
-                      <span className="ml-auto text-xs opacity-70">{semboller.length} sembol</span>
+                      <span className="ml-auto text-xs opacity-70">{grupSemboller.length} sembol</span>
                     </div>
                     <div className="space-y-2">
-                      {semboller.map((sembol) => (
+                      {grupSemboller.map((sembol) => (
                         <SembolSatiri
                           key={sembol.id}
                           sembol={sembol}
                           isSecili={secilenSembol?.id === sembol.id}
-                          onClick={() => setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol)}
+                          onClick={() => {
+                            setSecilenSembol(secilenSembol?.id === sembol.id ? null : sembol);
+                            setEditSembolId(null);
+                          }}
                         />
                       ))}
                     </div>
@@ -562,6 +891,12 @@ const RENK_GRUPLARI: {
     baslikSinif: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/20 dark:text-blue-300",
     dot: "bg-blue-500",
   },
+  {
+    renk: "beyaz",
+    baslik: "Beyaz — Bekleme / Standby",
+    baslikSinif: "border-neutral-200 bg-neutral-50 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300",
+    dot: "bg-neutral-400",
+  },
 ];
 
 const RENK_DOT: Record<IkazSembolu["renk"], string> = {
@@ -596,7 +931,6 @@ function SembolSatiri({
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          {/* Sembol ikon kutucuğu — karanlık arka plan (dashboard görünümü) */}
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950 dark:border-neutral-600">
             {sembol.gorsel ? (
               <img src={`/ikaz/${sembol.gorsel}`} alt={sembol.ad} className="h-9 w-9 object-contain" />
@@ -608,7 +942,7 @@ function SembolSatiri({
           </div>
           <div>
             <p className="text-sm font-semibold leading-tight">{sembol.ad}</p>
-            <p className="mt-0.5 text-xs text-neutral-500 line-clamp-1">{sembol.kitapcik_aciklama}</p>
+            <p className="mt-0.5 line-clamp-1 text-xs text-neutral-500">{sembol.kitapcik_aciklama}</p>
           </div>
         </div>
         <span className={`shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold ${aciliyetRenk}`}>

@@ -102,6 +102,18 @@ export default function AdminPage() {
               📊 Analytics
             </Link>
             <Link
+              href="/admin/ikazlar"
+              className="rounded-lg border border-white/10 bg-orange-500/10 px-4 py-2 text-sm text-orange-400 hover:bg-orange-500/20"
+            >
+              ⚠️ İkazlar
+            </Link>
+            <Link
+              href="/klavuz-ara"
+              className="rounded-lg border border-white/10 bg-purple-500/10 px-4 py-2 text-sm text-purple-400 hover:bg-purple-500/20"
+            >
+              📚 Kılavuz Ara
+            </Link>
+            <Link
               href="/admin/istasyonlar"
               className="rounded-lg border border-white/10 bg-[var(--togg-red)]/10 px-4 py-2 text-sm text-[var(--togg-red)] hover:bg-[var(--togg-red)]/20"
             >
