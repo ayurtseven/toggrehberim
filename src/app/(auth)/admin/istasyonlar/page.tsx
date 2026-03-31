@@ -43,7 +43,7 @@ export default async function SarjFiyatSayfasi() {
   for (const row of rows ?? []) {
     fiyatMap[row.id] = {
       fiyat: row.fiyat ?? "—",
-      not: row.not ?? "",
+      not: row.aciklama ?? "",
       son_guncelleme: row.son_guncelleme ?? "—",
     };
   }
