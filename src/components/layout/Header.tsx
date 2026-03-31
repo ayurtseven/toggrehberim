@@ -8,7 +8,8 @@ const navLinks = [
   { href: "/modeller", label: "Modeller" },
   { href: "/ikaz-arama", label: "İkaz Tanı" },
   { href: "/sarj-haritasi", label: "Şarj" },
-  { href: "/sarj-hesaplayici", label: "Hesaplayıcı" },
+  { href: "/sarj-hesaplayici", label: "Menzil Hesapla" },
+  { href: "/sozluk", label: "Sözlük" },
 ];
 
 export default function Header() {

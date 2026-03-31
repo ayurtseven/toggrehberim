@@ -113,18 +113,18 @@ export default function AnaSayfa() {
             Bağımsız Kullanıcı Rehberi
           </div>
           <h1 className="mb-4 text-4xl font-extrabold leading-[1.08] tracking-tight md:text-6xl">
-            Togg&apos;unuzu En İyi{" "}
+            Togg&apos;unda Sorun mu Var?{" "}
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: "linear-gradient(135deg, #ff1744 0%, #ff6b6b 100%)" }}
             >
-              Şekilde Kullanın
+              Burada Çözelim.
             </span>
           </h1>
           <p className="mb-6 text-base text-white/60 md:text-lg">
-            T10X ve T10F sahipleri için şarj, yazılım, bakım ve sürüş rehberleri.
+            Ekranda ışık yandı, şarj olmadı, menzil düştü — paniklemene gerek yok.
             <br className="hidden md:block" />
-            Gerçek sahipten, gerçek deneyimle.
+            T10X ve T10F sahipleri için sade Türkçe rehberler.
           </p>
           <div className="mb-6 flex justify-center">
             <HeroArama />

@@ -26,9 +26,6 @@ export default function HeroArama() {
       <span className="flex-1 text-sm text-slate-500 group-hover:text-slate-400 transition-colors">
         Şarj, OTA güncellemesi, ikaz lambası, bakım...
       </span>
-      <kbd className="hidden rounded-lg border border-white/10 bg-white/6 px-2.5 py-1 text-[11px] font-medium text-slate-600 sm:inline">
-        ⌘K
-      </kbd>
     </button>
   );
 }

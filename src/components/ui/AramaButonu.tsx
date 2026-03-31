@@ -151,9 +151,6 @@ export default function AramaButonu() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <span className="hidden sm:inline text-sm">Ara</span>
-        <kbd className="hidden rounded border border-white/15 bg-white/8 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 lg:inline">
-          ⌘K
-        </kbd>
       </button>
 
       {/* Modal overlay */}
