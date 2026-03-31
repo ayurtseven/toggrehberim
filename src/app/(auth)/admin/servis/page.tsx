@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import type { ServisNoktasi } from "@/lib/servis-noktalari";
+import { createClient } from "@/lib/supabase/server";
 import ServisEditor from "./ServisEditor";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +16,21 @@ function noktaOku(): ServisNoktasi[] {
   }
 }
 
-export default function AdminServisSayfasi() {
+export default async function AdminServisSayfasi() {
   const noktalar = noktaOku();
+
+  // Supabase'den iletişim bilgilerini çek
+  const supabase = await createClient();
+  const { data: iletisimRows } = await supabase.from("servis_iletisim").select("*");
+
+  const iletisimMap: Record<string, { telefonlar: string[]; email: string; maps_url: string }> = {};
+  for (const row of iletisimRows ?? []) {
+    iletisimMap[row.id] = {
+      telefonlar: row.telefonlar ?? [],
+      email: row.email ?? "",
+      maps_url: row.maps_url ?? "",
+    };
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
@@ -32,7 +46,7 @@ export default function AdminServisSayfasi() {
           Telefon numarası öğrendikçe ilgili servise ekle. Kaydet butonuna basınca anında canlıya geçer.
         </p>
 
-        <ServisEditor noktalar={noktalar} />
+        <ServisEditor noktalar={noktalar} iletisimMap={iletisimMap} />
       </div>
     </div>
   );

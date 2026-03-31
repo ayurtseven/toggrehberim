@@ -85,7 +85,7 @@ function KategoriGrubu({
   grupKey: string;
   icerikler: IcerikKarti[];
 }) {
-  const [acik, setAcik] = useState(true);
+  const [acik, setAcik] = useState(false);
   const stil = KAT_RENK[grupKey] ?? { bg: "bg-neutral-500/15", text: "text-neutral-300", label: grupKey };
 
   return (
@@ -126,6 +126,8 @@ export default function IcerikListesi({
   renk: "yellow" | "green";
   icerikler: IcerikKarti[];
 }) {
+  const [acik, setAcik] = useState(false);
+
   if (icerikler.length === 0) return null;
 
   // Kategoriye göre grupla
@@ -144,19 +146,25 @@ export default function IcerikListesi({
   ];
 
   return (
-    <section className="mb-8">
-      <h2 className="mb-3 flex items-center gap-2 text-base font-semibold">
+    <section className="mb-4">
+      <button
+        onClick={() => setAcik((v) => !v)}
+        className="mb-2 flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left transition hover:bg-white/5"
+      >
         <span
-          className={`h-2 w-2 rounded-full ${renk === "yellow" ? "bg-yellow-400" : "bg-green-400"}`}
+          className={`h-2 w-2 shrink-0 rounded-full ${renk === "yellow" ? "bg-yellow-400" : "bg-green-400"}`}
         />
-        {baslik}
+        <span className="flex-1 text-base font-semibold">{baslik}</span>
         <span className="text-sm font-normal text-slate-500">({icerikler.length})</span>
-      </h2>
-      <div className="space-y-2">
-        {siraliGruplar.map(([key, liste]) => (
-          <KategoriGrubu key={key} grupKey={key} icerikler={liste} />
-        ))}
-      </div>
+        <span className={`text-xs text-slate-600 transition-transform ${acik ? "rotate-180" : ""}`}>▼</span>
+      </button>
+      {acik && (
+        <div className="space-y-2">
+          {siraliGruplar.map(([key, liste]) => (
+            <KategoriGrubu key={key} grupKey={key} icerikler={liste} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

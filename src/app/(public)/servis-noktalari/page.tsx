@@ -3,6 +3,7 @@ import path from "path";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ServisNoktasi } from "@/lib/servis-noktalari";
+import { createClient } from "@/lib/supabase/server";
 import ServisListesi from "./ServisListesi";
 
 export const dynamic = "force-dynamic";
@@ -29,10 +30,31 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function ServisNoktalariSayfasi() {
+export default async function ServisNoktalariSayfasi() {
   const noktalar = noktaOku();
-  const aktifSayisi = noktalar.filter((n) => !n.yakinZamanda).length;
-  const ilSayisi = new Set(noktalar.map((n) => n.il)).size;
+
+  // Supabase'den iletişim bilgilerini çek ve JSON ile merge et
+  const supabase = await createClient();
+  const { data: iletisimRows } = await supabase.from("servis_iletisim").select("*");
+
+  const iletisimMap: Record<string, { telefonlar: string[]; email: string; maps_url: string }> = {};
+  for (const row of iletisimRows ?? []) {
+    iletisimMap[row.id] = {
+      telefonlar: row.telefonlar ?? [],
+      email: row.email ?? "",
+      maps_url: row.maps_url ?? "",
+    };
+  }
+
+  const mergedNoktalar: ServisNoktasi[] = noktalar.map((n) => ({
+    ...n,
+    telefonlar: iletisimMap[n.id]?.telefonlar ?? [],
+    email: iletisimMap[n.id]?.email ?? n.email,
+    maps_url: iletisimMap[n.id]?.maps_url ?? "",
+  }));
+
+  const aktifSayisi = mergedNoktalar.filter((n) => !n.yakinZamanda).length;
+  const ilSayisi = new Set(mergedNoktalar.map((n) => n.il)).size;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -103,7 +125,7 @@ export default function ServisNoktalariSayfasi() {
           </div>
         </div>
 
-        <ServisListesi noktalar={noktalar} />
+        <ServisListesi noktalar={mergedNoktalar} />
 
         <div className="mt-14 rounded-2xl border border-white/8 bg-slate-900/40 p-5 text-sm text-slate-500">
           <p className="font-semibold text-slate-400 mb-1">Bilgi notu</p>

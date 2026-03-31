@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Elektrikli Araç Şarj Fiyatları 2025 — Trugo, ZES, Eşarj, Voltrun",
@@ -17,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 interface SarjTarife {
+  id: string;
   tip: "ac" | "dc";
   guc: string;
   fiyat: string;
@@ -33,97 +37,81 @@ interface Operator {
   app: string;
   toggNot?: string;
   tarifeler: SarjTarife[];
-  sonGuncelleme: string;
 }
 
-const OPERATORLER: Operator[] = [
-  {
-    id: "trugo",
-    ad: "Trugo",
-    renk: "#e8002d",
-    logoBg: "bg-red-600/15",
-    url: "https://www.trugo.com.tr",
-    app: "https://www.trugo.com.tr/uygulamayi-indir",
-    toggNot: "Togg'un kendi şarj ağı — en geniş DC ağı",
-    tarifeler: [
-      { tip: "ac", guc: "7–22 kW",  fiyat: "—", birim: "TL/kWh", not: "Fiyat güncellemesi bekleniyor" },
-      { tip: "dc", guc: "50 kW",    fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "150 kW",   fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "300 kW",   fiyat: "—", birim: "TL/kWh" },
-    ],
-    sonGuncelleme: "—",
-  },
-  {
-    id: "zes",
-    ad: "ZES",
-    renk: "#1d6eff",
-    logoBg: "bg-blue-600/15",
-    url: "https://zes.net",
-    app: "https://zes.net/uygulama",
-    tarifeler: [
-      { tip: "ac", guc: "7–22 kW",  fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "50 kW",    fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "120+ kW",  fiyat: "—", birim: "TL/kWh" },
-    ],
-    sonGuncelleme: "—",
-  },
-  {
-    id: "esarj",
-    ad: "Eşarj",
-    renk: "#00c853",
-    logoBg: "bg-green-600/15",
-    url: "https://esarj.com",
-    app: "https://esarj.com/uygulama",
-    tarifeler: [
-      { tip: "ac", guc: "7–22 kW",  fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "50 kW",    fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "150 kW",   fiyat: "—", birim: "TL/kWh" },
-    ],
-    sonGuncelleme: "—",
-  },
-  {
-    id: "beefull",
-    ad: "Beefull",
-    renk: "#ff6600",
-    logoBg: "bg-orange-600/15",
-    url: "https://beefull.com",
-    app: "https://beefull.com",
-    tarifeler: [
-      { tip: "ac", guc: "7–22 kW",  fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "50–150 kW", fiyat: "—", birim: "TL/kWh" },
-    ],
-    sonGuncelleme: "—",
-  },
-  {
-    id: "voltrun",
-    ad: "Voltrun",
-    renk: "#8b5cf6",
-    logoBg: "bg-violet-600/15",
-    url: "https://voltrun.com",
-    app: "https://voltrun.com",
-    tarifeler: [
-      { tip: "ac", guc: "7–22 kW",  fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "50 kW",    fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "150 kW",   fiyat: "—", birim: "TL/kWh" },
-    ],
-    sonGuncelleme: "—",
-  },
-  {
-    id: "sharz",
-    ad: "Sharz",
-    renk: "#06b6d4",
-    logoBg: "bg-cyan-600/15",
-    url: "https://sharz.net",
-    app: "https://sharz.net",
-    tarifeler: [
-      { tip: "ac", guc: "7–22 kW",  fiyat: "—", birim: "TL/kWh" },
-      { tip: "dc", guc: "50–150 kW", fiyat: "—", birim: "TL/kWh" },
-    ],
-    sonGuncelleme: "—",
-  },
+const OPERATORLER_META: Omit<Operator, "tarifeler">[] = [
+  { id: "trugo", ad: "Trugo", renk: "#e8002d", logoBg: "bg-red-600/15", url: "https://www.trugo.com.tr", app: "https://www.trugo.com.tr/uygulamayi-indir", toggNot: "Togg'un kendi şarj ağı — en geniş DC ağı" },
+  { id: "zes", ad: "ZES", renk: "#1d6eff", logoBg: "bg-blue-600/15", url: "https://zes.net", app: "https://zes.net/uygulama" },
+  { id: "esarj", ad: "Eşarj", renk: "#00c853", logoBg: "bg-green-600/15", url: "https://esarj.com", app: "https://esarj.com/uygulama" },
+  { id: "beefull", ad: "Beefull", renk: "#ff6600", logoBg: "bg-orange-600/15", url: "https://beefull.com", app: "https://beefull.com" },
+  { id: "voltrun", ad: "Voltrun", renk: "#8b5cf6", logoBg: "bg-violet-600/15", url: "https://voltrun.com", app: "https://voltrun.com" },
+  { id: "sharz", ad: "Sharz", renk: "#06b6d4", logoBg: "bg-cyan-600/15", url: "https://sharz.net", app: "https://sharz.net" },
 ];
 
-export default function SarjFiyatlariSayfasi() {
+const TARIFELER_META: Omit<SarjTarife, "fiyat" | "not">[] = [
+  { id: "trugo-ac",     tip: "ac", guc: "7–22 kW",  birim: "TL/kWh" },
+  { id: "trugo-dc-50",  tip: "dc", guc: "50 kW",    birim: "TL/kWh" },
+  { id: "trugo-dc-150", tip: "dc", guc: "150 kW",   birim: "TL/kWh" },
+  { id: "trugo-dc-300", tip: "dc", guc: "300 kW",   birim: "TL/kWh" },
+  { id: "zes-ac",       tip: "ac", guc: "7–22 kW",  birim: "TL/kWh" },
+  { id: "zes-dc-50",    tip: "dc", guc: "50 kW",    birim: "TL/kWh" },
+  { id: "zes-dc-120",   tip: "dc", guc: "120+ kW",  birim: "TL/kWh" },
+  { id: "esarj-ac",     tip: "ac", guc: "7–22 kW",  birim: "TL/kWh" },
+  { id: "esarj-dc-50",  tip: "dc", guc: "50 kW",    birim: "TL/kWh" },
+  { id: "esarj-dc-150", tip: "dc", guc: "150 kW",   birim: "TL/kWh" },
+  { id: "beefull-ac",   tip: "ac", guc: "7–22 kW",  birim: "TL/kWh" },
+  { id: "beefull-dc",   tip: "dc", guc: "50–150 kW", birim: "TL/kWh" },
+  { id: "voltrun-ac",   tip: "ac", guc: "7–22 kW",  birim: "TL/kWh" },
+  { id: "voltrun-dc-50", tip: "dc", guc: "50 kW",   birim: "TL/kWh" },
+  { id: "voltrun-dc-150", tip: "dc", guc: "150 kW", birim: "TL/kWh" },
+  { id: "sharz-ac",     tip: "ac", guc: "7–22 kW",  birim: "TL/kWh" },
+  { id: "sharz-dc",     tip: "dc", guc: "50–150 kW", birim: "TL/kWh" },
+];
+
+// Tarife id'sinden operator_id'yi çıkar
+function operatorIdden(tarifeId: string): string {
+  if (tarifeId.startsWith("trugo")) return "trugo";
+  if (tarifeId.startsWith("zes")) return "zes";
+  if (tarifeId.startsWith("esarj")) return "esarj";
+  if (tarifeId.startsWith("beefull")) return "beefull";
+  if (tarifeId.startsWith("voltrun")) return "voltrun";
+  if (tarifeId.startsWith("sharz")) return "sharz";
+  return tarifeId.split("-")[0];
+}
+
+export default async function SarjFiyatlariSayfasi() {
+  // Supabase'den fiyatları çek
+  const supabase = await createClient();
+  const { data: fiyatRows } = await supabase.from("sarj_fiyatlari").select("*");
+
+  const fiyatMap: Record<string, { fiyat: string; not: string; son_guncelleme: string }> = {};
+  for (const row of fiyatRows ?? []) {
+    fiyatMap[row.id] = {
+      fiyat: row.fiyat ?? "—",
+      not: row.not ?? "",
+      son_guncelleme: row.son_guncelleme ?? "—",
+    };
+  }
+
+  // Operatör listesini oluştur
+  const operatorler: Operator[] = OPERATORLER_META.map((meta) => ({
+    ...meta,
+    tarifeler: TARIFELER_META
+      .filter((t) => operatorIdden(t.id) === meta.id)
+      .map((t) => ({
+        ...t,
+        fiyat: fiyatMap[t.id]?.fiyat ?? "—",
+        not: fiyatMap[t.id]?.not || undefined,
+      })),
+  }));
+
+  // Son güncellemeler — en son güncellenen tarih
+  const sonGuncelleme = fiyatRows
+    ?.map((r) => r.son_guncelleme)
+    .filter(Boolean)
+    .sort()
+    .at(-1) ?? "—";
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto max-w-4xl px-4 py-10">
@@ -142,6 +130,9 @@ export default function SarjFiyatlariSayfasi() {
         <p className="mt-3 mb-2 text-slate-400">
           Türkiye'deki başlıca şarj ağlarının AC ve DC fiyat tarifeleri.
         </p>
+        {sonGuncelleme !== "—" && (
+          <p className="mb-2 text-xs text-slate-600">Son güncelleme: {sonGuncelleme}</p>
+        )}
 
         {/* Güncelleme uyarısı */}
         <div className="mb-8 flex items-start gap-3 rounded-2xl border border-yellow-500/20 bg-yellow-500/8 px-4 py-3.5">
@@ -178,7 +169,7 @@ export default function SarjFiyatlariSayfasi() {
 
         {/* Operatör kartları */}
         <div className="space-y-4">
-          {OPERATORLER.map((op) => (
+          {operatorler.map((op) => (
             <div
               key={op.id}
               className="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden"
@@ -209,8 +200,8 @@ export default function SarjFiyatlariSayfasi() {
 
               {/* Tarifeler */}
               <div className="divide-y divide-white/5">
-                {op.tarifeler.map((t, i) => (
-                  <div key={i} className="flex items-center gap-3 px-5 py-3">
+                {op.tarifeler.map((t) => (
+                  <div key={t.id} className="flex items-center gap-3 px-5 py-3">
                     <span
                       className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
                         t.tip === "dc"
@@ -232,11 +223,8 @@ export default function SarjFiyatlariSayfasi() {
                 ))}
               </div>
 
-              {/* Son güncelleme + uygulama linki */}
-              <div className="flex items-center justify-between border-t border-white/8 px-5 py-2.5">
-                <span className="text-[11px] text-slate-700">
-                  Son güncelleme: {op.sonGuncelleme}
-                </span>
+              {/* Uygulama linki */}
+              <div className="flex items-center justify-end border-t border-white/8 px-5 py-2.5">
                 <a
                   href={op.app}
                   target="_blank"

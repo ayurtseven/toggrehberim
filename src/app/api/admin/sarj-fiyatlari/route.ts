@@ -7,16 +7,14 @@ async function adminKontrol() {
   return { yetkili: !!user, supabase };
 }
 
-/** GET /api/admin/servis — tüm iletişim kayıtlarını döner */
+/** GET /api/admin/sarj-fiyatlari — tüm fiyat kayıtlarını döner */
 export async function GET() {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("servis_iletisim")
-    .select("*");
+  const { data } = await supabase.from("sarj_fiyatlari").select("*");
   return NextResponse.json(data ?? []);
 }
 
-/** PATCH /api/admin/servis — bir servis noktasının iletişim bilgilerini günceller */
+/** PATCH /api/admin/sarj-fiyatlari — tek tarife satırını günceller */
 export async function PATCH(req: NextRequest) {
   const { yetkili, supabase } = await adminKontrol();
   if (!yetkili) {
@@ -25,21 +23,21 @@ export async function PATCH(req: NextRequest) {
 
   const body = await req.json() as {
     id: string;
-    telefonlar?: string[];
-    email?: string;
-    maps_url?: string;
+    fiyat: string;
+    not?: string;
+    son_guncelleme?: string;
   };
   if (!body.id) {
     return NextResponse.json({ error: "id gerekli" }, { status: 400 });
   }
 
   const { data, error } = await supabase
-    .from("servis_iletisim")
+    .from("sarj_fiyatlari")
     .upsert({
       id: body.id,
-      telefonlar: body.telefonlar ?? [],
-      email: body.email ?? "",
-      maps_url: body.maps_url ?? "",
+      fiyat: body.fiyat ?? "—",
+      not: body.not ?? "",
+      son_guncelleme: body.son_guncelleme ?? new Date().toLocaleDateString("tr-TR"),
     })
     .select()
     .single();
