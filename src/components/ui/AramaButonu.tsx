@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Fuse from "fuse.js";
 
 export interface AramaItem {
-  tur: "rehber" | "haber";
+  tur: "rehber" | "haber" | "ikaz";
   baslik: string;
   ozet: string;
   kategori: string;
@@ -208,10 +208,12 @@ export default function AramaButonu() {
                           className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
                             item.tur === "haber"
                               ? "bg-blue-500/15 text-blue-400"
+                              : item.tur === "ikaz"
+                              ? "bg-red-500/15 text-red-400"
                               : "bg-white/10 text-slate-400"
                           }`}
                         >
-                          {item.tur === "haber" ? "haber" : item.kategori}
+                          {item.tur === "haber" ? "haber" : item.tur === "ikaz" ? "ikaz" : item.kategori}
                         </span>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-white">{item.baslik}</p>

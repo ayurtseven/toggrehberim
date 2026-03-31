@@ -69,6 +69,7 @@ function tumIcerikleriOku() {
 const NAV_LINKLER = [
   { href: "/admin/tarama", label: "Tarama", ikon: "🔍", renk: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
   { href: "/admin/ikazlar", label: "İkazlar", ikon: "⚠️", renk: "text-orange-400 bg-orange-500/10 border-orange-500/20" },
+  { href: "/admin/servis", label: "Servisler", ikon: "🔧", renk: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
   { href: "/admin/istasyonlar", label: "İstasyonlar", ikon: "⚡", renk: "text-[var(--togg-red)] bg-[var(--togg-red)]/10 border-[var(--togg-red)]/20" },
   { href: "/admin/deneyimler", label: "Deneyimler", ikon: "💬", renk: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
   { href: "/admin/analytics", label: "Analytics", ikon: "📊", renk: "text-blue-400 bg-blue-500/10 border-blue-500/20" },

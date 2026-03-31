@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getTumRehberler } from "@/lib/content/rehber";
 import { getTumHaberler } from "@/lib/content/haberler";
+import { TUM_IKAZ_SEMBOLLERI } from "@/lib/ikaz-sembolleri";
 
 export const revalidate = 3600;
 
@@ -24,5 +25,15 @@ export function GET() {
     href: `/haberler/${h.slug}`,
   }));
 
-  return NextResponse.json([...rehberler, ...haberler]);
+  const ikazlar = TUM_IKAZ_SEMBOLLERI.map((ik) => ({
+    tur: "ikaz" as const,
+    baslik: ik.ad,
+    ozet: ik.anlami,
+    kategori: "ikaz",
+    model: ik.model,
+    etiketler: ik.anahtar_kelimeler ?? [],
+    href: `/ikaz/${ik.id}`,
+  }));
+
+  return NextResponse.json([...rehberler, ...haberler, ...ikazlar]);
 }

@@ -1,11 +1,24 @@
+import fs from "fs";
+import path from "path";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SERVIS_NOKTALARI, SERVIS_ILLERI } from "@/lib/servis-noktalari";
+import type { ServisNoktasi } from "@/lib/servis-noktalari";
 import ServisListesi from "./ServisListesi";
+
+export const dynamic = "force-dynamic";
+
+function noktaOku(): ServisNoktasi[] {
+  try {
+    const dosya = path.join(/*turbopackIgnore: true*/ process.cwd(), "data", "servis-noktalari.json");
+    return JSON.parse(fs.readFileSync(dosya, "utf-8")) as ServisNoktasi[];
+  } catch {
+    return [];
+  }
+}
 
 export const metadata: Metadata = {
   title: "Togg Servis Noktaları — Türkiye Geneli Adres ve İletişim",
-  description: `Türkiye genelinde ${SERVIS_NOKTALARI.length} Togg yetkili servis noktası. İl, adres, telefon ve harita yönlendirmesi.`,
+  description: "Türkiye genelinde Togg yetkili servis noktaları. İl, adres, telefon ve harita yönlendirmesi.",
   keywords: [
     "togg servis noktaları",
     "togg yetkili servis",
@@ -17,8 +30,9 @@ export const metadata: Metadata = {
 };
 
 export default function ServisNoktalariSayfasi() {
-  const aktifSayisi = SERVIS_NOKTALARI.filter((n) => !n.yakinZamanda).length;
-  const ilSayisi = SERVIS_ILLERI.length;
+  const noktalar = noktaOku();
+  const aktifSayisi = noktalar.filter((n) => !n.yakinZamanda).length;
+  const ilSayisi = new Set(noktalar.map((n) => n.il)).size;
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -31,7 +45,6 @@ export default function ServisNoktalariSayfasi() {
           <span className="text-slate-200">Servis Noktaları</span>
         </nav>
 
-        {/* Başlık */}
         <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
           Yetkili Servis
         </div>
@@ -90,27 +103,19 @@ export default function ServisNoktalariSayfasi() {
           </div>
         </div>
 
-        {/* Filtrelenebilir liste */}
-        <ServisListesi />
+        <ServisListesi noktalar={noktalar} />
 
-        {/* Alt not */}
         <div className="mt-14 rounded-2xl border border-white/8 bg-slate-900/40 p-5 text-sm text-slate-500">
           <p className="font-semibold text-slate-400 mb-1">Bilgi notu</p>
           <p>
             Servis bilgileri{" "}
-            <a
-              href="https://www.togg.com.tr/service-points"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-400 underline underline-offset-2 hover:text-white transition-colors"
-            >
+            <a href="https://www.togg.com.tr/service-points" target="_blank" rel="noopener noreferrer"
+              className="text-slate-400 underline underline-offset-2 hover:text-white transition-colors">
               togg.com.tr
             </a>{" "}
-            adresinden alınmıştır. Çalışma saatleri için ilgili servisi arayın. Telefon numaraları
-            doğrulandıkça güncellenecektir.
+            adresinden alınmıştır. Telefon numaraları doğrulandıkça güncellenmektedir.
           </p>
         </div>
-
       </div>
     </div>
   );

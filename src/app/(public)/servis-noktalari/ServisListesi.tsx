@@ -1,26 +1,24 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import {
-  SERVIS_NOKTALARI,
-  SERVIS_ILLERI,
-  googleMapsUrl,
-} from "@/lib/servis-noktalari";
+import type { ServisNoktasi } from "@/lib/servis-noktalari";
+import { googleMapsUrl } from "@/lib/servis-noktalari";
 
-export default function ServisListesi() {
+export default function ServisListesi({ noktalar }: { noktalar: ServisNoktasi[] }) {
   const [seciliIl, setSeciliIl] = useState<string | null>(null);
 
-  const filtrelenmis = useMemo(
-    () =>
-      seciliIl
-        ? SERVIS_NOKTALARI.filter((n) => n.il === seciliIl)
-        : SERVIS_NOKTALARI,
-    [seciliIl]
+  const iller = useMemo(
+    () => [...new Set(noktalar.map((n) => n.il))].sort((a, b) => a.localeCompare(b, "tr")),
+    [noktalar]
   );
 
-  // il bazlı grupla
+  const filtrelenmis = useMemo(
+    () => (seciliIl ? noktalar.filter((n) => n.il === seciliIl) : noktalar),
+    [noktalar, seciliIl]
+  );
+
   const gruplar = useMemo(() => {
-    const map = new Map<string, typeof SERVIS_NOKTALARI>();
+    const map = new Map<string, ServisNoktasi[]>();
     for (const n of filtrelenmis) {
       if (!map.has(n.il)) map.set(n.il, []);
       map.get(n.il)!.push(n);
@@ -41,10 +39,10 @@ export default function ServisListesi() {
           }`}
         >
           Tümü
-          <span className="ml-1.5 text-xs opacity-60">({SERVIS_NOKTALARI.length})</span>
+          <span className="ml-1.5 text-xs opacity-60">({noktalar.length})</span>
         </button>
-        {SERVIS_ILLERI.map((il) => {
-          const count = SERVIS_NOKTALARI.filter((n) => n.il === il).length;
+        {iller.map((il) => {
+          const count = noktalar.filter((n) => n.il === il).length;
           return (
             <button
               key={il}
@@ -56,9 +54,7 @@ export default function ServisListesi() {
               }`}
             >
               {il}
-              {count > 1 && (
-                <span className="ml-1.5 text-xs opacity-60">({count})</span>
-              )}
+              {count > 1 && <span className="ml-1.5 text-xs opacity-60">({count})</span>}
             </button>
           );
         })}
@@ -66,16 +62,16 @@ export default function ServisListesi() {
 
       {/* Gruplar */}
       <div className="space-y-10">
-        {gruplar.map(([il, noktalar]) => (
+        {gruplar.map(([il, liste]) => (
           <section key={il} id={il.toLowerCase().replace(/\s/g, "-")}>
             <h2 className="mb-4 flex items-center gap-3 text-lg font-bold">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--togg-red)]/15 text-xs font-bold text-[var(--togg-red)]">
-                {noktalar.length}
+                {liste.length}
               </span>
               {il}
             </h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {noktalar.map((nokta) => (
+              {liste.map((nokta) => (
                 <div
                   key={nokta.id}
                   className={`relative flex flex-col rounded-2xl border bg-slate-900 p-5 transition-all ${
@@ -84,22 +80,14 @@ export default function ServisListesi() {
                       : "border-white/10 hover:border-white/20"
                   }`}
                 >
-                  {/* Yakında badge */}
                   {nokta.yakinZamanda && (
                     <span className="absolute right-4 top-4 rounded-full bg-yellow-500/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-yellow-400">
                       Yakında
                     </span>
                   )}
-
-                  {/* İlçe başlık */}
                   <p className="mb-1 text-base font-bold text-white">{nokta.ilce}</p>
+                  <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-400">{nokta.adres}</p>
 
-                  {/* Adres */}
-                  <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-400">
-                    {nokta.adres}
-                  </p>
-
-                  {/* Telefon */}
                   {nokta.telefon ? (
                     <a
                       href={`tel:${nokta.telefon.replace(/\s/g, "")}`}
@@ -119,7 +107,6 @@ export default function ServisListesi() {
                     </p>
                   )}
 
-                  {/* Konuma Git butonu */}
                   {!nokta.yakinZamanda && (
                     <a
                       href={googleMapsUrl(nokta.koordinat.lat, nokta.koordinat.lon)}
