@@ -23,9 +23,10 @@ export async function PATCH(req: NextRequest) {
 
   const body = await req.json() as {
     id: string;
-    fiyat: string;
+    fiyat?: string;
     guc?: string;
     not?: string;
+    gizli?: boolean;
     son_guncelleme?: string;
   };
   if (!body.id) {
@@ -34,29 +35,30 @@ export async function PATCH(req: NextRequest) {
 
   const sonGuncelleme = body.son_guncelleme ?? new Date().toLocaleDateString("tr-TR");
 
-  // guc kolonu varsa dahil et, yoksa (42703) kolonsuz dene
+  // gizli toggle ise sadece o alanı güncelle
+  const upsertData: Record<string, unknown> = { id: body.id };
+  if (body.gizli !== undefined) {
+    upsertData.gizli = body.gizli;
+  } else {
+    upsertData.fiyat = body.fiyat ?? "—";
+    upsertData.guc = body.guc ?? "";
+    upsertData.aciklama = body.not ?? "";
+    upsertData.son_guncelleme = sonGuncelleme;
+  }
+
   let { data, error } = await supabase
     .from("sarj_fiyatlari")
-    .upsert({
-      id: body.id,
-      fiyat: body.fiyat ?? "—",
-      guc: body.guc ?? "",
-      aciklama: body.not ?? "",
-      son_guncelleme: sonGuncelleme,
-    })
+    .upsert(upsertData)
     .select()
     .single();
 
   if (error?.code === "42703") {
-    // guc kolonu henüz eklenmemiş — kolonsuz kaydet
+    // guc/gizli kolonu henüz eklenmemiş — temel alanlarla kaydet
+    delete upsertData.guc;
+    delete upsertData.gizli;
     ({ data, error } = await supabase
       .from("sarj_fiyatlari")
-      .upsert({
-        id: body.id,
-        fiyat: body.fiyat ?? "—",
-        aciklama: body.not ?? "",
-        son_guncelleme: sonGuncelleme,
-      })
+      .upsert(upsertData)
       .select()
       .single());
   }

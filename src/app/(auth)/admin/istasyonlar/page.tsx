@@ -39,13 +39,14 @@ export default async function SarjFiyatSayfasi() {
   const supabase = await createClient();
   const { data: rows } = await supabase.from("sarj_fiyatlari").select("*");
 
-  const fiyatMap: Record<string, { fiyat: string; guc: string; not: string; son_guncelleme: string }> = {};
+  const fiyatMap: Record<string, { fiyat: string; guc: string; not: string; son_guncelleme: string; gizli: boolean }> = {};
   for (const row of rows ?? []) {
     fiyatMap[row.id] = {
       fiyat: row.fiyat ?? "—",
       guc: row.guc ?? "",
       not: row.aciklama ?? "",
       son_guncelleme: row.son_guncelleme ?? "—",
+      gizli: row.gizli ?? false,
     };
   }
 

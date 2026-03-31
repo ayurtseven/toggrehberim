@@ -18,18 +18,23 @@ function TarifeSatiri({
   guc,
   not,
   sonGuncelleme,
+  gizli: baslangicGizli,
   onKaydet,
+  onGizliToggle,
 }: {
   satir: SarjTarifeRow;
   fiyat: string;
   guc: string;
   not: string;
   sonGuncelleme: string;
+  gizli: boolean;
   onKaydet: (id: string, fiyat: string, guc: string, not: string) => Promise<void>;
+  onGizliToggle: (id: string, gizli: boolean) => Promise<void>;
 }) {
   const [yeniFiyat, setYeniFiyat] = useState(fiyat === "—" ? "" : fiyat);
   const [yeniGuc, setYeniGuc] = useState(guc || satir.guc);
   const [yeniNot, setYeniNot] = useState(not);
+  const [gizli, setGizli] = useState(baslangicGizli);
   const [durum, setDurum] = useState<"idle" | "saving" | "ok" | "err">("idle");
 
   const degisti =
@@ -49,16 +54,45 @@ function TarifeSatiri({
     }
   }
 
+  async function toggleGizli() {
+    setDurum("saving");
+    try {
+      await onGizliToggle(satir.id, !gizli);
+      setGizli(!gizli);
+      setDurum("idle");
+    } catch {
+      setDurum("err");
+      setTimeout(() => setDurum("idle"), 2000);
+    }
+  }
+
+  if (gizli) {
+    return (
+      <div className="flex items-center gap-3 border-b border-white/5 py-2.5 last:border-0 opacity-40">
+        <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+          satir.tip === "dc" ? "bg-[var(--togg-red)]/15 text-[var(--togg-red)]" : "bg-blue-500/15 text-blue-400"
+        }`}>
+          {satir.tip.toUpperCase()}
+        </span>
+        <span className="flex-1 text-sm text-slate-600 line-through">{yeniGuc}</span>
+        <span className="text-xs text-slate-700">Gizli</span>
+        <button
+          onClick={toggleGizli}
+          disabled={durum === "saving"}
+          className="shrink-0 rounded-lg border border-white/10 px-2.5 py-1 text-[11px] text-slate-500 hover:text-slate-300 hover:border-white/25 transition disabled:opacity-50"
+        >
+          {durum === "saving" ? "..." : "Geri Al"}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-3 border-b border-white/5 py-3 last:border-0">
       {/* Tip badge */}
-      <span
-        className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-          satir.tip === "dc"
-            ? "bg-[var(--togg-red)]/15 text-[var(--togg-red)]"
-            : "bg-blue-500/15 text-blue-400"
-        }`}
-      >
+      <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+        satir.tip === "dc" ? "bg-[var(--togg-red)]/15 text-[var(--togg-red)]" : "bg-blue-500/15 text-blue-400"
+      }`}>
         {satir.tip.toUpperCase()}
       </span>
 
@@ -109,6 +143,17 @@ function TarifeSatiri({
       )}
       {durum === "ok" && <span className="shrink-0 text-[11px] text-emerald-400">✓</span>}
       {durum === "err" && <span className="shrink-0 text-[11px] text-red-400">Hata</span>}
+
+      {/* Gizle butonu */}
+      {!degisti && durum === "idle" && (
+        <button
+          onClick={toggleGizli}
+          className="shrink-0 rounded-lg border border-white/8 px-2.5 py-1 text-[11px] text-slate-600 hover:border-red-500/30 hover:text-red-400 transition"
+          title="Bu satırı gizle"
+        >
+          ×
+        </button>
+      )}
     </div>
   );
 }
@@ -118,7 +163,7 @@ export default function SarjFiyatEditor({
   fiyatMap,
 }: {
   satirlar: SarjTarifeRow[];
-  fiyatMap: Record<string, { fiyat: string; guc: string; not: string; son_guncelleme: string }>;
+  fiyatMap: Record<string, { fiyat: string; guc: string; not: string; son_guncelleme: string; gizli: boolean }>;
 }) {
   const oplar = [...new Set(satirlar.map((s) => s.operator_id))];
 
@@ -127,6 +172,18 @@ export default function SarjFiyatEditor({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, fiyat, guc, not }),
+    });
+    if (!res.ok) {
+      const hata = await res.json().catch(() => ({}));
+      throw new Error(hata.error ?? "Güncelleme başarısız");
+    }
+  }
+
+  async function gizliToggle(id: string, gizli: boolean) {
+    const res = await fetch("/api/admin/sarj-fiyatlari", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, gizli }),
     });
     if (!res.ok) {
       const hata = await res.json().catch(() => ({}));
@@ -150,13 +207,13 @@ export default function SarjFiyatEditor({
         const ad = opSatirlar[0]?.operatorAd ?? opId;
         return (
           <div key={opId} className="rounded-xl border border-white/10 bg-slate-900 overflow-hidden">
-            <div className={`flex items-center gap-2 border-b border-white/8 px-4 py-3`}>
+            <div className="flex items-center gap-2 border-b border-white/8 px-4 py-3">
               <span className={`font-bold ${renk}`}>{ad}</span>
             </div>
 
             <div className="px-4">
               {opSatirlar.map((satir) => {
-                const kayit = fiyatMap[satir.id] ?? { fiyat: "—", guc: "", not: "", son_guncelleme: "—" };
+                const kayit = fiyatMap[satir.id] ?? { fiyat: "—", guc: "", not: "", son_guncelleme: "—", gizli: false };
                 return (
                   <TarifeSatiri
                     key={satir.id}
@@ -165,7 +222,9 @@ export default function SarjFiyatEditor({
                     guc={kayit.guc}
                     not={kayit.not}
                     sonGuncelleme={kayit.son_guncelleme}
+                    gizli={kayit.gizli}
                     onKaydet={kaydet}
+                    onGizliToggle={gizliToggle}
                   />
                 );
               })}
