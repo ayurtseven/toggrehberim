@@ -232,6 +232,22 @@ function IkazEditFormu({
 
 // ─── Detay Kartı ─────────────────────────────────────────────────────────────
 
+// /ikaz/[id] sayfasıyla aynı dark-tema renk haritaları
+const RENK_DARK_KART: Record<IkazSembolu["renk"], { border: string; bg: string; badge: string; text: string }> = {
+  kirmizi: { border: "border-red-500/30",    bg: "bg-red-500/8",     badge: "bg-red-500/15 text-red-400",       text: "text-red-400"    },
+  sari:    { border: "border-yellow-500/30", bg: "bg-yellow-500/8",  badge: "bg-yellow-500/15 text-yellow-400", text: "text-yellow-400" },
+  mavi:    { border: "border-blue-500/30",   bg: "bg-blue-500/8",    badge: "bg-blue-500/15 text-blue-400",     text: "text-blue-400"   },
+  yesil:   { border: "border-emerald-500/30",bg: "bg-emerald-500/8", badge: "bg-emerald-500/15 text-emerald-400",text: "text-emerald-400"},
+  beyaz:   { border: "border-white/20",      bg: "bg-white/5",       badge: "bg-white/10 text-slate-300",       text: "text-white"      },
+};
+
+const ACILIYET_DARK_KART: Record<IkazSembolu["aciliyet"], { cls: string; label: string }> = {
+  hemen_dur:    { cls: "bg-red-600 text-white",              label: "🚨 Hemen Dur!" },
+  yakin_servis: { cls: "bg-orange-500 text-white",           label: "⚠️ Yakın Servise Git" },
+  dikkat:       { cls: "bg-yellow-500/20 text-yellow-400",   label: "⚡ Dikkat Et" },
+  bilgi:        { cls: "bg-blue-500/15 text-blue-400",       label: "ℹ️ Bilgi" },
+};
+
 function IkazDetayKarti({
   sembol,
   guven,
@@ -270,119 +286,112 @@ function IkazDetayKarti({
   const kitapcik_aciklama = isDbSembol
     ? (sembol as IkazSembolu).kitapcik_aciklama
     : undefined;
-
   const gorsel = isDbSembol
     ? (sembol as IkazSembolu).gorsel
     : (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).sembol_id
       ? TUM_IKAZ_SEMBOLLERI.find((s) => s.id === (sembol as NonNullable<IkazTanimaYaniti["sonuc"]>).sembol_id)?.gorsel
       : undefined;
 
-  const renkSinif = RENK_SINIF[renk] ?? RENK_SINIF["sari"];
-  const aciliyetEtiket = ACILIYET_ETIKETLER[aciliyet] ?? "Dikkat";
-  const aciliyetRenk = ACILIYET_RENK[aciliyet] ?? ACILIYET_RENK["dikkat"];
+  const renkD = RENK_DARK_KART[renk] ?? RENK_DARK_KART["sari"];
+  const aciliyetD = ACILIYET_DARK_KART[aciliyet] ?? ACILIYET_DARK_KART["dikkat"];
 
   return (
-    <div className={`rounded-2xl border-2 p-6 ${renkSinif.bg} ${renkSinif.border}`}>
-      {/* Sembol görseli */}
-      {gorsel && (
-        <div className="mb-5 flex justify-center">
-          <div className="flex h-24 w-24 items-center justify-center rounded-2xl border border-neutral-700 bg-neutral-950 p-3">
-            <img src={`/ikaz/${gorsel}`} alt={ad} className="h-full w-full object-contain" />
+    <div className="space-y-4 text-white">
+      {/* Başlık kartı — /ikaz/[id] ile aynı */}
+      <div className={`rounded-2xl border p-6 ${renkD.border} ${renkD.bg}`}>
+        {gorsel && (
+          <div className="mb-5 flex justify-center">
+            <div className="flex h-24 w-24 items-center justify-center rounded-2xl border border-white/10 bg-slate-950 p-3">
+              <img src={`/ikaz/${gorsel}`} alt={ad} className="h-full w-full object-contain" />
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Başlık */}
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <RenkBadge renk={renk} />
-          <h2 className={`mt-1 text-xl font-bold ${renkSinif.text}`}>{ad}</h2>
-        </div>
-        <div className="flex flex-col items-end gap-1.5">
-          <span className={`rounded-lg px-3 py-1 text-xs font-bold ${aciliyetRenk}`}>
-            {aciliyetEtiket}
+        )}
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className={`rounded-full px-3 py-1 text-xs font-bold ${aciliyetD.cls}`}>
+            {aciliyetD.label}
+          </span>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${renkD.badge}`}>
+            {renk.charAt(0).toUpperCase() + renk.slice(1)} İkaz
           </span>
           {guven && (
-            <span className="text-xs text-neutral-400">
-              Güven:{" "}
-              {guven === "yuksek" ? "Yüksek ✓" : guven === "orta" ? "Orta" : "Düşük"}
+            <span className="rounded-full bg-white/8 px-3 py-1 text-xs text-slate-400">
+              Güven: {guven === "yuksek" ? "Yüksek ✓" : guven === "orta" ? "Orta" : "Düşük"}
             </span>
           )}
-          {/* Düzenle butonu — sadece DB sembolleri için */}
           {isDbSembol && onDuzenle && (
             <button
               onClick={() => onDuzenle((sembol as IkazSembolu).id)}
-              className="mt-1 rounded-lg border border-neutral-200 px-2.5 py-1 text-xs font-medium text-neutral-500 hover:border-blue-300 hover:text-blue-600 dark:border-neutral-700 dark:hover:border-blue-700 dark:hover:text-blue-400"
+              className="ml-auto rounded-lg border border-white/15 px-2.5 py-1 text-xs font-medium text-slate-400 hover:border-white/30 hover:text-white transition-colors"
             >
               ✏️ Düzenle
             </button>
           )}
         </div>
-      </div>
-
-      {/* Kılavuz açıklaması + detaylı anlam */}
-      <div className="mb-5 space-y-2">
+        <h2 className={`text-2xl font-bold ${renkD.text}`}>{ad}</h2>
         {kitapcik_aciklama && (
-          <p className="text-sm font-semibold italic text-neutral-500 dark:text-neutral-400">
-            📖 {kitapcik_aciklama}
-          </p>
+          <p className="mt-2 text-sm italic text-slate-500">📖 {kitapcik_aciklama}</p>
         )}
-        <p className="leading-relaxed text-neutral-700 dark:text-neutral-300">{anlami}</p>
+        <p className="mt-3 text-slate-300">{anlami}</p>
       </div>
 
-      {/* Nedenler + Yapılacaklar */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-neutral-600 dark:text-neutral-400">
-            <span>❓</span> Neden yanar?
-          </h3>
-          <ul className="space-y-1.5">
+      {/* Ne yapmalıyım */}
+      <div className="rounded-2xl border border-white/10 bg-slate-900 p-5">
+        <h3 className="mb-4 text-lg font-bold text-white">Ne Yapmalıyım?</h3>
+        <ol className="space-y-3">
+          {yapilacaklar.map((adim, i) => (
+            <li key={i} className="flex gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--togg-red)]/15 text-xs font-bold text-[var(--togg-red)]">
+                {i + 1}
+              </span>
+              <span className="text-sm leading-relaxed text-slate-200">{adim}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* Olası nedenler */}
+      {nedenler.length > 0 && (
+        <div className="rounded-2xl border border-white/10 bg-slate-900 p-5">
+          <h3 className="mb-4 text-lg font-bold text-white">Olası Nedenler</h3>
+          <ul className="space-y-2">
             {nedenler.map((neden, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-                <span className="mt-0.5 shrink-0 text-neutral-400">•</span>
+              <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-600" />
                 {neden}
               </li>
             ))}
           </ul>
         </div>
-        <div>
-          <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-neutral-600 dark:text-neutral-400">
-            <span>✅</span> Ne yapmalısın?
-          </h3>
-          <ul className="space-y-1.5">
-            {yapilacaklar.map((adim, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm">
-                <span className={`mt-0.5 shrink-0 font-bold ${renkSinif.text}`}>{i + 1}.</span>
-                <span className="text-neutral-700 dark:text-neutral-300">{adim}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Servis gerekli */}
-      {servis_gerekli && (
-        <div className="mt-4 flex items-center gap-2 rounded-xl border border-orange-200 bg-orange-50 px-4 py-2.5 dark:border-orange-800 dark:bg-orange-950/20">
-          <span>🔧</span>
-          <span className="text-sm font-semibold text-orange-700 dark:text-orange-300">
-            Yetkili Togg servisi ziyareti gereklidir.
-          </span>
-        </div>
       )}
 
       {/* Not */}
       {not && (
-        <div className="mt-3 flex items-start gap-2 rounded-xl border border-neutral-200 bg-white/60 px-4 py-2.5 dark:border-neutral-700 dark:bg-neutral-900/60">
-          <span className="mt-0.5 shrink-0">💡</span>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">{not}</p>
+        <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-4">
+          <p className="text-sm text-yellow-300">
+            <span className="font-bold">Not: </span>{not}
+          </p>
         </div>
       )}
 
-      {/* Acil arama */}
+      {/* Servis gerekli */}
+      {servis_gerekli && (
+        <div className="rounded-2xl border border-orange-500/25 bg-orange-500/8 p-4">
+          <p className="text-sm font-semibold text-orange-400">
+            🔧 Bu ikaz için yetkili Togg servisi gereklidir.
+          </p>
+        </div>
+      )}
+
+      {/* Acil bant */}
       {aciliyet === "hemen_dur" && (
-        <div className="mt-4 rounded-xl bg-red-600 px-4 py-3 text-white">
-          <p className="text-sm font-bold">Togg Care Yol Yardım: 0 850 222 86 44</p>
-          <p className="text-xs text-red-200">7/24 — ücretsiz yol yardımı</p>
+        <div className="flex items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3.5">
+          <span className="text-lg">🚨</span>
+          <div>
+            <p className="text-sm font-bold text-red-400">Acil durumda Togg Care&apos;i ara</p>
+            <a href="tel:08502228644" className="text-sm font-bold text-white underline">
+              0 850 222 86 44
+            </a>
+          </div>
         </div>
       )}
 
