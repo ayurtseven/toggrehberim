@@ -59,7 +59,7 @@ function RenkBadge({ renk }: { renk: IkazSembolu["renk"] }) {
     beyaz: "bg-neutral-300",
   };
   return (
-    <span className="flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+    <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
       <span className={`inline-block h-2.5 w-2.5 rounded-full ${RENK_DOT[renk]}`} />
       {RENK_AD[renk]}
     </span>
@@ -88,12 +88,12 @@ function ListEditor({
               next[i] = e.target.value;
               onChange(next);
             }}
-            className="flex-1 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="flex-1 rounded-lg border border-white/10 bg-slate-800 px-3 py-1.5 text-sm text-white placeholder:text-slate-600"
             placeholder={placeholder}
           />
           <button
             onClick={() => onChange(items.filter((_, j) => j !== i))}
-            className="shrink-0 rounded-lg border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/20"
+            className="shrink-0 rounded-lg border border-red-500/25 px-2 py-1 text-xs text-red-500 hover:bg-red-950/20"
           >
             ✕
           </button>
@@ -101,7 +101,7 @@ function ListEditor({
       ))}
       <button
         onClick={() => onChange([...items, ""])}
-        className="w-full rounded-lg border border-dashed border-neutral-300 py-1.5 text-xs text-neutral-400 hover:border-neutral-400 hover:text-neutral-500 dark:border-neutral-700"
+        className="w-full rounded-lg border border-dashed border-white/15 py-1.5 text-xs text-slate-500 hover:border-white/25 hover:text-slate-400"
       >
         + Ekle
       </button>
@@ -143,37 +143,37 @@ function IkazEditFormu({
   };
 
   return (
-    <div className="space-y-4 rounded-2xl border-2 border-blue-200 bg-blue-50 p-5 dark:border-blue-800 dark:bg-blue-950/20">
+    <div className="space-y-4 rounded-2xl border-2 border-blue-500/20 bg-blue-950/20 p-5">
       <div className="flex items-center justify-between">
-        <h3 className="font-bold text-blue-700 dark:text-blue-300">✏️ Sembol Düzenle</h3>
+        <h3 className="font-bold text-blue-300">✏️ Sembol Düzenle</h3>
         <span className="text-xs text-blue-500">{sembol.id}</span>
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <label className="mb-1 block text-xs font-semibold text-slate-400">
           Kılavuz Açıklaması
         </label>
         <input
           value={veri.kitapcik_aciklama}
           onChange={(e) => setVeri({ ...veri, kitapcik_aciklama: e.target.value })}
-          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <label className="mb-1 block text-xs font-semibold text-slate-400">
           Anlam (detaylı)
         </label>
         <textarea
           value={veri.anlami}
           onChange={(e) => setVeri({ ...veri, anlami: e.target.value })}
           rows={3}
-          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <label className="mb-1 block text-xs font-semibold text-slate-400">
           Neden Yanar?
         </label>
         <ListEditor
@@ -184,7 +184,7 @@ function IkazEditFormu({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <label className="mb-1 block text-xs font-semibold text-slate-400">
           Ne Yapmalısın?
         </label>
         <ListEditor
@@ -195,20 +195,20 @@ function IkazEditFormu({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <label className="mb-1 block text-xs font-semibold text-slate-400">
           Not (isteğe bağlı)
         </label>
         <textarea
           value={veri.not_metni}
           onChange={(e) => setVeri({ ...veri, not_metni: e.target.value })}
           rows={2}
-          className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600"
           placeholder="Özel not..."
         />
       </div>
 
       {hata && (
-        <p className="text-sm font-medium text-red-600 dark:text-red-400">⚠️ {hata}</p>
+        <p className="text-sm font-medium text-red-300">⚠️ {hata}</p>
       )}
 
       <div className="flex gap-2">
@@ -221,7 +221,7 @@ function IkazEditFormu({
         </button>
         <button
           onClick={onIptal}
-          className="rounded-xl border border-neutral-200 px-4 py-2.5 text-sm font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+          className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium hover:bg-slate-800"
         >
           İptal
         </button>
@@ -592,13 +592,13 @@ export default function IkazArama() {
   return (
     <div>
       {/* Sekme seçici */}
-      <div className="mb-6 flex rounded-2xl border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="mb-6 flex rounded-2xl border border-white/10 bg-slate-900 p-1">
         <button
           onClick={() => setAktifSekme("foto")}
           className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
             aktifSekme === "foto"
-              ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-white"
-              : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+              ? "bg-slate-700 text-white shadow-sm"
+              : "text-slate-500 hover:text-slate-300"
           }`}
         >
           📸 Fotoğrafla Tanı
@@ -607,8 +607,8 @@ export default function IkazArama() {
           onClick={() => setAktifSekme("liste")}
           className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
             aktifSekme === "liste"
-              ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-white"
-              : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+              ? "bg-slate-700 text-white shadow-sm"
+              : "text-slate-500 hover:text-slate-300"
           }`}
         >
           📋 Sembol Listesi
@@ -620,12 +620,12 @@ export default function IkazArama() {
         <div>
           {!onizleme ? (
             <div className="mb-6">
-              <div className="rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-8 text-center dark:border-neutral-700 dark:bg-neutral-900/50">
+              <div className="rounded-2xl border-2 border-dashed border-white/15 bg-slate-900/50 p-8 text-center">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--togg-red)] text-3xl text-white">
                   🔍
                 </div>
                 <h2 className="mb-2 text-lg font-bold">İkaz Lambasını Tanı</h2>
-                <p className="mb-6 text-sm text-neutral-500">
+                <p className="mb-6 text-sm text-slate-500">
                   Dashboard'da gördüğün uyarı sembolünün fotoğrafını çek veya galerinden seç.
                   AI anında tanımlayıp açıklayacak.
                 </p>
@@ -639,7 +639,7 @@ export default function IkazArama() {
                   </button>
                   <button
                     onClick={() => dosyaInputRef.current?.click()}
-                    className="flex items-center justify-center gap-2 rounded-xl border-2 border-neutral-300 bg-white px-6 py-3.5 text-sm font-bold transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900"
+                    className="flex items-center justify-center gap-2 rounded-xl border-2 border-white/15 bg-slate-900 px-6 py-3.5 text-sm font-bold transition-colors hover:bg-slate-800"
                   >
                     🖼️ Galeriden Seç
                   </button>
@@ -661,7 +661,7 @@ export default function IkazArama() {
                   onChange={handleDosyaDegisim}
                 />
 
-                <p className="mt-4 text-xs text-neutral-400">
+                <p className="mt-4 text-xs text-slate-500">
                   JPG, PNG veya WebP · Maks. 5 MB · Veriler sunucudan geçer, saklanmaz
                 </p>
               </div>
@@ -674,17 +674,17 @@ export default function IkazArama() {
                 ].map((t) => (
                   <div
                     key={t.ipucu}
-                    className="rounded-xl border border-neutral-200 p-3 text-center dark:border-neutral-800"
+                    className="rounded-xl border border-white/10 p-3 text-center"
                   >
                     <div className="text-xl">{t.ikon}</div>
-                    <p className="mt-1 text-xs text-neutral-500">{t.ipucu}</p>
+                    <p className="mt-1 text-xs text-slate-500">{t.ipucu}</p>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
             <div>
-              <div className="mb-4 flex items-center gap-4 rounded-xl border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="mb-4 flex items-center gap-4 rounded-xl border border-white/10 bg-slate-900 p-3">
                 <img
                   src={onizleme}
                   alt="Yüklenen görsel"
@@ -694,32 +694,32 @@ export default function IkazArama() {
                   <p className="text-sm font-semibold">
                     {yukleniyor ? "AI analiz ediyor..." : sonuc ? "Tanımlama tamamlandı" : "Beklenmedik durum"}
                   </p>
-                  <p className="text-xs text-neutral-400">
+                  <p className="text-xs text-slate-500">
                     {yukleniyor ? "Bu birkaç saniye sürebilir" : "Claude Haiku ile analiz edildi"}
                   </p>
                 </div>
                 <button
                   onClick={handleSifirla}
-                  className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+                  className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium hover:bg-slate-800"
                 >
                   Yeni Ara
                 </button>
               </div>
 
               {yukleniyor && (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-50 py-12 dark:border-neutral-800 dark:bg-neutral-900/50">
-                  <div className="mb-4 h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-[var(--togg-red)]" />
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-900/50 py-12">
+                  <div className="mb-4 h-10 w-10 animate-spin rounded-full border-4 border-white/10 border-t-[var(--togg-red)]" />
                   <p className="text-sm font-medium">AI sembolü analiz ediyor...</p>
-                  <p className="mt-1 text-xs text-neutral-400">Togg el kitabı bilgileriyle karşılaştırıyor</p>
+                  <p className="mt-1 text-xs text-slate-500">Togg el kitabı bilgileriyle karşılaştırıyor</p>
                 </div>
               )}
 
               {hata && !yukleniyor && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-800 dark:bg-red-950/20">
-                  <p className="font-semibold text-red-700 dark:text-red-300">⚠️ {hata}</p>
+                <div className="rounded-2xl border border-red-500/25 bg-red-950/20 p-5">
+                  <p className="font-semibold text-red-300">⚠️ {hata}</p>
                   <button
                     onClick={handleSifirla}
-                    className="mt-3 text-sm text-red-600 underline dark:text-red-400"
+                    className="mt-3 text-sm text-red-300 underline"
                   >
                     Tekrar dene
                   </button>
@@ -729,17 +729,17 @@ export default function IkazArama() {
               {sonuc && !yukleniyor && (
                 <>
                   {!sonuc.tanindi ? (
-                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 dark:border-amber-800 dark:bg-amber-950/20">
-                      <p className="font-semibold text-amber-700 dark:text-amber-300">
+                    <div className="rounded-2xl border border-yellow-500/20 bg-amber-950/20 p-5">
+                      <p className="font-semibold text-amber-300">
                         🤔 Sembol tanımlanamadı
                       </p>
-                      <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
+                      <p className="mt-1 text-sm text-amber-300">
                         Görsel bir dashboard uyarı sembolü içermiyor olabilir veya görüntü kalitesi yetersiz.
                         Daha yakın ve net bir fotoğraf dene ya da listeden ara.
                       </p>
                       <button
                         onClick={() => setAktifSekme("liste")}
-                        className="mt-3 text-sm font-semibold text-amber-700 underline dark:text-amber-300"
+                        className="mt-3 text-sm font-semibold text-amber-300 underline"
                       >
                         Listeden ara →
                       </button>
@@ -768,13 +768,13 @@ export default function IkazArama() {
                 setEditSembolId(null);
               }}
               placeholder="Sembol adı, rengi veya anahtar kelime ile ara..."
-              className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm outline-none ring-0 transition focus:border-[var(--togg-red)] focus:ring-2 focus:ring-[var(--togg-red)]/20 dark:border-neutral-700 dark:bg-neutral-900"
+              className="w-full rounded-xl border border-white/10 bg-slate-800 px-4 py-3 text-sm text-white placeholder:text-slate-600 outline-none ring-0 transition focus:border-[var(--togg-red)] focus:ring-2 focus:ring-[var(--togg-red)]/20"
             />
           </div>
 
           {/* Sembol listesi */}
           {aramaFiltrelenmis.length === 0 ? (
-            <p className="py-8 text-center text-sm text-neutral-400">
+            <p className="py-8 text-center text-sm text-slate-500">
               Eşleşen sembol bulunamadı
             </p>
           ) : aramaMetni.trim() ? (
@@ -873,31 +873,31 @@ const RENK_GRUPLARI: {
   {
     renk: "kirmizi",
     baslik: "Kırmızı İkazlar — Acil",
-    baslikSinif: "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/20 dark:text-red-300",
+    baslikSinif: "border-red-500/20 bg-red-500/8 text-red-300",
     dot: "bg-red-500",
   },
   {
     renk: "sari",
     baslik: "Sarı Uyarılar — Dikkat",
-    baslikSinif: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/20 dark:text-amber-300",
+    baslikSinif: "border-yellow-500/20 bg-yellow-500/8 text-yellow-300",
     dot: "bg-amber-400",
   },
   {
     renk: "yesil",
     baslik: "Yeşil — Bilgi",
-    baslikSinif: "border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/20 dark:text-green-300",
+    baslikSinif: "border-green-500/20 bg-green-500/8 text-green-300",
     dot: "bg-green-500",
   },
   {
     renk: "mavi",
     baslik: "Mavi — Bilgi / Aktif Sistem",
-    baslikSinif: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/20 dark:text-blue-300",
+    baslikSinif: "border-blue-500/20 bg-blue-500/8 text-blue-300",
     dot: "bg-blue-500",
   },
   {
     renk: "beyaz",
     baslik: "Beyaz — Bekleme / Standby",
-    baslikSinif: "border-neutral-200 bg-neutral-50 text-neutral-700 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300",
+    baslikSinif: "border-white/10 bg-white/5 text-slate-300",
     dot: "bg-neutral-400",
   },
 ];
@@ -929,12 +929,12 @@ function SembolSatiri({
       className={`w-full rounded-xl border p-3 text-left transition-all hover:shadow-sm ${
         isSecili
           ? `${renkSinif.bg} ${renkSinif.border} ring-2 ring-offset-1`
-          : "border-neutral-200 bg-white hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900"
+          : "border-white/8 bg-slate-900 hover:border-white/15 hover:bg-slate-800/80"
       }`}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950 dark:border-neutral-600">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-950">
             {sembol.gorsel ? (
               <img src={`/ikaz/${sembol.gorsel}`} alt={sembol.ad} className="h-9 w-9 object-contain" />
             ) : IkonBileseni ? (
@@ -945,7 +945,7 @@ function SembolSatiri({
           </div>
           <div>
             <p className="text-sm font-semibold leading-tight">{sembol.ad}</p>
-            <p className="mt-0.5 line-clamp-1 text-xs text-neutral-500">{sembol.kitapcik_aciklama}</p>
+            <p className="mt-0.5 line-clamp-1 text-xs text-slate-500">{sembol.kitapcik_aciklama}</p>
           </div>
         </div>
         <span className={`shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold ${aciliyetRenk}`}>
