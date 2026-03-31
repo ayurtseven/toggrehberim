@@ -15,27 +15,32 @@ const OP_RENK: Record<string, string> = {
 function TarifeSatiri({
   satir,
   fiyat,
+  guc,
   not,
   sonGuncelleme,
   onKaydet,
 }: {
   satir: SarjTarifeRow;
   fiyat: string;
+  guc: string;
   not: string;
   sonGuncelleme: string;
-  onKaydet: (id: string, fiyat: string, not: string) => Promise<void>;
+  onKaydet: (id: string, fiyat: string, guc: string, not: string) => Promise<void>;
 }) {
   const [yeniFiyat, setYeniFiyat] = useState(fiyat === "—" ? "" : fiyat);
+  const [yeniGuc, setYeniGuc] = useState(guc || satir.guc);
   const [yeniNot, setYeniNot] = useState(not);
   const [durum, setDurum] = useState<"idle" | "saving" | "ok" | "err">("idle");
 
   const degisti =
-    (yeniFiyat || "—") !== fiyat || yeniNot !== not;
+    (yeniFiyat || "—") !== fiyat ||
+    yeniGuc !== (guc || satir.guc) ||
+    yeniNot !== not;
 
   async function kaydet() {
     setDurum("saving");
     try {
-      await onKaydet(satir.id, yeniFiyat.trim() || "—", yeniNot.trim());
+      await onKaydet(satir.id, yeniFiyat.trim() || "—", yeniGuc.trim(), yeniNot.trim());
       setDurum("ok");
       setTimeout(() => setDurum("idle"), 2000);
     } catch {
@@ -57,8 +62,14 @@ function TarifeSatiri({
         {satir.tip.toUpperCase()}
       </span>
 
-      {/* Güç */}
-      <span className="w-20 shrink-0 text-sm text-slate-400">{satir.guc}</span>
+      {/* Güç input */}
+      <input
+        type="text"
+        value={yeniGuc}
+        onChange={(e) => setYeniGuc(e.target.value)}
+        placeholder={satir.guc}
+        className="w-28 shrink-0 rounded-lg border border-white/10 bg-slate-800 px-2.5 py-1.5 text-sm text-slate-300 placeholder:text-slate-600 focus:border-white/30 focus:outline-none"
+      />
 
       {/* Fiyat input */}
       <div className="flex items-center gap-1.5">
@@ -107,16 +118,15 @@ export default function SarjFiyatEditor({
   fiyatMap,
 }: {
   satirlar: SarjTarifeRow[];
-  fiyatMap: Record<string, { fiyat: string; not: string; son_guncelleme: string }>;
+  fiyatMap: Record<string, { fiyat: string; guc: string; not: string; son_guncelleme: string }>;
 }) {
-  // Operatörlere göre grupla
   const oplar = [...new Set(satirlar.map((s) => s.operator_id))];
 
-  async function kaydet(id: string, fiyat: string, not: string) {
+  async function kaydet(id: string, fiyat: string, guc: string, not: string) {
     const res = await fetch("/api/admin/sarj-fiyatlari", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, fiyat, not }),
+      body: JSON.stringify({ id, fiyat, guc, not }),
     });
     if (!res.ok) {
       const hata = await res.json().catch(() => ({}));
@@ -126,26 +136,33 @@ export default function SarjFiyatEditor({
 
   return (
     <div className="space-y-4">
+      {/* Sütun başlıkları */}
+      <div className="flex flex-wrap items-center gap-3 px-4 pb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
+        <span className="w-10 shrink-0">Tip</span>
+        <span className="w-28 shrink-0">kW / Güç</span>
+        <span className="w-24">Fiyat</span>
+        <span className="flex-1">Not</span>
+      </div>
+
       {oplar.map((opId) => {
         const opSatirlar = satirlar.filter((s) => s.operator_id === opId);
         const renk = OP_RENK[opId] ?? "text-slate-400";
         const ad = opSatirlar[0]?.operatorAd ?? opId;
         return (
           <div key={opId} className="rounded-xl border border-white/10 bg-slate-900 overflow-hidden">
-            {/* Operatör başlığı */}
             <div className={`flex items-center gap-2 border-b border-white/8 px-4 py-3`}>
               <span className={`font-bold ${renk}`}>{ad}</span>
             </div>
 
-            {/* Tarifeler */}
             <div className="px-4">
               {opSatirlar.map((satir) => {
-                const kayit = fiyatMap[satir.id] ?? { fiyat: "—", not: "", son_guncelleme: "—" };
+                const kayit = fiyatMap[satir.id] ?? { fiyat: "—", guc: "", not: "", son_guncelleme: "—" };
                 return (
                   <TarifeSatiri
                     key={satir.id}
                     satir={satir}
                     fiyat={kayit.fiyat}
+                    guc={kayit.guc}
                     not={kayit.not}
                     sonGuncelleme={kayit.son_guncelleme}
                     onKaydet={kaydet}

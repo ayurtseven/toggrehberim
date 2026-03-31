@@ -24,6 +24,7 @@ export async function PATCH(req: NextRequest) {
   const body = await req.json() as {
     id: string;
     fiyat: string;
+    guc?: string;
     not?: string;
     son_guncelleme?: string;
   };
@@ -36,6 +37,7 @@ export async function PATCH(req: NextRequest) {
     .upsert({
       id: body.id,
       fiyat: body.fiyat ?? "—",
+      guc: body.guc ?? "",
       aciklama: body.not ?? "",
       son_guncelleme: body.son_guncelleme ?? new Date().toLocaleDateString("tr-TR"),
     })
