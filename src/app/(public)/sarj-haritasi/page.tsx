@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import SarjFiyatListesi from "./SarjFiyatListesi";
 
 export const dynamic = "force-dynamic";
 
@@ -171,77 +172,8 @@ export default async function SarjFiyatlariSayfasi() {
           </div>
         </div>
 
-        {/* Operatör kartları */}
-        <div className="space-y-4">
-          {operatorler.map((op) => (
-            <div
-              key={op.id}
-              className="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden"
-            >
-              {/* Operatör başlığı */}
-              <div className="flex items-center gap-4 border-b border-white/8 px-5 py-4">
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${op.logoBg} text-base font-black`}
-                  style={{ color: op.renk }}
-                >
-                  {op.ad[0]}
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold text-white">{op.ad}</p>
-                  {op.toggNot && (
-                    <p className="text-xs text-slate-500">{op.toggNot}</p>
-                  )}
-                </div>
-                <a
-                  href={op.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-400 transition hover:text-white hover:border-white/25"
-                >
-                  Web →
-                </a>
-              </div>
-
-              {/* Tarifeler */}
-              <div className="divide-y divide-white/5">
-                {op.tarifeler.map((t) => (
-                  <div key={t.id} className="flex items-center gap-3 px-5 py-3">
-                    <span
-                      className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-                        t.tip === "dc"
-                          ? "bg-[var(--togg-red)]/15 text-[var(--togg-red)]"
-                          : "bg-blue-500/15 text-blue-400"
-                      }`}
-                    >
-                      {t.tip.toUpperCase()}
-                    </span>
-                    <span className="flex-1 text-sm text-slate-400">{t.guc}</span>
-                    <span className={`text-sm font-bold ${t.fiyat === "—" ? "text-slate-600" : "text-white"}`}>
-                      {t.fiyat}
-                    </span>
-                    <span className="text-xs text-slate-600">{t.birim}</span>
-                    {t.not && (
-                      <span className="text-xs text-yellow-500/70">{t.not}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Uygulama linki */}
-              <div className="flex items-center justify-end border-t border-white/8 px-5 py-2.5">
-                <a
-                  href={op.app}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-semibold transition-colors hover:opacity-80"
-                  style={{ color: op.renk }}
-                >
-                  Uygulamayı İndir →
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Filtre + Kart/Liste görünümü */}
+        <SarjFiyatListesi operatorler={operatorler} />
 
         {/* Hesaplama notu */}
         <div className="mt-10 rounded-2xl border border-white/8 bg-slate-900/40 p-5">
