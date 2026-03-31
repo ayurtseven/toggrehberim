@@ -32,17 +32,34 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "id gerekli" }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  const sonGuncelleme = body.son_guncelleme ?? new Date().toLocaleDateString("tr-TR");
+
+  // guc kolonu varsa dahil et, yoksa (42703) kolonsuz dene
+  let { data, error } = await supabase
     .from("sarj_fiyatlari")
     .upsert({
       id: body.id,
       fiyat: body.fiyat ?? "—",
       guc: body.guc ?? "",
       aciklama: body.not ?? "",
-      son_guncelleme: body.son_guncelleme ?? new Date().toLocaleDateString("tr-TR"),
+      son_guncelleme: sonGuncelleme,
     })
     .select()
     .single();
+
+  if (error?.code === "42703") {
+    // guc kolonu henüz eklenmemiş — kolonsuz kaydet
+    ({ data, error } = await supabase
+      .from("sarj_fiyatlari")
+      .upsert({
+        id: body.id,
+        fiyat: body.fiyat ?? "—",
+        aciklama: body.not ?? "",
+        son_guncelleme: sonGuncelleme,
+      })
+      .select()
+      .single());
+  }
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
