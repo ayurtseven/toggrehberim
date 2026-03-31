@@ -55,6 +55,7 @@ export default async function RehberDetay({
   const katInfo = KATEGORI_RENK[kategori] ?? KATEGORI_RENK.sss;
 
   return (
+    <div className="min-h-screen bg-slate-950 text-white">
     <div className="mx-auto max-w-3xl px-4 py-10">
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500">
@@ -158,6 +159,7 @@ export default async function RehberDetay({
           Tüm rehberler
         </Link>
       </div>
+    </div>
     </div>
   );
 }
