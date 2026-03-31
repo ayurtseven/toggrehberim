@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/ikaz-arama", label: "İkaz Tanı" },
   { href: "/sarj-haritasi", label: "Şarj" },
   { href: "/sarj-hesaplayici", label: "Menzil Hesapla" },
+  { href: "/servis-noktalari", label: "Servis" },
   { href: "/sozluk", label: "Sözlük" },
 ];
 
