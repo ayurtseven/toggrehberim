@@ -28,15 +28,19 @@ export async function POST(req: NextRequest) {
         offline_mode: boolean;
       };
       // Silently ignore if table doesn't exist — analytics is non-critical
-      await supabase.from("triage_events").insert({
-        event,
-        input_type,
-        alert_category: alert_category ?? null,
-        confidence,
-        triage_status: triage_status ?? null,
-        service_directed,
-        offline_mode,
-      }).then(() => {}).catch(() => {});
+      try {
+        await supabase.from("triage_events").insert({
+          event,
+          input_type,
+          alert_category: alert_category ?? null,
+          confidence,
+          triage_status: triage_status ?? null,
+          service_directed,
+          offline_mode,
+        });
+      } catch {
+        // Table may not exist yet — non-critical
+      }
       return NextResponse.json({ ok: true });
     }
 
