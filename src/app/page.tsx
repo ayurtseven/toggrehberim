@@ -57,7 +57,7 @@ export default function AnaSayfa() {
     <div className="bg-slate-950 text-white">
 
       {/* ── HERO ── */}
-      <YolArkadasiHero />
+      <YolArkadasiHero rehberler={getTumRehberler()} />
 
       {/* ── HIZLI ERİŞİM ── */}
       <section className="mx-auto max-w-5xl px-4 py-10">

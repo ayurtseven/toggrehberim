@@ -2,16 +2,17 @@
 
 /**
  * TOGGREHBERI — Yol Arkadaşı Hero Section
- * Dinamik saat tabanlı selamlama + iki büyük CTA butonu.
+ * Dinamik saat tabanlı selamlama + Ekranı Okut CTA + inline Fuse.js arama.
  * Tamamen client-side; çevrimdışı (PWA) sorunsuz çalışır.
- * Negatif kelime YOK: "sorun / arıza / hata / ikaz" kullanılmaz.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import type { RehberMeta } from "@/lib/content/rehber";
+import { searchRehberler } from "@/lib/search/fuse";
 
-// ─── Saat tabanlı selamlama (Date objesi — offline / sıfır gecikme) ───────────
+// ─── Saat tabanlı selamlama ──────────────────────────────────────────────────
 
 function selamlamaMetni(): { ana: string; alt: string } {
   const s = new Date().getHours();
@@ -21,75 +22,39 @@ function selamlamaMetni(): { ana: string; alt: string } {
   return                        { ana: "İyi Geceler.",   alt: "Gece sürüşünüzde asistanınız yanınızda." };
 }
 
-// ─── Sesli Sor — Web Speech API ───────────────────────────────────────────────
-
-// Web Speech API global tipler (lib.dom.d.ts'de eksik tarayıcılar için)
-interface ISpeechRecognitionEvent {
-  results: { [i: number]: { [j: number]: { transcript: string } } };
-}
-interface ISpeechRecognition {
-  lang: string;
-  interimResults: boolean;
-  maxAlternatives: number;
-  onresult: (e: ISpeechRecognitionEvent) => void;
-  onerror: () => void;
-  onend: () => void;
-  start: () => void;
-}
-type SpeechRecognitionCtor = new () => ISpeechRecognition;
-
-type SesliDurum = "bosta" | "dinliyor" | "desteklenmiyor";
-
-function useSesliArama() {
-  const [durum, setDurum] = useState<SesliDurum>("bosta");
-  const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const API = ((window as typeof window & { SpeechRecognition?: SpeechRecognitionCtor; webkitSpeechRecognition?: SpeechRecognitionCtor })
-      .SpeechRecognition ?? (window as typeof window & { webkitSpeechRecognition?: SpeechRecognitionCtor }).webkitSpeechRecognition);
-    if (!API) setDurum("desteklenmiyor");
-  }, []);
-
-  function sesliBaslat() {
-    if (durum === "desteklenmiyor") {
-      router.push("/arama");
-      return;
-    }
-    const API = ((window as typeof window & { SpeechRecognition?: SpeechRecognitionCtor; webkitSpeechRecognition?: SpeechRecognitionCtor })
-      .SpeechRecognition ?? (window as typeof window & { webkitSpeechRecognition?: SpeechRecognitionCtor }).webkitSpeechRecognition);
-    if (!API) return;
-
-    const tanici = new API();
-    tanici.lang = "tr-TR";
-    tanici.interimResults = false;
-    tanici.maxAlternatives = 1;
-
-    setDurum("dinliyor");
-
-    tanici.onresult = (e: ISpeechRecognitionEvent) => {
-      const metin = e.results[0][0].transcript;
-      setDurum("bosta");
-      router.push(`/arama?q=${encodeURIComponent(metin)}`);
-    };
-
-    tanici.onerror = () => setDurum("bosta");
-    tanici.onend = () => setDurum((d) => d === "dinliyor" ? "bosta" : d);
-
-    tanici.start();
-  }
-
-  return { durum, sesliBaslat };
-}
-
 // ─── Bileşen ─────────────────────────────────────────────────────────────────
 
-export default function YolArkadasiHero() {
-  // SSR uyumu: selamlama sadece client'ta hesaplanır
+export default function YolArkadasiHero({ rehberler }: { rehberler: RehberMeta[] }) {
   const [metin, setMetin] = useState<{ ana: string; alt: string } | null>(null);
   useEffect(() => { setMetin(selamlamaMetni()); }, []);
 
-  const { durum, sesliBaslat } = useSesliArama();
+  const [sorgu, setSorgu] = useState("");
+  const [acik, setAcik] = useState(false);
+  const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const sonuclar = useMemo(
+    () => (sorgu.trim() ? searchRehberler(rehberler, sorgu).slice(0, 5) : []),
+    [rehberler, sorgu]
+  );
+
+  // Dışarı tıklanınca dropdown kapat
+  useEffect(() => {
+    function kapat(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setAcik(false);
+      }
+    }
+    document.addEventListener("mousedown", kapat);
+    return () => document.removeEventListener("mousedown", kapat);
+  }, []);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!sorgu.trim()) return;
+    setAcik(false);
+    router.push(`/arama?q=${encodeURIComponent(sorgu.trim())}`);
+  }
 
   return (
     <section
@@ -124,7 +89,7 @@ export default function YolArkadasiHero() {
       <p className="relative mb-10 max-w-sm text-base leading-relaxed text-slate-400 md:text-lg">
         Togg asistanınız hazır.{" "}
         <span className="text-white">Ekrandaki mesajı okutun</span> veya{" "}
-        <span className="text-white">bize sorun.</span>
+        <span className="text-white">rehberlerde arayın.</span>
       </p>
 
       {/* ── CTA Butonları ── */}
@@ -148,52 +113,75 @@ export default function YolArkadasiHero() {
           </div>
         </Link>
 
-        {/* Sesli sor — ikincil eylem */}
-        <button
-          onClick={sesliBaslat}
-          disabled={durum === "dinliyor"}
-          aria-label={durum === "dinliyor" ? "Dinleniyor, konuşun" : "Sesli soru sor"}
-          aria-live="polite"
-          className="group flex w-full items-center justify-center gap-4 rounded-2xl border border-white/12 bg-slate-800/70 px-6 py-6 backdrop-blur-sm transition-all active:scale-[0.98] hover:bg-slate-700/70 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/20 disabled:cursor-default"
-        >
-          <span
-            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
-              durum === "dinliyor" ? "bg-emerald-500/20" : "bg-white/8"
-            }`}
-            aria-hidden
-          >
-            {durum === "dinliyor" ? (
-              <span className="flex gap-0.5">
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    className="w-1 rounded-full bg-emerald-400"
-                    style={{
-                      height: "28px",
-                      animation: `soundbar 0.8s ease-in-out ${i * 0.15}s infinite alternate`,
-                    }}
-                  />
-                ))}
-              </span>
-            ) : (
-              <svg className="h-7 w-7 text-slate-300 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+        {/* Arama kutusu — ikincil eylem */}
+        <div ref={containerRef} className="relative w-full">
+          <form onSubmit={handleSubmit}>
+            <div className="flex items-center gap-3 rounded-2xl border border-white/12 bg-slate-800/70 px-5 py-4 backdrop-blur-sm transition-colors focus-within:border-white/25 focus-within:bg-slate-800">
+              <svg className="h-5 w-5 shrink-0 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-            )}
-          </span>
-          <div className="text-left">
-            <p className="text-xl font-bold text-white">
-              {durum === "dinliyor" ? "Dinliyorum…" : "Sesli Sor"}
-            </p>
-            <p className="text-sm font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
-              {durum === "desteklenmiyor"
-                ? "Arama sayfasına git"
-                : durum === "dinliyor"
-                ? "Sorunuzu söyleyin"
-                : "Mikrofon ile konuşun"}
-            </p>
-          </div>
-        </button>
+              <input
+                type="search"
+                placeholder="Şarj, OTA güncelleme, batarya…"
+                value={sorgu}
+                onChange={(e) => { setSorgu(e.target.value); setAcik(true); }}
+                onFocus={() => { if (sorgu.trim()) setAcik(true); }}
+                className="flex-1 bg-transparent text-base text-white placeholder:text-slate-500 outline-none"
+                aria-label="Rehberlerde ara"
+                autoComplete="off"
+              />
+              {sorgu && (
+                <button
+                  type="button"
+                  onClick={() => { setSorgu(""); setAcik(false); }}
+                  className="shrink-0 text-slate-500 hover:text-slate-300 transition-colors"
+                  aria-label="Aramayı temizle"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </form>
+
+          {/* Live dropdown */}
+          {acik && sorgu.trim() && (
+            <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
+              {sonuclar.length > 0 ? (
+                <>
+                  {sonuclar.map((r) => (
+                    <Link
+                      key={`${r.kategori}/${r.slug}`}
+                      href={`/rehber/${r.kategori}/${r.slug}`}
+                      onClick={() => { setAcik(false); setSorgu(""); }}
+                      className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-slate-800 border-b border-white/5 last:border-0"
+                    >
+                      <svg className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <div className="min-w-0 text-left">
+                        <p className="truncate text-sm font-medium text-white">{r.baslik}</p>
+                        <p className="truncate text-xs capitalize text-slate-500">{r.kategori}</p>
+                      </div>
+                    </Link>
+                  ))}
+                  <Link
+                    href={`/arama?q=${encodeURIComponent(sorgu.trim())}`}
+                    onClick={() => setAcik(false)}
+                    className="flex items-center justify-center gap-1.5 px-4 py-3 text-xs font-semibold text-[var(--togg-red)] hover:bg-slate-800 transition-colors"
+                  >
+                    Tüm sonuçları gör →
+                  </Link>
+                </>
+              ) : (
+                <p className="px-4 py-4 text-center text-sm text-slate-600">
+                  &quot;{sorgu}&quot; için sonuç bulunamadı
+                </p>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Acil hat — kompakt */}
         <p className="pt-2 text-center text-xs text-slate-600">
@@ -203,14 +191,6 @@ export default function YolArkadasiHero() {
           </a>
         </p>
       </div>
-
-      {/* Soundbar animasyonu */}
-      <style>{`
-        @keyframes soundbar {
-          from { transform: scaleY(0.3); opacity: 0.6; }
-          to   { transform: scaleY(1);   opacity: 1;   }
-        }
-      `}</style>
     </section>
   );
 }
