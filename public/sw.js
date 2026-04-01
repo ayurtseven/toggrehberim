@@ -57,6 +57,22 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // /api/ikaz-sembolleri → Stale While Revalidate (offline'da sembol listesi çalışsın)
+  if (url.pathname === "/api/ikaz-sembolleri") {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) =>
+        cache.match(request).then((cached) => {
+          const fresh = fetch(request).then((res) => {
+            if (res.status === 200) cache.put(request, res.clone());
+            return res;
+          });
+          return cached || fresh;
+        })
+      )
+    );
+    return;
+  }
+
   // /api/arama-index → Stale While Revalidate (offline'da arama çalışsın)
   if (url.pathname === "/api/arama-index") {
     event.respondWith(

@@ -12,10 +12,36 @@ function getSupabase() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { tip, ...veri } = body as { tip: "search" | "pageview"; [key: string]: unknown };
 
     const supabase = getSupabase();
     if (!supabase) return NextResponse.json({ ok: true }); // Supabase yoksa sessiz
+
+    // ── Triage analytics (Blueprint Phase 1/2) ───────────────────────────────
+    if ("event" in body && typeof body.event === "string") {
+      const { event, input_type, alert_category, confidence, triage_status, service_directed, offline_mode } = body as {
+        event: string;
+        input_type: string;
+        alert_category?: string;
+        confidence: string;
+        triage_status?: string;
+        service_directed: boolean;
+        offline_mode: boolean;
+      };
+      // Silently ignore if table doesn't exist — analytics is non-critical
+      await supabase.from("triage_events").insert({
+        event,
+        input_type,
+        alert_category: alert_category ?? null,
+        confidence,
+        triage_status: triage_status ?? null,
+        service_directed,
+        offline_mode,
+      }).then(() => {}).catch(() => {});
+      return NextResponse.json({ ok: true });
+    }
+
+    // ── Legacy search/pageview analytics ─────────────────────────────────────
+    const { tip, ...veri } = body as { tip: "search" | "pageview"; [key: string]: unknown };
 
     if (tip === "search") {
       await supabase.from("search_logs").insert({

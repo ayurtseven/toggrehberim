@@ -12,6 +12,13 @@ import {
 } from "@/lib/ikaz-sembolleri";
 import { IKAZ_IKONU } from "@/lib/ikaz-ikonlar";
 import type { IkazTanimaYaniti } from "@/app/api/ikaz-tanima/route";
+import AracDurumu from "./AracDurumu";
+import TriajSonuc from "./TriajSonuc";
+import ManuelTriaj from "./ManuelTriaj";
+import { DEFAULT_VEHICLE_STATE } from "@/lib/triage-types";
+import type { VehicleState, TriageResult } from "@/lib/triage-types";
+import { runRuleEngineById } from "@/lib/rule-engine";
+import { logTriageCompleted, logTriageFallback } from "@/lib/analytics";
 
 // ─── Tipler ─────────────────────────────────────────────────────────────────
 
@@ -412,6 +419,9 @@ export default function IkazArama() {
   const [aramaMetni, setAramaMetni] = useState("");
   const [secilenSembol, setSecilenSembol] = useState<IkazSembolu | null>(null);
   const [editSembolId, setEditSembolId] = useState<string | null>(null);
+  const [vehicleState, setVehicleState] = useState<VehicleState>(DEFAULT_VEHICLE_STATE);
+  const [triage, setTriage] = useState<TriageResult | null>(null);
+  const [manuelTriajAcik, setManuelTriajAcik] = useState(false);
 
   // Override sistemi
   const [semboller, setSemboller] = useState<IkazSembolu[]>(TUM_IKAZ_SEMBOLLERI);
@@ -503,6 +513,7 @@ export default function IkazArama() {
     try {
       const form = new FormData();
       form.append("gorsel", dosya);
+      form.append("vehicleState", JSON.stringify(vehicleState));
 
       const res = await fetch("/api/ikaz-tanima", {
         method: "POST",
@@ -517,12 +528,31 @@ export default function IkazArama() {
       }
 
       setSonuc(veri.sonuc);
+      if (veri.triage) {
+        setTriage(veri.triage);
+        if (veri.triage.manualTriageRequired) {
+          setManuelTriajAcik(true);
+        }
+        // Analytics
+        if (veri.triage.manualTriageRequired) {
+          logTriageFallback("CAMERA", false);
+        } else {
+          logTriageCompleted(
+            "CAMERA",
+            veri.triage.alertId ?? undefined,
+            veri.triage.confidence,
+            veri.triage.status,
+            veri.triage.serviceRequired,
+            false,
+          );
+        }
+      }
     } catch {
       setHata("Ağ hatası. İnternet bağlantınızı kontrol edin.");
     } finally {
       setYukleniyor(false);
     }
-  }, []);
+  }, [vehicleState]);
 
   const handleDosyaDegisim = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -538,6 +568,8 @@ export default function IkazArama() {
     setOnizleme(null);
     setSonuc(null);
     setHata(null);
+    setTriage(null);
+    setManuelTriajAcik(false);
     if (dosyaInputRef.current) dosyaInputRef.current.value = "";
     if (kameraInputRef.current) kameraInputRef.current.value = "";
   };
@@ -620,6 +652,7 @@ export default function IkazArama() {
         <div>
           {!onizleme ? (
             <div className="mb-6">
+              <AracDurumu value={vehicleState} onChange={setVehicleState} />
               <div className="rounded-2xl border-2 border-dashed border-white/15 bg-slate-900/50 p-8 text-center">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--togg-red)] text-3xl text-white">
                   🔍
@@ -748,6 +781,39 @@ export default function IkazArama() {
                     <IkazDetayKarti sembol={sonuc} guven={sonuc.guven} />
                   )}
                 </>
+              )}
+
+              {/* Blueprint triage output */}
+              {triage && !yukleniyor && !manuelTriajAcik && (
+                <div className="mt-4">
+                  <TriajSonuc
+                    triage={triage}
+                    onReset={handleSifirla}
+                    onManualTriage={() => setManuelTriajAcik(true)}
+                  />
+                </div>
+              )}
+
+              {/* Manuel triage pathway */}
+              {manuelTriajAcik && (
+                <div className="mt-4">
+                  <ManuelTriaj
+                    semboller={semboller}
+                    vehicleState={vehicleState}
+                    fallbackMesaj={triage?.summary}
+                    onSembolSec={(sembol) => {
+                      const result = runRuleEngineById(sembol.id, semboller, vehicleState);
+                      if (result) {
+                        setTriage(result);
+                        setManuelTriajAcik(false);
+                        logTriageCompleted("MANUAL", sembol.id, result.confidence, result.status, result.serviceRequired, false);
+                      } else {
+                        setSecilenSembol(sembol);
+                        setManuelTriajAcik(false);
+                      }
+                    }}
+                  />
+                </div>
               )}
             </div>
           )}
