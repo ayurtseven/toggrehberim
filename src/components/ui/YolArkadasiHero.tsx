@@ -2,15 +2,17 @@
 
 /**
  * TOGGREHBERI — Yol Arkadaşı Hero Section
- * Dinamik saat tabanlı selamlama + Ekranı Okut CTA + inline Fuse.js arama.
- * Tamamen client-side; çevrimdışı (PWA) sorunsuz çalışır.
+ * Dinamik saat tabanlı selamlama + Ekranı Okut CTA + inline arama.
+ * Rehber MDX + ikaz sembolleri birlikte aranır.
  */
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { RehberMeta } from "@/lib/content/rehber";
 import { searchRehberler } from "@/lib/search/fuse";
+import { TUM_IKAZ_SEMBOLLERI } from "@/lib/ikaz-sembolleri";
 
 // ─── Saat tabanlı selamlama ──────────────────────────────────────────────────
 
@@ -21,6 +23,19 @@ function selamlamaMetni(): { ana: string; alt: string } {
   if (s >= 18 && s < 24) return { ana: "İyi Akşamlar.",  alt: "Yolculuğunuzda yalnız değilsiniz." };
   return                        { ana: "İyi Geceler.",   alt: "Gece sürüşünüzde asistanınız yanınızda." };
 }
+
+// ─── İkaz Fuse instance (statik veri — bir kez oluşturulur) ─────────────────
+
+const ikazFuse = new Fuse(TUM_IKAZ_SEMBOLLERI, {
+  keys: [
+    { name: "ad",                  weight: 0.5 },
+    { name: "anahtar_kelimeler",   weight: 0.3 },
+    { name: "anlami",              weight: 0.15 },
+    { name: "kitapcik_aciklama",   weight: 0.05 },
+  ],
+  threshold: 0.4,
+  includeScore: true,
+});
 
 // ─── Bileşen ─────────────────────────────────────────────────────────────────
 
@@ -33,10 +48,15 @@ export default function YolArkadasiHero({ rehberler }: { rehberler: RehberMeta[]
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const sonuclar = useMemo(
-    () => (sorgu.trim() ? searchRehberler(rehberler, sorgu).slice(0, 5) : []),
-    [rehberler, sorgu]
-  );
+  const { rehberSonuclar, ikazSonuclar } = useMemo(() => {
+    if (!sorgu.trim()) return { rehberSonuclar: [], ikazSonuclar: [] };
+    return {
+      rehberSonuclar: searchRehberler(rehberler, sorgu).slice(0, 3),
+      ikazSonuclar: ikazFuse.search(sorgu).slice(0, 3).map((r) => r.item),
+    };
+  }, [rehberler, sorgu]);
+
+  const toplamSonuc = rehberSonuclar.length + ikazSonuclar.length;
 
   // Dışarı tıklanınca dropdown kapat
   useEffect(() => {
@@ -89,7 +109,7 @@ export default function YolArkadasiHero({ rehberler }: { rehberler: RehberMeta[]
       <p className="relative mb-10 max-w-sm text-base leading-relaxed text-slate-400 md:text-lg">
         Togg asistanınız hazır.{" "}
         <span className="text-white">Ekrandaki mesajı okutun</span> veya{" "}
-        <span className="text-white">rehberlerde arayın.</span>
+        <span className="text-white">arayın.</span>
       </p>
 
       {/* ── CTA Butonları ── */}
@@ -113,7 +133,7 @@ export default function YolArkadasiHero({ rehberler }: { rehberler: RehberMeta[]
           </div>
         </Link>
 
-        {/* Arama kutusu — ikincil eylem */}
+        {/* Arama kutusu */}
         <div ref={containerRef} className="relative w-full">
           <form onSubmit={handleSubmit}>
             <div className="flex items-center gap-3 rounded-2xl border border-white/12 bg-slate-800/70 px-5 py-4 backdrop-blur-sm transition-colors focus-within:border-white/25 focus-within:bg-slate-800">
@@ -122,12 +142,12 @@ export default function YolArkadasiHero({ rehberler }: { rehberler: RehberMeta[]
               </svg>
               <input
                 type="search"
-                placeholder="Şarj, OTA güncelleme, batarya…"
+                placeholder="Şarj, ABS, OTA güncelleme, park freni…"
                 value={sorgu}
                 onChange={(e) => { setSorgu(e.target.value); setAcik(true); }}
                 onFocus={() => { if (sorgu.trim()) setAcik(true); }}
                 className="flex-1 bg-transparent text-base text-white placeholder:text-slate-500 outline-none"
-                aria-label="Rehberlerde ara"
+                aria-label="Rehberlerde ve uyarı lambalarında ara"
                 autoComplete="off"
               />
               {sorgu && (
@@ -148,24 +168,64 @@ export default function YolArkadasiHero({ rehberler }: { rehberler: RehberMeta[]
           {/* Live dropdown */}
           {acik && sorgu.trim() && (
             <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
-              {sonuclar.length > 0 ? (
+              {toplamSonuc > 0 ? (
                 <>
-                  {sonuclar.map((r) => (
-                    <Link
-                      key={`${r.kategori}/${r.slug}`}
-                      href={`/rehber/${r.kategori}/${r.slug}`}
-                      onClick={() => { setAcik(false); setSorgu(""); }}
-                      className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-slate-800 border-b border-white/5 last:border-0"
-                    >
-                      <svg className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                      <div className="min-w-0 text-left">
-                        <p className="truncate text-sm font-medium text-white">{r.baslik}</p>
-                        <p className="truncate text-xs capitalize text-slate-500">{r.kategori}</p>
-                      </div>
-                    </Link>
-                  ))}
+                  {/* Rehber sonuçları */}
+                  {rehberSonuclar.length > 0 && (
+                    <>
+                      <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-600">
+                        Rehberler
+                      </p>
+                      {rehberSonuclar.map((r) => (
+                        <Link
+                          key={`${r.kategori}/${r.slug}`}
+                          href={`/rehber/${r.kategori}/${r.slug}`}
+                          onClick={() => { setAcik(false); setSorgu(""); }}
+                          className="flex items-start gap-3 px-4 py-2.5 transition-colors hover:bg-slate-800 border-b border-white/5 last:border-0"
+                        >
+                          <svg className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          <div className="min-w-0 text-left">
+                            <p className="truncate text-sm font-medium text-white">{r.baslik}</p>
+                            <p className="truncate text-xs capitalize text-slate-500">{r.kategori}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+
+                  {/* İkaz sembolü sonuçları */}
+                  {ikazSonuclar.length > 0 && (
+                    <>
+                      <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-600">
+                        Uyarı Lambaları
+                      </p>
+                      {ikazSonuclar.map((s) => (
+                        <Link
+                          key={s.id}
+                          href={`/ikaz/${s.id}`}
+                          onClick={() => { setAcik(false); setSorgu(""); }}
+                          className="flex items-start gap-3 px-4 py-2.5 transition-colors hover:bg-slate-800 border-b border-white/5 last:border-0"
+                        >
+                          <span
+                            className={`mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full ${
+                              s.renk === "kirmizi" ? "bg-red-500" :
+                              s.renk === "sari"    ? "bg-amber-400" :
+                              s.renk === "yesil"   ? "bg-green-500" :
+                              s.renk === "mavi"    ? "bg-blue-500"  : "bg-neutral-400"
+                            }`}
+                            aria-hidden
+                          />
+                          <div className="min-w-0 text-left">
+                            <p className="truncate text-sm font-medium text-white">{s.ad}</p>
+                            <p className="truncate text-xs text-slate-500 capitalize">{s.renk} · {s.aciliyet.replace(/_/g, " ")}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </>
+                  )}
+
                   <Link
                     href={`/arama?q=${encodeURIComponent(sorgu.trim())}`}
                     onClick={() => setAcik(false)}
