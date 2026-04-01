@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
+import { AramaBarChart, SayfaBarChart, TriajGuvenDonut } from "./AnalytikGrafik";
 
 function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -31,7 +32,10 @@ interface TriajSatiri {
 
 async function getAnalytics() {
   const supabase = getServiceClient();
-  if (!supabase) return { aramalar: [], sayfalar: [], toplamArama: 0, toplamGoruntulenme: 0, triajlar: [], toplamTriaj: 0, servisYonlendirme: 0 };
+  if (!supabase) return {
+    aramalar: [], sayfalar: [], toplamArama: 0, toplamGoruntulenme: 0,
+    triajlar: [], toplamTriaj: 0, servisYonlendirme: 0, triajHam: [],
+  };
 
   const [aramaRes, sayfaRes, toplamAramaRes, toplamGoruntulenmeRes, triajRes] = await Promise.all([
     supabase.from("top_searches").select("*"),
@@ -41,21 +45,20 @@ async function getAnalytics() {
     supabase.from("triage_events").select("event, confidence, triage_status, alert_category, service_directed"),
   ]);
 
-  // Triage: group by alert_category + count
-  const triajHam = (triajRes.data ?? []) as { event: string; confidence: string; triage_status: string | null; alert_category: string | null; service_directed: boolean }[];
+  const triajHam = (triajRes.data ?? []) as {
+    event: string; confidence: string; triage_status: string | null;
+    alert_category: string | null; service_directed: boolean;
+  }[];
+
+  // group by alert_category
   const triajMap = new Map<string, TriajSatiri>();
   for (const row of triajHam) {
     const key = row.alert_category ?? "(bilinmiyor)";
     const existing = triajMap.get(key);
-    if (existing) {
-      existing.sayisi += 1;
-    } else {
-      triajMap.set(key, { ...row, sayisi: 1 });
-    }
+    if (existing) { existing.sayisi += 1; }
+    else { triajMap.set(key, { ...row, sayisi: 1 }); }
   }
   const triajlar = [...triajMap.values()].sort((a, b) => b.sayisi - a.sayisi).slice(0, 10);
-  const toplamTriaj = triajHam.length;
-  const servisYonlendirme = triajHam.filter((r) => r.service_directed).length;
 
   return {
     aramalar: (aramaRes.data ?? []) as AramaSatiri[],
@@ -63,17 +66,22 @@ async function getAnalytics() {
     toplamArama: aramaRes.error ? 0 : (toplamAramaRes.count ?? 0),
     toplamGoruntulenme: sayfaRes.error ? 0 : (toplamGoruntulenmeRes.count ?? 0),
     triajlar,
-    toplamTriaj,
-    servisYonlendirme,
+    triajHam,
+    toplamTriaj: triajHam.length,
+    servisYonlendirme: triajHam.filter((r) => r.service_directed).length,
   };
 }
 
 export default async function AnalyticsPage() {
-  const { aramalar, sayfalar, toplamArama, toplamGoruntulenme, triajlar, toplamTriaj, servisYonlendirme } = await getAnalytics();
+  const {
+    aramalar, sayfalar, toplamArama, toplamGoruntulenme,
+    triajlar, triajHam, toplamTriaj, servisYonlendirme,
+  } = await getAnalytics();
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-5xl">
+
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -89,7 +97,7 @@ export default async function AnalyticsPage() {
         </div>
 
         {/* Özet kartlar */}
-        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <StatKart baslik="Toplam Arama" deger={toplamArama} renk="text-blue-400" />
           <StatKart baslik="Toplam Görüntülenme" deger={toplamGoruntulenme} renk="text-emerald-400" />
           <StatKart baslik="Tekil Arama Terimi" deger={aramalar.length} renk="text-purple-400" />
@@ -98,47 +106,79 @@ export default async function AnalyticsPage() {
           <StatKart baslik="Servis Yönlendirme" deger={servisYonlendirme} renk="text-red-400" />
         </div>
 
-        {/* Triage Analytics */}
-        {toplamTriaj > 0 && (
-          <section className="mb-8">
-            <h2 className="mb-3 text-base font-semibold text-slate-200">İkaz Tanıma — En Sık Kategoriler</h2>
-            <div className="overflow-hidden rounded-xl border border-white/8">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/8 bg-white/3">
-                    <th className="px-4 py-2.5 text-left font-medium text-slate-500">#</th>
-                    <th className="px-4 py-2.5 text-left font-medium text-slate-500">Kategori</th>
-                    <th className="px-4 py-2.5 text-right font-medium text-slate-500">Güven</th>
-                    <th className="px-4 py-2.5 text-right font-medium text-slate-500">Sayı</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {triajlar.map((t, i) => (
-                    <tr key={i} className="border-b border-white/5 hover:bg-white/3">
-                      <td className="px-4 py-2.5 text-slate-600">{i + 1}</td>
-                      <td className="px-4 py-2.5 font-medium text-white">{t.alert_category ?? "—"}</td>
-                      <td className="px-4 py-2.5 text-right">
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                          t.confidence === "HIGH" ? "bg-emerald-500/15 text-emerald-400" :
-                          t.confidence === "MEDIUM" ? "bg-yellow-500/15 text-yellow-400" :
-                          "bg-slate-700 text-slate-400"
-                        }`}>
-                          {t.confidence}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2.5 text-right text-orange-400">{t.sayisi}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        {/* ── Grafik bölümü ──────────────────────────────────────────────── */}
+        <div className="mb-8 grid gap-6 lg:grid-cols-2">
+
+          {/* Arama bar chart */}
+          <section className="rounded-xl border border-white/8 bg-slate-900 p-5">
+            <h2 className="mb-4 text-sm font-semibold text-slate-300">En Çok Aranan Terimler</h2>
+            {aramalar.length === 0 ? (
+              <Bos mesaj="Henüz arama verisi yok" />
+            ) : (
+              <AramaBarChart data={aramalar} />
+            )}
           </section>
+
+          {/* Sayfa bar chart */}
+          <section className="rounded-xl border border-white/8 bg-slate-900 p-5">
+            <h2 className="mb-4 text-sm font-semibold text-slate-300">En Çok Görüntülenen Sayfalar</h2>
+            {sayfalar.length === 0 ? (
+              <Bos mesaj="Henüz sayfa görüntülenme verisi yok" />
+            ) : (
+              <SayfaBarChart data={sayfalar} />
+            )}
+          </section>
+
+        </div>
+
+        {/* ── Triage ──────────────────────────────────────────────────────── */}
+        {toplamTriaj > 0 && (
+          <div className="mb-8 grid gap-6 lg:grid-cols-3">
+
+            {/* Güven donut */}
+            <section className="rounded-xl border border-white/8 bg-slate-900 p-5">
+              <h2 className="mb-2 text-sm font-semibold text-slate-300">Güven Dağılımı</h2>
+              <TriajGuvenDonut data={triajHam.map((r) => ({ confidence: r.confidence, sayisi: 1 }))} />
+            </section>
+
+            {/* Kategori tablosu */}
+            <section className="lg:col-span-2 rounded-xl border border-white/8 bg-slate-900 p-5">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-slate-300">En Sık Tanınan İkazlar</h2>
+                <span className="text-xs text-slate-600">{toplamTriaj} toplam tanıma</span>
+              </div>
+              <div className="space-y-2">
+                {triajlar.map((t, i) => {
+                  const pct = Math.round((t.sayisi / toplamTriaj) * 100);
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="w-4 shrink-0 text-right text-xs text-slate-600">{i + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="mb-1 flex items-center justify-between gap-2">
+                          <span className="truncate text-xs font-medium text-slate-200">{t.alert_category ?? "—"}</span>
+                          <span className="shrink-0 text-xs text-slate-500">{t.sayisi} ({pct}%)</span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+                          <div
+                            className="h-full rounded-full bg-orange-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          </div>
         )}
 
+        {/* ── Ham tablolar ─────────────────────────────────────────────────── */}
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* En çok aranan terimler */}
+
+          {/* En çok aranan terimler — tam tablo */}
           <section>
-            <h2 className="mb-3 text-base font-semibold text-slate-200">En Çok Aranan Terimler</h2>
+            <h2 className="mb-3 text-sm font-semibold text-slate-400">Arama Detayı</h2>
             {aramalar.length === 0 ? (
               <Bos mesaj="Henüz arama verisi yok" />
             ) : (
@@ -169,9 +209,9 @@ export default async function AnalyticsPage() {
             )}
           </section>
 
-          {/* En çok görüntülenen sayfalar */}
+          {/* En çok görüntülenen sayfalar — tam tablo */}
           <section>
-            <h2 className="mb-3 text-base font-semibold text-slate-200">En Çok Görüntülenen Sayfalar</h2>
+            <h2 className="mb-3 text-sm font-semibold text-slate-400">Sayfa Görüntülenme Detayı</h2>
             {sayfalar.length === 0 ? (
               <Bos mesaj="Henüz sayfa görüntülenme verisi yok" />
             ) : (
@@ -198,6 +238,7 @@ export default async function AnalyticsPage() {
             )}
           </section>
         </div>
+
       </div>
     </div>
   );
