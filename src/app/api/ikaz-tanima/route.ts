@@ -188,7 +188,7 @@ Yanıtın YALNIZCA JSON olsun, başka metin ekleme.`;
             tanindi: aiSonuc.tanindi,
             guven: aiSonuc.guven as "yuksek" | "orta" | "dusuk",
             sembol_id: aiSonuc.sembol_id ?? undefined,
-            ai_aciklama: zenginAciklama as IkazTanimaYaniti["sonuc"]["ai_aciklama"],
+            ai_aciklama: zenginAciklama as NonNullable<IkazTanimaYaniti["sonuc"]>["ai_aciklama"],
           }
         : undefined,
       triage,
