@@ -8,7 +8,6 @@ const navLinks = [
   { href: "/modeller", label: "Modeller" },
   { href: "/ekranim", label: "Ekranımı Oku" },
   { href: "/sarj-haritasi", label: "Şarj" },
-  { href: "/sarj-hesaplayici", label: "Menzil Hesapla" },
   { href: "/servis-noktalari", label: "Servis" },
   { href: "/sozluk", label: "Sözlük" },
 ];
