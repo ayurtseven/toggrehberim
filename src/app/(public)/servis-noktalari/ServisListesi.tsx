@@ -20,6 +20,7 @@ export default function ServisListesi({ noktalar }: { noktalar: ServisNoktasi[] 
   const [seciliIl, setSeciliIl] = useState<string | null>(null);
   const [enYakinId, setEnYakinId] = useState<string | null>(null);
   const [konumDurum, setKonumDurum] = useState<"idle" | "yukleniyor" | "hazir" | "red">("idle");
+  const [illerAcik, setIllerAcik] = useState(false);
   const yakinKartRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -99,36 +100,63 @@ export default function ServisListesi({ noktalar }: { noktalar: ServisNoktasi[] 
         </div>
       )}
 
-      {/* İl filtre çipleri */}
-      <div className="mb-8 flex flex-wrap gap-2">
+      {/* İl filtre — collapsible */}
+      <div className="mb-8">
         <button
-          onClick={() => setSeciliIl(null)}
-          className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition-all ${
-            seciliIl === null
-              ? "border-[var(--togg-red)] bg-[var(--togg-red)]/15 text-[var(--togg-red)]"
-              : "border-white/15 bg-white/5 text-slate-400 hover:border-white/30 hover:text-white"
-          }`}
+          onClick={() => setIllerAcik((p) => !p)}
+          className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:text-white"
         >
-          Tümü
-          <span className="ml-1.5 text-xs opacity-60">({noktalar.length})</span>
+          <span className="flex items-center gap-2">
+            🗺️
+            {seciliIl ? (
+              <span>
+                <span className="text-[var(--togg-red)]">{seciliIl}</span>
+                <span className="ml-1.5 text-xs text-slate-500">seçili</span>
+              </span>
+            ) : (
+              <span>İle göre filtrele <span className="text-xs font-normal text-slate-500">({iller.length} il)</span></span>
+            )}
+          </span>
+          <svg
+            className={`h-4 w-4 text-slate-500 transition-transform ${illerAcik ? "rotate-180" : ""}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
         </button>
-        {iller.map((il) => {
-          const count = noktalar.filter((n) => n.il === il).length;
-          return (
+
+        {illerAcik && (
+          <div className="mt-2 flex flex-wrap gap-2 rounded-xl border border-white/8 bg-slate-900/60 p-3">
             <button
-              key={il}
-              onClick={() => setSeciliIl(il === seciliIl ? null : il)}
+              onClick={() => { setSeciliIl(null); setIllerAcik(false); }}
               className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition-all ${
-                seciliIl === il
+                seciliIl === null
                   ? "border-[var(--togg-red)] bg-[var(--togg-red)]/15 text-[var(--togg-red)]"
                   : "border-white/15 bg-white/5 text-slate-400 hover:border-white/30 hover:text-white"
               }`}
             >
-              {il}
-              {count > 1 && <span className="ml-1.5 text-xs opacity-60">({count})</span>}
+              Tümü
+              <span className="ml-1.5 text-xs opacity-60">({noktalar.length})</span>
             </button>
-          );
-        })}
+            {iller.map((il) => {
+              const count = noktalar.filter((n) => n.il === il).length;
+              return (
+                <button
+                  key={il}
+                  onClick={() => { setSeciliIl(il === seciliIl ? null : il); setIllerAcik(false); }}
+                  className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition-all ${
+                    seciliIl === il
+                      ? "border-[var(--togg-red)] bg-[var(--togg-red)]/15 text-[var(--togg-red)]"
+                      : "border-white/15 bg-white/5 text-slate-400 hover:border-white/30 hover:text-white"
+                  }`}
+                >
+                  {il}
+                  {count > 1 && <span className="ml-1.5 text-xs opacity-60">({count})</span>}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Gruplar */}
