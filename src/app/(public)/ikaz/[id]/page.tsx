@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   TUM_IKAZ_SEMBOLLERI,
@@ -118,8 +119,31 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
                 </span>
               )}
             </div>
-            <h1 className={`text-2xl font-bold md:text-3xl ${renk.text}`}>{sembol.ad}</h1>
-            <p className="mt-3 text-slate-300">{sembol.anlami}</p>
+
+            <div className="flex items-start gap-5">
+              {/* Sembol görseli */}
+              <div className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border ${renk.border} bg-black/30`}>
+                {sembol.gorsel ? (
+                  <Image
+                    src={`/ikaz/${sembol.gorsel}`}
+                    alt={sembol.ad}
+                    width={64}
+                    height={64}
+                    className="object-contain"
+                  />
+                ) : (
+                  <span className="text-4xl">
+                    {sembol.renk === "kirmizi" ? "🔴" : sembol.renk === "sari" ? "🟡" : sembol.renk === "mavi" ? "🔵" : sembol.renk === "yesil" ? "🟢" : "⚪"}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <h1 className={`text-2xl font-bold md:text-3xl ${renk.text}`}>{sembol.ad}</h1>
+                <p className="mt-2 text-sm text-slate-500">{sembol.sembol_tanimi}</p>
+                <p className="mt-3 text-slate-300">{sembol.anlami}</p>
+              </div>
+            </div>
           </div>
 
           {/* Ne yapmalıyım */}
