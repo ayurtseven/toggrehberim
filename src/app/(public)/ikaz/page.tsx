@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   TUM_IKAZ_SEMBOLLERI,
   ACILIYET_ETIKETLER,
@@ -71,8 +72,25 @@ export default function IkazSozlukSayfasi() {
                   <Link
                     key={s.id}
                     href={`/ikaz/${s.id}`}
-                    className={`flex items-center gap-4 rounded-xl border px-4 py-3.5 transition-all hover:-translate-y-0.5 hover:shadow-lg ${stil.border} ${stil.bg} hover:border-opacity-50`}
+                    className={`flex items-center gap-3 rounded-xl border px-3 py-3 transition-all hover:-translate-y-0.5 hover:shadow-lg ${stil.border} ${stil.bg} hover:border-opacity-50`}
                   >
+                    {/* Sembol görseli */}
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-black/30">
+                      {s.gorsel ? (
+                        <Image
+                          src={`/ikaz/${s.gorsel}`}
+                          alt={s.ad}
+                          width={36}
+                          height={36}
+                          className="object-contain"
+                        />
+                      ) : (
+                        <span className="text-lg">
+                          {s.renk === "kirmizi" ? "🔴" : s.renk === "sari" ? "🟡" : s.renk === "mavi" ? "🔵" : s.renk === "yesil" ? "🟢" : "⚪"}
+                        </span>
+                      )}
+                    </div>
+
                     <div className="min-w-0 flex-1">
                       <div className="mb-0.5 flex flex-wrap items-center gap-2">
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${stil.badge}`}>
