@@ -23,6 +23,21 @@ function selamlamaMetni(): { ana: string; alt: string } {
 
 // ─── Sesli Sor — Web Speech API ───────────────────────────────────────────────
 
+// Web Speech API global tipler (lib.dom.d.ts'de eksik tarayıcılar için)
+interface ISpeechRecognitionEvent {
+  results: { [i: number]: { [j: number]: { transcript: string } } };
+}
+interface ISpeechRecognition {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onresult: (e: ISpeechRecognitionEvent) => void;
+  onerror: () => void;
+  onend: () => void;
+  start: () => void;
+}
+type SpeechRecognitionCtor = new () => ISpeechRecognition;
+
 type SesliDurum = "bosta" | "dinliyor" | "desteklenmiyor";
 
 function useSesliArama() {
@@ -31,8 +46,8 @@ function useSesliArama() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const API = (window as typeof window & { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown })
-      .SpeechRecognition ?? (window as typeof window & { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition;
+    const API = ((window as typeof window & { SpeechRecognition?: SpeechRecognitionCtor; webkitSpeechRecognition?: SpeechRecognitionCtor })
+      .SpeechRecognition ?? (window as typeof window & { webkitSpeechRecognition?: SpeechRecognitionCtor }).webkitSpeechRecognition);
     if (!API) setDurum("desteklenmiyor");
   }, []);
 
@@ -41,8 +56,8 @@ function useSesliArama() {
       router.push("/arama");
       return;
     }
-    const API = (window as typeof window & { SpeechRecognition?: new () => SpeechRecognition; webkitSpeechRecognition?: new () => SpeechRecognition })
-      .SpeechRecognition ?? (window as typeof window & { webkitSpeechRecognition?: new () => SpeechRecognition }).webkitSpeechRecognition;
+    const API = ((window as typeof window & { SpeechRecognition?: SpeechRecognitionCtor; webkitSpeechRecognition?: SpeechRecognitionCtor })
+      .SpeechRecognition ?? (window as typeof window & { webkitSpeechRecognition?: SpeechRecognitionCtor }).webkitSpeechRecognition);
     if (!API) return;
 
     const tanici = new API();
@@ -52,7 +67,7 @@ function useSesliArama() {
 
     setDurum("dinliyor");
 
-    tanici.onresult = (e: SpeechRecognitionEvent) => {
+    tanici.onresult = (e: ISpeechRecognitionEvent) => {
       const metin = e.results[0][0].transcript;
       setDurum("bosta");
       router.push(`/arama?q=${encodeURIComponent(metin)}`);
