@@ -410,7 +410,7 @@ function IkazDetayKarti({
 
 // ─── Ana bileşen ─────────────────────────────────────────────────────────────
 
-export default function IkazArama() {
+export default function IkazArama({ autoKamera = false }: { autoKamera?: boolean }) {
   const [aktifSekme, setAktifSekme] = useState<"foto" | "liste">("liste");
   const [onizleme, setOnizleme] = useState<string | null>(null);
   const [yukleniyor, setYukleniyor] = useState(false);
@@ -428,6 +428,14 @@ export default function IkazArama() {
 
   const dosyaInputRef = useRef<HTMLInputElement>(null);
   const kameraInputRef = useRef<HTMLInputElement>(null);
+
+  // autoKamera: hero'dan ?kamera=ac ile gelince fotoğraf sekmesini aç ve kamerayı tetikle
+  useEffect(() => {
+    if (!autoKamera) return;
+    setAktifSekme("foto");
+    const timer = setTimeout(() => kameraInputRef.current?.click(), 400);
+    return () => clearTimeout(timer);
+  }, [autoKamera]);
 
   // Overrides + custom semboller yükle
   useEffect(() => {

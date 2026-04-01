@@ -1,10 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getTumRehberler } from "@/lib/content/rehber";
 import { getTumHaberler } from "@/lib/content/haberler";
 import HaberlerSlider from "@/components/haberler/HaberlerSlider";
-import HeroArama from "@/components/ui/HeroArama";
 import SonRehberlerIstemci from "@/components/rehber/SonRehberlerIstemci";
+import YolArkadasiHero from "@/components/ui/YolArkadasiHero";
 
 const HIZLI_ERISIM = [
   {
@@ -16,10 +15,10 @@ const HIZLI_ERISIM = [
     text: "text-blue-400",
   },
   {
-    baslik: "İkaz Tanıma",
-    aciklama: "Yanan lambayı AI ile tanı",
-    href: "/ikaz-arama",
-    ikon: "🔴",
+    baslik: "Ekranımı Oku",
+    aciklama: "Kontrol panelindeki ışığın ne anlattığını öğren",
+    href: "/ekranim",
+    ikon: "✨",
     renk: "border-[var(--togg-red)]/20 hover:border-[var(--togg-red)]/40 bg-[var(--togg-red)]/5",
     text: "text-[var(--togg-red)]",
   },
@@ -42,7 +41,7 @@ const HIZLI_ERISIM = [
 ];
 
 const SIKKONULAR = [
-  { soru: "Şarjım neden bu kadar yavaş?",         href: "/rehber/sarj",                   ikon: "⚡" },
+  { soru: "Şarj neden yavaş ilerliyor?",           href: "/rehber/sarj",                   ikon: "⚡" },
   { soru: "Kışın menzil neden düşüyor?",           href: "/rehber/sarj/kisin-togg-sarj-etme-soguk-hava-batarya-ve-menzil-uzerindeki-etkisi", ikon: "❄️" },
   { soru: "OTA güncellemek güvenli mi?",           href: "/rehber/yazilim/togg-ota-guncellemesi-nasil-yapilir-guncelleme-oncesi-kontrol-listesi", ikon: "📲" },
   { soru: "Periyodik bakım ne zaman gerekli?",     href: "/rehber/bakim",                  ikon: "🔧" },
@@ -58,45 +57,7 @@ export default function AnaSayfa() {
     <div className="bg-slate-950 text-white">
 
       {/* ── HERO ── */}
-      <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden pb-12 pt-16 text-center">
-        <Image
-          src="https://www.togg.com.tr/assets/img/670514f6bb5c7ba993aec863_T10X-More-than-a-car.webp"
-          alt="Togg T10X"
-          fill
-          priority
-          className="object-cover object-center"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-slate-950" />
-
-        <div className="relative z-10 mx-auto max-w-2xl px-4">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-white/40">
-            Bağımsız Togg Kullanıcı Rehberi
-          </p>
-          <h1 className="mb-4 text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
-            Togg&apos;unda sorun mu var?{" "}
-            <span className="text-[var(--togg-red)]">Burada çöz.</span>
-          </h1>
-          <p className="mb-7 text-sm text-white/55 md:text-base">
-            T10X ve T10F sahipleri için şarj, yazılım, bakım ve sürüş rehberleri.
-          </p>
-          <HeroArama />
-          <div className="mt-5 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/rehber"
-              className="rounded-full bg-white px-6 py-2.5 text-sm font-bold text-black transition hover:bg-neutral-100"
-            >
-              Rehberlere Bak
-            </Link>
-            <Link
-              href="/ikaz-arama"
-              className="rounded-full border border-white/25 bg-white/8 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-white/15"
-            >
-              İkaz Lambası Tanı
-            </Link>
-          </div>
-        </div>
-      </section>
+      <YolArkadasiHero />
 
       {/* ── HIZLI ERİŞİM ── */}
       <section className="mx-auto max-w-5xl px-4 py-10">

@@ -6,7 +6,7 @@ import ModelSeciciChip from "@/components/ui/ModelSeciciChip";
 const navLinks = [
   { href: "/rehber", label: "Rehber" },
   { href: "/modeller", label: "Modeller" },
-  { href: "/ikaz-arama", label: "İkaz Tanı" },
+  { href: "/ekranim", label: "Ekranımı Oku" },
   { href: "/sarj-haritasi", label: "Şarj" },
   { href: "/sarj-hesaplayici", label: "Menzil Hesapla" },
   { href: "/servis-noktalari", label: "Servis" },
