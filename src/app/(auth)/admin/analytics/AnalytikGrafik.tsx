@@ -51,7 +51,7 @@ export function AramaBarChart({ data }: { data: AramaVeri[] }) {
             cursor={{ fill: "rgba(255,255,255,0.04)" }}
             contentStyle={{ background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, fontSize: 12 }}
             labelStyle={{ color: "#e2e8f0" }}
-            formatter={(val: number, _name: string, props: { payload: { fullName: string } }) => [val, props.payload.fullName]}
+            formatter={(_val, _name, props) => [_val, (props.payload as { fullName: string }).fullName]}
           />
           <Bar dataKey="sayi" radius={[0, 4, 4, 0]} maxBarSize={18}>
             {slice.map((_, i) => (
@@ -95,7 +95,7 @@ export function SayfaBarChart({ data }: { data: SayfaVeri[] }) {
             cursor={{ fill: "rgba(255,255,255,0.04)" }}
             contentStyle={{ background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, fontSize: 12 }}
             labelStyle={{ color: "#e2e8f0" }}
-            formatter={(val: number, _name: string, props: { payload: { fullPath: string } }) => [val, props.payload.fullPath]}
+            formatter={(_val, _name, props) => [_val, (props.payload as { fullPath: string }).fullPath]}
           />
           <Bar dataKey="sayi" radius={[0, 4, 4, 0]} maxBarSize={18}>
             {slice.map((_, i) => (
@@ -160,7 +160,7 @@ export function TriajGuvenDonut({ data }: { data: TriajGuvenVeri[] }) {
           </Pie>
           <Tooltip
             contentStyle={{ background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, fontSize: 12 }}
-            formatter={(val: number, name: string) => [val, name]}
+            formatter={(_val, name) => [_val, name]}
           />
           <Legend
             iconType="circle"
