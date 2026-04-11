@@ -7,7 +7,7 @@ import type { VehicleState } from "@/lib/triage-types";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const AI_TIMEOUT_MS = 10000;
+const AI_TIMEOUT_MS = 4000;
 
 export interface IkazTanimaYaniti {
   basarili: boolean;
@@ -125,7 +125,7 @@ Yanıtın YALNIZCA JSON olsun, başka metin ekleme.`;
       const timer = setTimeout(() => abortController.abort(), AI_TIMEOUT_MS);
 
       const response = await anthropic.messages.create({
-        model: "claude-sonnet-4-6",
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 1024,
         messages: [{
           role: "user",
