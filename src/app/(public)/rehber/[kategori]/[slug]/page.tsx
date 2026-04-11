@@ -123,7 +123,7 @@ export default async function RehberDetay({
       </header>
 
       {/* MDX İçerik */}
-      <article className="prose prose-invert prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-100 prose-p:text-slate-300 prose-a:text-[var(--togg-red)] prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-100 prose-blockquote:border-[var(--togg-red)] prose-blockquote:bg-slate-900/60 prose-blockquote:py-1 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-slate-300 prose-code:rounded-lg prose-code:border prose-code:border-white/10 prose-code:bg-slate-900 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:text-slate-200 prose-code:before:content-none prose-code:after:content-none prose-li:text-slate-300 prose-hr:border-slate-800">
+      <article className="prose prose-invert prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-100 prose-p:text-slate-300 prose-a:text-[var(--togg-red)] prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-100 prose-blockquote:border-[var(--togg-red)] prose-blockquote:bg-slate-900/60 prose-blockquote:py-1 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-slate-300 prose-code:rounded-lg prose-code:border prose-code:border-white/10 prose-code:bg-slate-900 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:text-slate-200 prose-code:before:content-none prose-code:after:content-none prose-li:text-slate-300 prose-hr:border-slate-800 prose-img:rounded-xl prose-img:w-full prose-img:my-6 prose-img:border prose-img:border-white/10">
         <MDXRemote source={rehber.icerik} />
       </article>
 
