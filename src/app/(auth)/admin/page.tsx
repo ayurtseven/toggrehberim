@@ -71,6 +71,7 @@ const NAV_LINKLER = [
   { href: "/admin/ikazlar", label: "İkazlar", ikon: "⚠️", renk: "text-orange-400 bg-orange-500/10 border-orange-500/20" },
   { href: "/admin/servis", label: "Servisler", ikon: "🔧", renk: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
   { href: "/admin/istasyonlar", label: "İstasyonlar", ikon: "⚡", renk: "text-[var(--togg-red)] bg-[var(--togg-red)]/10 border-[var(--togg-red)]/20" },
+  { href: "/admin/fiyat-takip", label: "Fiyat Takip", ikon: "💰", renk: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20" },
   { href: "/admin/deneyimler", label: "Deneyimler", ikon: "💬", renk: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
   { href: "/admin/analytics", label: "Analytics", ikon: "📊", renk: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
   { href: "/klavuz-ara", label: "Kılavuz", ikon: "📚", renk: "text-purple-400 bg-purple-500/10 border-purple-500/20" },

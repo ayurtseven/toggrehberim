@@ -28,6 +28,8 @@ export async function PATCH(req: NextRequest) {
     not?: string;
     gizli?: boolean;
     son_guncelleme?: string;
+    tarife_url?: string | null;
+    css_selector?: string | null;
   };
   if (!body.id) {
     return NextResponse.json({ error: "id gerekli" }, { status: 400 });
@@ -39,6 +41,10 @@ export async function PATCH(req: NextRequest) {
   const upsertData: Record<string, unknown> = { id: body.id };
   if (body.gizli !== undefined) {
     upsertData.gizli = body.gizli;
+  } else if (body.tarife_url !== undefined || body.css_selector !== undefined) {
+    // URL / selector güncelleme
+    if (body.tarife_url !== undefined) upsertData.tarife_url = body.tarife_url;
+    if (body.css_selector !== undefined) upsertData.css_selector = body.css_selector;
   } else {
     upsertData.fiyat = body.fiyat ?? "—";
     upsertData.guc = body.guc ?? "";
