@@ -14,7 +14,7 @@ const OPERATOR: Record<
   esarj:   { renk: "#00c853", yazi: "Eşarj",   url: "https://esarj.com" },
   beefull: { renk: "#ff6600", yazi: "Beefull",  url: "https://beefull.com" },
   voltrun: { renk: "#8b5cf6", yazi: "Voltrun",  url: "https://voltrun.com" },
-  sharz:   { renk: "#06b6d4", yazi: "Sharz",    url: "https://sharz.net" },
+  sharz:   { renk: "#06b6d4", yazi: "Sharz",    url: "https://sharz.net", fiyatUrl: "https://www.sharz.net/istasyon-haritasi" },
   tesla:   { renk: "#cc0000", yazi: "Tesla",    url: "https://www.tesla.com/tr_TR/findus/list/superchargers/Turkey" },
   diger:   { renk: "#6b7280", yazi: "Diğer" },
 };
@@ -132,6 +132,8 @@ function IstasyonDetay({
 }) {
   const op = OPERATOR[ist.operatorKey] || OPERATOR.diger;
   const durum = durumRenk(ist.durum);
+  const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${ist.lat},${ist.lng}&travelmode=driving`;
+  const appleMapsUrl = `https://maps.apple.com/?daddr=${ist.lat},${ist.lng}&dirflg=d`;
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-slate-950">
@@ -179,6 +181,33 @@ function IstasyonDetay({
             <span className={`h-1.5 w-1.5 rounded-full ${durum.bg}`} />
             {durum.label}
           </span>
+        </div>
+
+        {/* Navigasyon butonları */}
+        <div className="grid grid-cols-2 gap-2">
+          <a
+            href={gmapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-semibold text-white transition-all hover:border-white/20 hover:bg-white/[0.08]"
+          >
+            <svg className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Google Maps
+          </a>
+          <a
+            href={appleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-semibold text-slate-300 transition-all hover:border-white/20 hover:bg-white/[0.08]"
+          >
+            <svg className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m0 13l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 4V9" />
+            </svg>
+            Apple Maps
+          </a>
         </div>
 
         {/* Güç özeti */}
