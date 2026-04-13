@@ -12,7 +12,8 @@
     "tara:youtube": "tsx --env-file=.env.local scripts/tara.ts --youtube",
     "tara:rehber": "tsx --env-file=.env.local scripts/tara.ts --rehber",
     "tara:listele": "tsx --env-file=.env.local scripts/tara.ts --listele",
-    "tara:yayinla": "tsx --env-file=.env.local scripts/tara.ts --yayinla"
+    "tara:yayinla": "tsx --env-file=.env.local scripts/tara.ts --yayinla",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",

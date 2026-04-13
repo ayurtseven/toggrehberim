@@ -15,11 +15,11 @@ const links = {
   Araçlar: [
     { href: "/ikaz-arama", label: "İkaz Tanı" },
     { href: "/sarj-haritasi", label: "Şarj Haritası" },
-    { href: "/haberler", label: "Haberler" },
+    { href: "/sozluk", label: "Toggça Sözlük" },
   ],
   Site: [
     { href: "/hakkinda", label: "Hakkında" },
-    { href: "/iletisim", label: "İletişim" },
+    { href: "/oner", label: "Öneri Gönder" },
   ],
 };
 

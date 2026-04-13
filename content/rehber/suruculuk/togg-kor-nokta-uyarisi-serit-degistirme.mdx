@@ -1,0 +1,74 @@
+---
+baslik: Togg Kör Nokta Uyarısı ve Güvenli Şerit Değiştirme
+ozet: Yan aynalardaki uyarı ışıkları ne anlama gelir, şerit değiştirirken hangi sensörler devrede ve kapıdan çıkarken neden uyarı alırsın?
+kategori: suruculuk
+model: hepsi
+etiketler: [kör nokta, şerit değiştirme, BSW, kör nokta uyarısı, kapıdan çıkış asistanı, güvenlik]
+tarih: 2026-04-12
+sure: 4
+---
+
+## Kör Nokta Uyarısı (BSW) Nedir?
+
+Arabanın yan aynalarının göremediği bölgeye "kör nokta" denir. Hız yapan bir araç sinyal verip şerit değiştirirken o bölgede başka bir araç olabilir — Togg bunu radar/sonar ile algılayarak uyarır.
+
+**Uyarı nasıl gelir?**
+- Kör noktada araç varsa: dış aynada **sarı/turuncu ışık** yanar
+- Sinyali o yöne verirsen: ışık **yanıp söner** ve sesli uyarı gelir
+
+---
+
+## Uyarı Seviyeleri
+
+| Simge | Durum |
+|---|---|
+| Sabit sarı ışık (aynada) | Kör noktada nesne var, sinyal vermemişsin |
+| Yanıp sönen sarı + ses | Sinyal verdin, kör noktada araç var — değiştirme! |
+
+Uyarı otomatik iptal olur — kör nokta boşalınca ışık söner.
+
+---
+
+## Şerit Güvenlik Asistanı ile Farkı
+
+Kör nokta uyarısı ve şerit güvenlik asistanı birbirini **tamamlayan** iki farklı sistemdir:
+
+| Sistem | Ne Yapar? |
+|---|---|
+| **Kör Nokta Uyarısı** | Yan aynada araç varsa uyarır |
+| **Şerit Güvenlik Asistanı** | Yanlışlıkla şeritten çıkmana engel olur, direksiyona müdahale eder |
+
+Şerit güvenlik asistanı 60 km/sa ve üzerinde aktif olur. Şerit çizgisi göremediğinde pasife geçer (simge solar).
+
+---
+
+## Kapıdan Çıkış Asistanı
+
+Park ettin ve kapıyı açmak üzeresin — ama arkadan bisiklet veya araç geliyorsa?
+
+Togg, araç kapandıktan sonra **3 dakika** boyunca arka alanı izler. Kapıyı açarken yaklaşan nesne varsa:
+- Dış aynada uyarı ışığı yanar
+- Sesli uyarı gelir
+
+> Bu özellik şehirde çok işe yarar. Bisiklet şeridine park ettiğinde veya dar caddelerde büyük koruma sağlar.
+
+---
+
+## Sistemin Sınırlamaları
+
+Kör nokta uyarısı aşağıdaki durumlarda tam çalışmayabilir:
+
+- Çok hızlı yaklaşan araçlar (yüksek hız farkı)
+- Kötü hava / yoğun yağış
+- Sensörler kirli veya buzlu
+- Çok geniş araçlar (tır, otobüs) — kısmen algılanabilir
+
+**Önemli:** Bu sistem yardımcıdır, şerit değiştirmeden önce aynaya bakmak her zaman zorunludur.
+
+---
+
+## Ayarlar
+
+Kontrol Ekranı → ADAS → Kör Nokta Uyarısı → Aç/Kapat
+
+Sesli uyarıyı ayrıca açıp kapatabilirsin.

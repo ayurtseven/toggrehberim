@@ -4,6 +4,7 @@ import { getTumHaberler } from "@/lib/content/haberler";
 import HaberlerSlider from "@/components/haberler/HaberlerSlider";
 import SonRehberlerIstemci from "@/components/rehber/SonRehberlerIstemci";
 import YolArkadasiHero from "@/components/ui/YolArkadasiHero";
+import PanikButonu from "@/components/ui/PanikButonu";
 
 const HIZLI_ERISIM = [
   {
@@ -77,6 +78,9 @@ export default function AnaSayfa() {
           ))}
         </div>
       </section>
+
+      {/* ── PANİK BUTONU ── */}
+      <PanikButonu />
 
       {/* ── SIK SORULANLAR ── */}
       <section className="mx-auto max-w-5xl px-4 pb-12">
