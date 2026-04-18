@@ -143,11 +143,7 @@ export default function FiyatTakipClient({
     setCronCalisıyor(true);
     setCronSonuc(null);
     try {
-      const res = await fetch("/api/cron/fiyat-guncelle", {
-        headers: process.env.NEXT_PUBLIC_CRON_SECRET
-          ? { authorization: `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET}` }
-          : {},
-      });
+      const res = await fetch("/api/admin/fiyat-kontrol", { method: "POST" });
       const json = await res.json();
       setCronSonuc(JSON.stringify(json, null, 2));
 
