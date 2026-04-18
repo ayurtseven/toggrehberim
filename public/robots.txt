@@ -1,0 +1,15 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /admin
+Disallow: /api
+Disallow: /giris
+
+# Host
+Host: https://www.toggrehberim.com
+
+# Sitemaps
+Sitemap: https://www.toggrehberim.com/sitemap.xml
