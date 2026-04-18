@@ -1,94 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import * as cheerio from "cheerio";
 import { createServiceClient } from "@/lib/supabase/service";
+import { fiyatCek } from "@/lib/fiyat-scraper";
 
-// ─── Tipler ──────────────────────────────────────────────────────────────────
 interface TarifeSatiri {
   id: string;
   fiyat: string | null;
   tarife_url: string | null;
-  css_selector: string | null;  // CSS selector VEYA "$." ile başlayan JSONPath
+  css_selector: string | null;
 }
 
-type SonucTipi = "guncellendi" | "degismedi" | "hata" | "selector_bulunamadi" | "url_yok";
-
-interface SonucItem {
-  id: string;
-  sonuc: SonucTipi;
-  eski?: string;
-  yeni?: string;
-  hata?: string;
-}
-
-// ─── Ortak fetch ─────────────────────────────────────────────────────────────
-async function sayfaCek(url: string, mod: "html" | "json"): Promise<Response | null> {
-  try {
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Accept": mod === "json"
-          ? "application/json, text/plain, */*"
-          : "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "tr-TR,tr;q=0.9,en;q=0.8",
-        "Referer": new URL(url).origin + "/",
-        "Origin": new URL(url).origin,
-      },
-      signal: AbortSignal.timeout(15_000),
-    });
-    return res.ok ? res : null;
-  } catch {
-    return null;
-  }
-}
-
-// ─── HTML modu — cheerio CSS selector ─────────────────────────────────────────
-async function htmldenFiyatCek(url: string, selector: string, cache: Map<string, string>): Promise<string | null> {
-  if (!cache.has(url)) {
-    const res = await sayfaCek(url, "html");
-    cache.set(url, res ? await res.text() : "");
-  }
-  const html = cache.get(url)!;
-  if (!html) return null;
-
-  const $ = cheerio.load(html);
-  const el = $(selector).first();
-  if (!el.length) return null;
-
-  const ham = el.text().trim();
-  const esles = ham.replace(",", ".").match(/\d+\.?\d*/);
-  return esles ? esles[0] : null;
-}
-
-// ─── JSON modu — JSONPath benzeri ($.key.key[0].key) ─────────────────────────
-async function jsondenFiyatCek(url: string, path: string, cache: Map<string, unknown>): Promise<string | null> {
-  if (!cache.has(url)) {
-    const res = await sayfaCek(url, "json");
-    if (!res) { cache.set(url, null); }
-    else {
-      try { cache.set(url, await res.json()); }
-      catch { cache.set(url, null); }
-    }
-  }
-  const json = cache.get(url);
-  if (!json) return null;
-
-  // $.prices[0].acPerKwh → ["prices", "0", "acPerKwh"]
-  const parcalar = path.replace(/^\$\.?/, "").split(/[\.\[\]]+/).filter(Boolean);
-  let deger: unknown = json;
-  for (const parca of parcalar) {
-    if (deger === null || deger === undefined) return null;
-    deger = (deger as Record<string, unknown>)[parca];
-  }
-
-  if (deger === null || deger === undefined) return null;
-  const str = String(deger).replace(",", ".");
-  const esles = str.match(/\d+\.?\d*/);
-  return esles ? esles[0] : null;
-}
-
-// ─── Ana işleyici ─────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
-  // Güvenlik: Vercel cron header veya CRON_SECRET
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
@@ -96,20 +17,19 @@ export async function GET(req: NextRequest) {
   }
 
   const supabase = createServiceClient();
-
-  const { data: satirlar, error: fetchHata } = await supabase
+  const { data: satirlar, error } = await supabase
     .from("sarj_fiyatlari")
     .select("id, fiyat, tarife_url, css_selector")
     .not("tarife_url", "is", null)
     .eq("gizli", false);
 
-  if (fetchHata || !satirlar) {
-    return NextResponse.json({ error: "DB hatası", detay: fetchHata?.message }, { status: 500 });
+  if (error || !satirlar) {
+    return NextResponse.json({ error: "DB hatası", detay: error?.message }, { status: 500 });
   }
 
-  const sonuclar: SonucItem[] = [];
-  const htmlCache = new Map<string, string>();       // url → ham HTML
-  const jsonCache = new Map<string, unknown>();      // url → parsed JSON
+  const sonuclar: Array<{ id: string; sonuc: string; eski?: string; yeni?: string; hata?: string }> = [];
+  const htmlCache = new Map<string, string>();
+  const jsonCache = new Map<string, unknown>();
 
   for (const satir of satirlar as TarifeSatiri[]) {
     const now = new Date();
@@ -127,12 +47,7 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    // Mod tespiti: "$." ile başlıyorsa JSON, değilse HTML
-    const jsonMod = satir.css_selector.startsWith("$");
-
-    const bulunanFiyat = jsonMod
-      ? await jsondenFiyatCek(satir.tarife_url, satir.css_selector, jsonCache)
-      : await htmldenFiyatCek(satir.tarife_url, satir.css_selector, htmlCache);
+    const bulunanFiyat = await fiyatCek(satir.tarife_url, satir.css_selector, htmlCache, jsonCache);
 
     if (!bulunanFiyat) {
       sonuclar.push({ id: satir.id, sonuc: "selector_bulunamadi" });
@@ -144,7 +59,6 @@ export async function GET(req: NextRequest) {
     }
 
     const mevcutFiyat = satir.fiyat ?? "—";
-
     if (bulunanFiyat === mevcutFiyat) {
       sonuclar.push({ id: satir.id, sonuc: "degismedi", yeni: bulunanFiyat });
       await supabase.from("sarj_fiyatlari").update({
@@ -154,7 +68,6 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    // Fiyat değişti — güncelle
     await supabase.from("sarj_fiyatlari").update({
       fiyat: bulunanFiyat,
       son_guncelleme: now.toLocaleDateString("tr-TR"),
