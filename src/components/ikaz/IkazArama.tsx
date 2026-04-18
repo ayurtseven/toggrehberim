@@ -237,6 +237,80 @@ function IkazEditFormu({
   );
 }
 
+// ─── Karşılaştırma Paneli ────────────────────────────────────────────────────
+
+function KarsilastirmaPanel({
+  onizleme,
+  sonuc,
+  semboller,
+  onYanlis,
+}: {
+  onizleme: string;
+  sonuc: NonNullable<IkazTanimaYaniti["sonuc"]>;
+  semboller: IkazSembolu[];
+  onYanlis: () => void;
+}) {
+  const eslesenSembol = sonuc.sembol_id
+    ? semboller.find((s) => s.id === sonuc.sembol_id)
+    : null;
+  const IkonBileseni = eslesenSembol ? IKAZ_IKONU[eslesenSembol.id] : null;
+
+  return (
+    <div className="mb-4 rounded-2xl border border-white/10 bg-slate-900 p-4">
+      <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
+        Görsel Karşılaştırma
+      </p>
+      <div className="flex items-start gap-3">
+        {/* Kullanıcının fotoğrafı */}
+        <div className="flex flex-1 flex-col items-center gap-1.5">
+          <p className="text-[11px] text-slate-500">Çektiğiniz Fotoğraf</p>
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black">
+            <img
+              src={onizleme}
+              alt="Yüklenen görsel"
+              className="h-full w-full object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Ok */}
+        <div className="mt-7 shrink-0 text-lg text-slate-600">→</div>
+
+        {/* Eşleşen sembol */}
+        <div className="flex flex-1 flex-col items-center gap-1.5">
+          <p className="text-[11px] text-slate-500">Eşleşen Sembol</p>
+          <div className="flex h-20 w-20 items-center justify-center rounded-xl border border-white/10 bg-slate-950 p-2">
+            {eslesenSembol?.gorsel ? (
+              <img
+                src={`/ikaz/${eslesenSembol.gorsel}`}
+                alt={eslesenSembol.ad}
+                className="h-full w-full object-contain"
+              />
+            ) : IkonBileseni ? (
+              <IkonBileseni className="h-12 w-12 text-white/60" />
+            ) : (
+              <span className="text-xs text-slate-600">—</span>
+            )}
+          </div>
+          {eslesenSembol && (
+            <p className="text-center text-[11px] font-medium text-slate-400">
+              {eslesenSembol.ad}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Yanlış tespit butonu */}
+      <button
+        onClick={onYanlis}
+        className="mt-3 w-full rounded-xl border border-white/10 py-2 text-xs font-medium text-slate-400 transition-colors hover:border-white/25 hover:text-white"
+      >
+        🔄 Yanlış sembol — Manuel seç
+      </button>
+    </div>
+  );
+}
+
 // ─── Detay Kartı ─────────────────────────────────────────────────────────────
 
 // /ikaz/[id] sayfasıyla aynı dark-tema renk haritaları
@@ -786,7 +860,17 @@ export default function IkazArama({ autoKamera = false }: { autoKamera?: boolean
                       </button>
                     </div>
                   ) : (
-                    <IkazDetayKarti sembol={sonuc} guven={sonuc.guven} />
+                    <>
+                      {onizleme && (
+                        <KarsilastirmaPanel
+                          onizleme={onizleme}
+                          sonuc={sonuc}
+                          semboller={semboller}
+                          onYanlis={() => setManuelTriajAcik(true)}
+                        />
+                      )}
+                      <IkazDetayKarti sembol={sonuc} guven={sonuc.guven} />
+                    </>
                   )}
                 </>
               )}
