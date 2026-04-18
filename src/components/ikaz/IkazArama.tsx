@@ -73,9 +73,17 @@ function RenkBadge({ renk }: { renk: IkazSembolu["renk"] }) {
   );
 }
 
-// ─── Liste Düzenleyici (nedenler / yapılacaklar için) ────────────────────────
 
-function ListEditor({
+// ─── Edit Formu ──────────────────────────────────────────────────────────────
+
+/** textarea'yı içeriğe göre otomatik uzatır */
+function autoResize(el: HTMLTextAreaElement) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
+/** Numbered list editör — yapılacaklar adımları için */
+function SiralanmisListEditor({
   items,
   onChange,
   placeholder,
@@ -85,38 +93,102 @@ function ListEditor({
   placeholder: string;
 }) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       {items.map((item, i) => (
-        <div key={i} className="flex gap-2">
-          <input
+        <div key={i} className="flex items-start gap-2">
+          <span className="mt-2 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500/20 text-[10px] font-bold text-blue-400">
+            {i + 1}
+          </span>
+          <textarea
             value={item}
+            rows={1}
             onChange={(e) => {
               const next = [...items];
               next[i] = e.target.value;
               onChange(next);
+              autoResize(e.target);
             }}
-            className="flex-1 rounded-lg border border-white/10 bg-slate-800 px-3 py-1.5 text-sm text-white placeholder:text-slate-600"
+            onInput={(e) => autoResize(e.currentTarget)}
+            className="flex-1 resize-none overflow-hidden rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:outline-none"
             placeholder={placeholder}
           />
           <button
             onClick={() => onChange(items.filter((_, j) => j !== i))}
-            className="shrink-0 rounded-lg border border-red-500/25 px-2 py-1 text-xs text-red-500 hover:bg-red-950/20"
+            className="mt-1.5 shrink-0 rounded-lg border border-red-500/20 p-1.5 text-red-500/70 hover:border-red-500/40 hover:text-red-400"
           >
-            ✕
+            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="3" x2="13" y2="13" /><line x1="13" y1="3" x2="3" y2="13" />
+            </svg>
           </button>
         </div>
       ))}
       <button
         onClick={() => onChange([...items, ""])}
-        className="w-full rounded-lg border border-dashed border-white/15 py-1.5 text-xs text-slate-500 hover:border-white/25 hover:text-slate-400"
+        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-white/15 py-2 text-xs text-slate-500 transition-colors hover:border-white/30 hover:text-slate-400"
       >
-        + Ekle
+        <span className="mx-auto flex items-center gap-1.5">
+          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="8" y1="2" x2="8" y2="14" /><line x1="2" y1="8" x2="14" y2="8" />
+          </svg>
+          Adım Ekle
+        </span>
       </button>
     </div>
   );
 }
 
-// ─── Edit Formu ──────────────────────────────────────────────────────────────
+/** Bullet list editör — nedenler için */
+function BulletListEditor({
+  items,
+  onChange,
+  placeholder,
+}: {
+  items: string[];
+  onChange: (items: string[]) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="space-y-2">
+      {items.map((item, i) => (
+        <div key={i} className="flex items-start gap-2">
+          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-500" />
+          <textarea
+            value={item}
+            rows={1}
+            onChange={(e) => {
+              const next = [...items];
+              next[i] = e.target.value;
+              onChange(next);
+              autoResize(e.target);
+            }}
+            onInput={(e) => autoResize(e.currentTarget)}
+            className="flex-1 resize-none overflow-hidden rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:outline-none"
+            placeholder={placeholder}
+          />
+          <button
+            onClick={() => onChange(items.filter((_, j) => j !== i))}
+            className="mt-1.5 shrink-0 rounded-lg border border-red-500/20 p-1.5 text-red-500/70 hover:border-red-500/40 hover:text-red-400"
+          >
+            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="3" x2="13" y2="13" /><line x1="13" y1="3" x2="3" y2="13" />
+            </svg>
+          </button>
+        </div>
+      ))}
+      <button
+        onClick={() => onChange([...items, ""])}
+        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-white/15 py-2 text-xs text-slate-500 transition-colors hover:border-white/30 hover:text-slate-400"
+      >
+        <span className="mx-auto flex items-center gap-1.5">
+          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="8" y1="2" x2="8" y2="14" /><line x1="2" y1="8" x2="14" y2="8" />
+          </svg>
+          Neden Ekle
+        </span>
+      </button>
+    </div>
+  );
+}
 
 function IkazEditFormu({
   sembol,
@@ -136,6 +208,7 @@ function IkazEditFormu({
   });
   const [yukleniyor, setYukleniyor] = useState(false);
   const [hata, setHata] = useState<string | null>(null);
+  const [aktifBolum, setAktifBolum] = useState<"aciklama" | "nedenler" | "yapilacaklar" | "not">("aciklama");
 
   const kaydet = async () => {
     setYukleniyor(true);
@@ -149,76 +222,151 @@ function IkazEditFormu({
     }
   };
 
+  const sekmeler: { id: typeof aktifBolum; label: string; count?: number }[] = [
+    { id: "aciklama", label: "Açıklama" },
+    { id: "nedenler", label: "Nedenler", count: veri.nedenler.length },
+    { id: "yapilacaklar", label: "Yapılacaklar", count: veri.yapilacaklar.length },
+    { id: "not", label: "Not" },
+  ];
+
   return (
-    <div className="space-y-4 rounded-2xl border-2 border-blue-500/20 bg-blue-950/20 p-5">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold text-blue-300">✏️ Sembol Düzenle</h3>
-        <span className="text-xs text-blue-500">{sembol.id}</span>
+    <div className="overflow-hidden rounded-2xl border-2 border-blue-500/20 bg-[#0a0f1e]">
+      {/* Başlık */}
+      <div className="flex items-center justify-between border-b border-white/8 bg-blue-950/30 px-4 py-3">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/20 text-sm">✏️</span>
+          <div>
+            <p className="text-sm font-bold text-blue-300">{sembol.ad}</p>
+            <p className="font-mono text-[10px] text-blue-500/70">{sembol.id}</p>
+          </div>
+        </div>
+        <button
+          onClick={onIptal}
+          className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 text-slate-500 transition-colors hover:border-white/25 hover:text-white"
+        >
+          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="3" y1="3" x2="13" y2="13" /><line x1="13" y1="3" x2="3" y2="13" />
+          </svg>
+        </button>
       </div>
 
-      <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-400">
-          Kılavuz Açıklaması
-        </label>
-        <input
-          value={veri.kitapcik_aciklama}
-          onChange={(e) => setVeri({ ...veri, kitapcik_aciklama: e.target.value })}
-          className="w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600"
-        />
+      {/* Sekme navigasyon */}
+      <div className="flex border-b border-white/8 bg-slate-900/50">
+        {sekmeler.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => setAktifBolum(s.id)}
+            className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 text-xs font-semibold transition-colors ${
+              aktifBolum === s.id
+                ? "border-b-2 border-blue-500 text-blue-400"
+                : "text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            {s.label}
+            {s.count !== undefined && (
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                aktifBolum === s.id ? "bg-blue-500/20 text-blue-300" : "bg-white/8 text-slate-500"
+              }`}>
+                {s.count}
+              </span>
+            )}
+          </button>
+        ))}
       </div>
 
-      <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-400">
-          Anlam (detaylı)
-        </label>
-        <textarea
-          value={veri.anlami}
-          onChange={(e) => setVeri({ ...veri, anlami: e.target.value })}
-          rows={3}
-          className="w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600"
-        />
+      {/* İçerik */}
+      <div className="p-4">
+        {aktifBolum === "aciklama" && (
+          <div className="space-y-4">
+            <div>
+              <div className="mb-1.5 flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-400">📖 Kılavuz Açıklaması</label>
+                <span className="text-[10px] text-slate-600">{veri.kitapcik_aciklama.length} karakter</span>
+              </div>
+              <textarea
+                value={veri.kitapcik_aciklama}
+                rows={2}
+                onChange={(e) => { setVeri({ ...veri, kitapcik_aciklama: e.target.value }); autoResize(e.target); }}
+                onInput={(e) => autoResize(e.currentTarget)}
+                className="w-full resize-none overflow-hidden rounded-xl border border-white/10 bg-slate-800 px-3 py-2.5 text-sm text-white focus:border-blue-500/50 focus:outline-none"
+                placeholder="Togg kullanıcı el kitabındaki resmi açıklama..."
+              />
+              <p className="mt-1 text-[11px] text-slate-600">Togg el kitabındaki orijinal kısa tanım</p>
+            </div>
+
+            <div>
+              <div className="mb-1.5 flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-400">💬 Detaylı Anlam</label>
+                <span className="text-[10px] text-slate-600">{veri.anlami.length} karakter</span>
+              </div>
+              <textarea
+                value={veri.anlami}
+                rows={6}
+                onChange={(e) => { setVeri({ ...veri, anlami: e.target.value }); autoResize(e.target); }}
+                onInput={(e) => autoResize(e.currentTarget)}
+                className="w-full resize-none overflow-hidden rounded-xl border border-white/10 bg-slate-800 px-3 py-2.5 text-sm leading-relaxed text-white focus:border-blue-500/50 focus:outline-none"
+                placeholder="Sembolün detaylı açıklaması..."
+              />
+              <p className="mt-1 text-[11px] text-slate-600">Paragraf için boş satır bırak (Enter × 2)</p>
+            </div>
+          </div>
+        )}
+
+        {aktifBolum === "nedenler" && (
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <label className="text-xs font-semibold text-slate-400">⚡ Olası Nedenler</label>
+              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] text-slate-500">{veri.nedenler.length} madde</span>
+            </div>
+            <BulletListEditor
+              items={veri.nedenler}
+              onChange={(items) => setVeri({ ...veri, nedenler: items })}
+              placeholder="Bu lambanın yanma nedeni..."
+            />
+          </div>
+        )}
+
+        {aktifBolum === "yapilacaklar" && (
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <label className="text-xs font-semibold text-slate-400">✅ Yapılacaklar (sıralı)</label>
+              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] text-slate-500">{veri.yapilacaklar.length} adım</span>
+            </div>
+            <SiralanmisListEditor
+              items={veri.yapilacaklar}
+              onChange={(items) => setVeri({ ...veri, yapilacaklar: items })}
+              placeholder="Kullanıcının yapması gereken adım..."
+            />
+          </div>
+        )}
+
+        {aktifBolum === "not" && (
+          <div>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="text-xs font-semibold text-slate-400">📌 Ek Not</label>
+              <span className="text-[10px] text-slate-600">{veri.not_metni.length} karakter</span>
+            </div>
+            <textarea
+              value={veri.not_metni}
+              rows={4}
+              onChange={(e) => { setVeri({ ...veri, not_metni: e.target.value }); autoResize(e.target); }}
+              onInput={(e) => autoResize(e.currentTarget)}
+              className="w-full resize-none overflow-hidden rounded-xl border border-white/10 bg-slate-800 px-3 py-2.5 text-sm text-white focus:border-blue-500/50 focus:outline-none"
+              placeholder="Özel uyarı, istisna veya ek bilgi..."
+            />
+            <p className="mt-1 text-[11px] text-slate-600">Sarı kutuda gösterilir. Boş bırakılabilir.</p>
+          </div>
+        )}
+
+        {hata && (
+          <div className="mt-3 rounded-xl border border-red-500/20 bg-red-950/20 px-3 py-2">
+            <p className="text-sm text-red-300">⚠️ {hata}</p>
+          </div>
+        )}
       </div>
 
-      <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-400">
-          Neden Yanar?
-        </label>
-        <ListEditor
-          items={veri.nedenler}
-          onChange={(items) => setVeri({ ...veri, nedenler: items })}
-          placeholder="Neden..."
-        />
-      </div>
-
-      <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-400">
-          Ne Yapmalısın?
-        </label>
-        <ListEditor
-          items={veri.yapilacaklar}
-          onChange={(items) => setVeri({ ...veri, yapilacaklar: items })}
-          placeholder="Yapılacak adım..."
-        />
-      </div>
-
-      <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-400">
-          Not (isteğe bağlı)
-        </label>
-        <textarea
-          value={veri.not_metni}
-          onChange={(e) => setVeri({ ...veri, not_metni: e.target.value })}
-          rows={2}
-          className="w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600"
-          placeholder="Özel not..."
-        />
-      </div>
-
-      {hata && (
-        <p className="text-sm font-medium text-red-300">⚠️ {hata}</p>
-      )}
-
-      <div className="flex gap-2">
+      {/* Footer — kaydet / iptal */}
+      <div className="flex gap-2 border-t border-white/8 bg-slate-900/50 px-4 py-3">
         <button
           onClick={kaydet}
           disabled={yukleniyor}
@@ -228,7 +376,7 @@ function IkazEditFormu({
         </button>
         <button
           onClick={onIptal}
-          className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium hover:bg-slate-800"
+          className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white"
         >
           İptal
         </button>
@@ -410,9 +558,12 @@ function IkazDetayKarti({
         </div>
         <h2 className={`text-2xl font-bold ${renkD.text}`}>{ad}</h2>
         {kitapcik_aciklama && (
-          <p className="mt-2 text-sm italic text-slate-500">📖 {kitapcik_aciklama}</p>
+          <div className="mt-2 rounded-lg border border-white/8 bg-black/20 px-3 py-2">
+            <p className="text-xs font-semibold text-slate-500">📖 El Kitabı Tanımı</p>
+            <p className="mt-0.5 text-sm italic text-slate-400">{kitapcik_aciklama}</p>
+          </div>
         )}
-        <p className="mt-3 text-slate-300">{anlami}</p>
+        <p className="mt-3 whitespace-pre-line leading-relaxed text-slate-300">{anlami}</p>
       </div>
 
       {/* Ne yapmalıyım */}
