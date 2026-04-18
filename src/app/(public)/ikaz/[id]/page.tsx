@@ -8,6 +8,10 @@ import {
   type IkazSembolu,
 } from "@/lib/ikaz-sembolleri";
 import IkazDeneyimler from "./IkazDeneyimler";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+
+// Override'lar değişebileceği için cache'i kapat
+export const revalidate = 0;
 
 // Renk mapping (dark theme versions)
 const RENK_DARK: Record<IkazSembolu["renk"], { border: string; bg: string; badge: string; text: string }> = {
@@ -45,10 +49,41 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
+async function overrideUygula(sembol: IkazSembolu): Promise<IkazSembolu> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return sembol;
+
+  try {
+    const sb = createSupabaseClient(url, key);
+    const { data } = await sb
+      .from("ikaz_overrides")
+      .select("kitapcik_aciklama, anlami, nedenler, yapilacaklar, not_metni")
+      .eq("sembol_id", sembol.id)
+      .single();
+
+    if (!data) return sembol;
+
+    return {
+      ...sembol,
+      ...(data.kitapcik_aciklama != null && { kitapcik_aciklama: data.kitapcik_aciklama }),
+      ...(data.anlami           != null && { anlami:           data.anlami           }),
+      ...(data.nedenler         != null && { nedenler:         data.nedenler         }),
+      ...(data.yapilacaklar     != null && { yapilacaklar:     data.yapilacaklar     }),
+      ...(data.not_metni        != null && { not:              data.not_metni        }),
+    };
+  } catch {
+    return sembol;
+  }
+}
+
 export default async function IkazDetaySayfasi({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const sembol = TUM_IKAZ_SEMBOLLERI.find((s) => s.id === id);
-  if (!sembol) notFound();
+  const temelSembol = TUM_IKAZ_SEMBOLLERI.find((s) => s.id === id);
+  if (!temelSembol) notFound();
+
+  // Supabase override'larını uygula
+  const sembol = await overrideUygula(temelSembol);
 
   const renk = RENK_DARK[sembol.renk];
   const aciliyet = ACILIYET_DARK[sembol.aciliyet];
@@ -141,7 +176,7 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
               <div className="flex-1 min-w-0">
                 <h1 className={`text-2xl font-bold md:text-3xl ${renk.text}`}>{sembol.ad}</h1>
                 <p className="mt-2 text-sm text-slate-500">{sembol.sembol_tanimi}</p>
-                <p className="mt-3 text-slate-300">{sembol.anlami}</p>
+                <p className="mt-3 whitespace-pre-line leading-relaxed text-slate-300">{sembol.anlami}</p>
               </div>
             </div>
           </div>
