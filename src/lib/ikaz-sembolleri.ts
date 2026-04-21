@@ -23,30 +23,6 @@ export interface IkazSembolu {
 
 const KIRMIZI_IKAZLAR: IkazSembolu[] = [
   {
-    id: "batarya-kritik",
-    ad: "Kritik Batarya Şarj Seviyesi",
-    renk: "kirmizi",
-    aciliyet: "hemen_dur",
-    model: "hepsi",
-    sembol_tanimi: "Kırmızı renkte, içinde ünlem işareti olan batarya simgesi veya çok düşük şarj göstergesi",
-    kitapcik_aciklama: "Yüksek voltajlı batarya şarj seviyesi kritik düzeyde düşük.",
-    anlami: "Batarya şarj seviyesi kritik eşiğin altına düştü. Araç yakında hareket edemez hale gelir.",
-    nedenler: [
-      "Şarj yapılmadan uzun süre kullanım",
-      "Soğuk havada batarya kapasitesinin geçici düşüşü",
-      "Batarya yönetim sistemi arızası",
-    ],
-    yapilacaklar: [
-      "Güvenli bir yere çek ve hemen şarja bağla",
-      "Togg Care'i ara: 0 850 222 86 44",
-      "Trugo veya uyumlu şarj istasyonu bul",
-      "Isıtma/soğutma sistemini kapat, menzil tasarrufu sağla",
-    ],
-    servis_gerekli: false,
-    not: "Araç bataryası %0'a ulaşırsa flatbed çekici gerekebilir.",
-    anahtar_kelimeler: ["batarya", "şarj yok", "menzil bitti", "kırmızı batarya", "düşük şarj"],
-  },
-  {
     id: "park-freni-ariza",
     ad: "Elektromekanik Park Freni Arızası",
     renk: "kirmizi",
