@@ -26,6 +26,7 @@ interface IkazOverride {
   gorsel_url?: string;
   anahtar_kelimeler?: string[];
   is_custom?: boolean;
+  gizli?: boolean;
 }
 
 interface FormVeri {
@@ -108,17 +109,23 @@ function ListEditor({
 function SembolForm({
   sembolId,
   isCustom,
+  gizli,
   baslangicVeri,
   onKaydet,
   onIptal,
   onSil,
+  onGizle,
+  onGeriGetir,
 }: {
   sembolId: string;
   isCustom: boolean;
+  gizli: boolean;
   baslangicVeri: FormVeri;
   onKaydet: (sembolId: string, veri: FormVeri, isCustom: boolean) => Promise<void>;
   onIptal: () => void;
-  onSil?: (sembolId: string) => Promise<void>;
+  onSil: (sembolId: string) => Promise<void>;
+  onGizle: (sembolId: string) => Promise<void>;
+  onGeriGetir: (sembolId: string) => Promise<void>;
 }) {
   const [veri, setVeri] = useState<FormVeri>(baslangicVeri);
   const [yukleniyor, setYukleniyor] = useState(false);
@@ -343,14 +350,16 @@ function SembolForm({
       {hata && <p className="text-sm text-red-400">⚠️ {hata}</p>}
 
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={kaydet}
-          disabled={yukleniyor}
-          className="flex-1 rounded-xl bg-blue-600 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-        >
-          {yukleniyor ? "Kaydediliyor..." : "💾 Kaydet"}
-        </button>
+        {!gizli && (
+          <button
+            type="button"
+            onClick={kaydet}
+            disabled={yukleniyor}
+            className="flex-1 rounded-xl bg-blue-600 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {yukleniyor ? "Kaydediliyor..." : "💾 Kaydet"}
+          </button>
+        )}
         <button
           type="button"
           onClick={onIptal}
@@ -358,17 +367,43 @@ function SembolForm({
         >
           İptal
         </button>
-        {onSil && (
+        {gizli ? (
           <button
             type="button"
             onClick={async () => {
-              if (!confirm("Bu override silinsin mi? Mevcut semboller için orijinal değerler geri döner.")) return;
+              setYukleniyor(true);
+              try { await onGeriGetir(sembolId); } finally { setYukleniyor(false); }
+            }}
+            disabled={yukleniyor}
+            className="rounded-xl border border-emerald-700 px-3 py-2.5 text-sm text-emerald-400 hover:bg-emerald-950/30 disabled:opacity-50"
+          >
+            ↩ Geri Getir
+          </button>
+        ) : isCustom ? (
+          <button
+            type="button"
+            onClick={async () => {
+              if (!confirm(`"${sembolId}" tamamen silinsin mi? Bu işlem geri alınamaz.`)) return;
               setYukleniyor(true);
               try { await onSil(sembolId); } finally { setYukleniyor(false); }
             }}
-            className="rounded-xl border border-red-800 px-3 py-2.5 text-sm text-red-400 hover:bg-red-950/30"
+            disabled={yukleniyor}
+            className="rounded-xl border border-red-800 px-3 py-2.5 text-sm text-red-400 hover:bg-red-950/30 disabled:opacity-50"
           >
-            🗑️
+            🗑️ Sil
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={async () => {
+              if (!confirm(`"${sembolId}" gizlensin mi? Admin panelinde görünmeye devam eder, public sayfada görünmez.`)) return;
+              setYukleniyor(true);
+              try { await onGizle(sembolId); } finally { setYukleniyor(false); }
+            }}
+            disabled={yukleniyor}
+            className="rounded-xl border border-red-800 px-3 py-2.5 text-sm text-red-400 hover:bg-red-950/30 disabled:opacity-50"
+          >
+            🗑️ Sil
           </button>
         )}
       </div>
@@ -446,6 +481,7 @@ export default function AdminIkazlarPage() {
     [overrideYukle]
   );
 
+  /** Custom sembol — tamamen siler */
   const sil = useCallback(
     async (sembolId: string) => {
       const res = await fetch("/api/ikaz-duzenle", {
@@ -459,7 +495,47 @@ export default function AdminIkazlarPage() {
       }
       await overrideYukle();
       setEditId(null);
-      setBasari(`"${sembolId}" override silindi`);
+      setBasari(`"${sembolId}" silindi`);
+      setTimeout(() => setBasari(null), 3000);
+    },
+    [overrideYukle]
+  );
+
+  /** Statik sembol — public sayfadan gizler */
+  const gizle = useCallback(
+    async (sembolId: string) => {
+      const res = await fetch("/api/ikaz-duzenle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sembol_id: sembolId, gizli: true }),
+      });
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.hata || "Gizleme hatası");
+      }
+      await overrideYukle();
+      setEditId(null);
+      setBasari(`"${sembolId}" gizlendi — public sayfada görünmüyor`);
+      setTimeout(() => setBasari(null), 4000);
+    },
+    [overrideYukle]
+  );
+
+  /** Gizlenmiş sembolü tekrar göster */
+  const geriGetir = useCallback(
+    async (sembolId: string) => {
+      const res = await fetch("/api/ikaz-duzenle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sembol_id: sembolId, gizli: false }),
+      });
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.hata || "Geri getirme hatası");
+      }
+      await overrideYukle();
+      setEditId(null);
+      setBasari(`"${sembolId}" tekrar görünür yapıldı`);
       setTimeout(() => setBasari(null), 3000);
     },
     [overrideYukle]
@@ -576,9 +652,13 @@ export default function AdminIkazlarPage() {
               <SembolForm
                 sembolId={yeniSembolId.replace("_confirm", "")}
                 isCustom={true}
+                gizli={false}
                 baslangicVeri={{ ...BOSH_FORM }}
                 onKaydet={kaydet}
                 onIptal={() => { setYeniForm(false); setYeniSembolId(""); }}
+                onSil={sil}
+                onGizle={gizle}
+                onGeriGetir={geriGetir}
               />
             )}
           </div>
@@ -608,6 +688,7 @@ export default function AdminIkazlarPage() {
               const isEditing = editId === sembol.id;
               const isCustomEntry = !!override?.is_custom;
               const hasOverride = !!override && !isCustomEntry;
+              const isGizli = !!override?.gizli;
               const renkSinif = RENK_SINIF[sembol.renk];
               const aciliyetEtiket = ACILIYET_ETIKETLER[sembol.aciliyet];
 
@@ -618,6 +699,8 @@ export default function AdminIkazlarPage() {
                     className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition ${
                       isEditing
                         ? "border-blue-700/50 bg-blue-950/20"
+                        : isGizli
+                        ? "border-white/5 bg-white/2 opacity-50"
                         : "border-white/8 bg-white/3 hover:bg-white/5"
                     }`}
                   >
@@ -636,11 +719,16 @@ export default function AdminIkazlarPage() {
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="truncate text-sm font-semibold text-slate-200">{sembol.ad}</span>
-                        {hasOverride && (
+                        <span className={`truncate text-sm font-semibold ${isGizli ? "line-through text-slate-500" : "text-slate-200"}`}>
+                          {sembol.ad}
+                        </span>
+                        {isGizli && (
+                          <span className="shrink-0 rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] text-red-400">gizli</span>
+                        )}
+                        {hasOverride && !isGizli && (
                           <span className="shrink-0 rounded-full bg-blue-500/20 px-2 py-0.5 text-[10px] text-blue-300">override</span>
                         )}
-                        {isCustomEntry && (
+                        {isCustomEntry && !isGizli && (
                           <span className="shrink-0 rounded-full bg-purple-500/20 px-2 py-0.5 text-[10px] text-purple-300">özel</span>
                         )}
                       </div>
@@ -656,7 +744,7 @@ export default function AdminIkazlarPage() {
                       onClick={() => setEditId(isEditing ? null : sembol.id)}
                       className="shrink-0 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/8"
                     >
-                      {isEditing ? "Kapat" : "Düzenle"}
+                      {isEditing ? "Kapat" : isGizli ? "Gizli" : "Düzenle"}
                     </button>
                   </div>
 
@@ -666,10 +754,13 @@ export default function AdminIkazlarPage() {
                       <SembolForm
                         sembolId={sembol.id}
                         isCustom={isCustomEntry}
+                        gizli={isGizli}
                         baslangicVeri={formVeriOlustur(sembol, override)}
                         onKaydet={kaydet}
                         onIptal={() => setEditId(null)}
-                        onSil={override ? sil : undefined}
+                        onSil={sil}
+                        onGizle={gizle}
+                        onGeriGetir={geriGetir}
                       />
                     </div>
                   )}

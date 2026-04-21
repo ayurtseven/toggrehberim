@@ -20,6 +20,8 @@ export interface IkazOverrideKayit {
   gorsel_url?: string;
   anahtar_kelimeler?: string[];
   is_custom?: boolean;
+  /** Admin panelden gizleme — public sayfalarda gösterilmez */
+  gizli?: boolean;
 }
 
 // ─── GET — tüm override'ları getir (herkese açık) ──────────────────────────
@@ -33,7 +35,7 @@ export async function GET() {
   const { data } = await supabase
     .from("ikaz_overrides")
     .select(
-      "sembol_id, kitapcik_aciklama, anlami, nedenler, yapilacaklar, not_metni, ad, renk, aciliyet, model, servis_gerekli, gorsel_url, anahtar_kelimeler, is_custom"
+      "sembol_id, kitapcik_aciklama, anlami, nedenler, yapilacaklar, not_metni, ad, renk, aciliyet, model, servis_gerekli, gorsel_url, anahtar_kelimeler, is_custom, gizli"
     );
 
   return NextResponse.json(data ?? []);
@@ -53,8 +55,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ hata: "sembol_id gerekli" }, { status: 400 });
   }
 
-  // Yeni sembol ekliyorsa zorunlu alanları kontrol et
-  if (alanlar.is_custom) {
+  // Yeni sembol ekliyorsa zorunlu alanları kontrol et (gizleme için bypass)
+  if (alanlar.is_custom && !alanlar.gizli) {
     if (!alanlar.ad || !alanlar.renk || !alanlar.aciliyet || !alanlar.anlami) {
       return NextResponse.json(
         { hata: "Yeni sembol için ad, renk, aciliyet ve anlami zorunludur" },

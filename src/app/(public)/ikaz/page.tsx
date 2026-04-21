@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import {
   TUM_IKAZ_SEMBOLLERI,
   ACILIYET_ETIKETLER,
   type IkazSembolu,
 } from "@/lib/ikaz-sembolleri";
+
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Togg İkaz Lambaları Sözlüğü — Tüm Uyarı Sembolleri",
@@ -27,12 +30,31 @@ const ACILIYET_STILLER: Record<IkazSembolu["aciliyet"], { border: string; bg: st
   bilgi:        { border: "border-blue-500/20",   bg: "bg-blue-500/4",   badge: "bg-blue-500/15 text-blue-400",             baslik: "ℹ️ Mavi/Yeşil İkazlar — Bilgi" },
 };
 
-export default function IkazSozlukSayfasi() {
+async function gizliIdleriGetir(): Promise<Set<string>> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return new Set();
+  try {
+    const sb = createSupabaseClient(url, key);
+    const { data } = await sb
+      .from("ikaz_overrides")
+      .select("sembol_id")
+      .eq("gizli", true);
+    return new Set((data ?? []).map((r: { sembol_id: string }) => r.sembol_id));
+  } catch {
+    return new Set();
+  }
+}
+
+export default async function IkazSozlukSayfasi() {
+  const gizliIdler = await gizliIdleriGetir();
+  const gorunurSemboller = TUM_IKAZ_SEMBOLLERI.filter((s) => !gizliIdler.has(s.id));
+
   const gruplar = ACILIYET_SIRASI.map((aciliyet) => ({
     aciliyet,
     stil: ACILIYET_STILLER[aciliyet],
     etiket: ACILIYET_ETIKETLER[aciliyet],
-    semboller: TUM_IKAZ_SEMBOLLERI.filter((s) => s.aciliyet === aciliyet),
+    semboller: gorunurSemboller.filter((s) => s.aciliyet === aciliyet),
   })).filter((g) => g.semboller.length > 0);
 
   return (
@@ -48,7 +70,7 @@ export default function IkazSozlukSayfasi() {
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-[var(--togg-red)]">El Kitabı 6.2.2</p>
           <h1 className="text-3xl font-bold">Togg İkaz Lambaları Sözlüğü</h1>
           <p className="mt-2 text-slate-400">
-            T10X ve T10F&apos;in tüm {TUM_IKAZ_SEMBOLLERI.length} ikaz sembolü — anlamları ve çözümleri.
+            T10X ve T10F&apos;in tüm {gorunurSemboller.length} ikaz sembolü — anlamları ve çözümleri.
           </p>
           <Link
             href="/ikaz-arama"

@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-async function overrideUygula(sembol: IkazSembolu): Promise<IkazSembolu> {
+async function overrideUygula(sembol: IkazSembolu): Promise<IkazSembolu | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return sembol;
@@ -58,11 +58,14 @@ async function overrideUygula(sembol: IkazSembolu): Promise<IkazSembolu> {
     const sb = createSupabaseClient(url, key);
     const { data } = await sb
       .from("ikaz_overrides")
-      .select("kitapcik_aciklama, anlami, nedenler, yapilacaklar, not_metni")
+      .select("kitapcik_aciklama, anlami, nedenler, yapilacaklar, not_metni, gizli")
       .eq("sembol_id", sembol.id)
       .single();
 
     if (!data) return sembol;
+
+    // Gizlenmiş sembol — 404
+    if (data.gizli) return null;
 
     return {
       ...sembol,
@@ -82,8 +85,9 @@ export default async function IkazDetaySayfasi({ params }: { params: Promise<{ i
   const temelSembol = TUM_IKAZ_SEMBOLLERI.find((s) => s.id === id);
   if (!temelSembol) notFound();
 
-  // Supabase override'larını uygula
+  // Supabase override'larını uygula (null = gizlenmiş → 404)
   const sembol = await overrideUygula(temelSembol);
+  if (!sembol) notFound();
 
   const renk = RENK_DARK[sembol.renk];
   const aciliyet = ACILIYET_DARK[sembol.aciliyet];
