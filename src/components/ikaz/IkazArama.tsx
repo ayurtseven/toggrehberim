@@ -82,110 +82,33 @@ function autoResize(el: HTMLTextAreaElement) {
   el.style.height = el.scrollHeight + "px";
 }
 
-/** Numbered list editör — yapılacaklar adımları için */
-function SiralanmisListEditor({
+/** Çok satırlı liste editörü — her satır bir madde/adım olur */
+function MultilineListEditor({
   items,
   onChange,
   placeholder,
+  hint,
 }: {
   items: string[];
   onChange: (items: string[]) => void;
   placeholder: string;
+  hint: string;
 }) {
+  const text = items.join("\n");
   return (
-    <div className="space-y-2">
-      {items.map((item, i) => (
-        <div key={i} className="flex items-start gap-2">
-          <span className="mt-2 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500/20 text-[10px] font-bold text-blue-400">
-            {i + 1}
-          </span>
-          <textarea
-            value={item}
-            rows={1}
-            onChange={(e) => {
-              const next = [...items];
-              next[i] = e.target.value;
-              onChange(next);
-              autoResize(e.target);
-            }}
-            onInput={(e) => autoResize(e.currentTarget)}
-            className="flex-1 resize-none overflow-hidden rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:outline-none"
-            placeholder={placeholder}
-          />
-          <button
-            onClick={() => onChange(items.filter((_, j) => j !== i))}
-            className="mt-1.5 shrink-0 rounded-lg border border-red-500/20 p-1.5 text-red-500/70 hover:border-red-500/40 hover:text-red-400"
-          >
-            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="3" y1="3" x2="13" y2="13" /><line x1="13" y1="3" x2="3" y2="13" />
-            </svg>
-          </button>
-        </div>
-      ))}
-      <button
-        onClick={() => onChange([...items, ""])}
-        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-white/15 py-2 text-xs text-slate-500 transition-colors hover:border-white/30 hover:text-slate-400"
-      >
-        <span className="mx-auto flex items-center gap-1.5">
-          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="8" y1="2" x2="8" y2="14" /><line x1="2" y1="8" x2="14" y2="8" />
-          </svg>
-          Adım Ekle
-        </span>
-      </button>
-    </div>
-  );
-}
-
-/** Bullet list editör — nedenler için */
-function BulletListEditor({
-  items,
-  onChange,
-  placeholder,
-}: {
-  items: string[];
-  onChange: (items: string[]) => void;
-  placeholder: string;
-}) {
-  return (
-    <div className="space-y-2">
-      {items.map((item, i) => (
-        <div key={i} className="flex items-start gap-2">
-          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-500" />
-          <textarea
-            value={item}
-            rows={1}
-            onChange={(e) => {
-              const next = [...items];
-              next[i] = e.target.value;
-              onChange(next);
-              autoResize(e.target);
-            }}
-            onInput={(e) => autoResize(e.currentTarget)}
-            className="flex-1 resize-none overflow-hidden rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:outline-none"
-            placeholder={placeholder}
-          />
-          <button
-            onClick={() => onChange(items.filter((_, j) => j !== i))}
-            className="mt-1.5 shrink-0 rounded-lg border border-red-500/20 p-1.5 text-red-500/70 hover:border-red-500/40 hover:text-red-400"
-          >
-            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="3" y1="3" x2="13" y2="13" /><line x1="13" y1="3" x2="3" y2="13" />
-            </svg>
-          </button>
-        </div>
-      ))}
-      <button
-        onClick={() => onChange([...items, ""])}
-        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-white/15 py-2 text-xs text-slate-500 transition-colors hover:border-white/30 hover:text-slate-400"
-      >
-        <span className="mx-auto flex items-center gap-1.5">
-          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="8" y1="2" x2="8" y2="14" /><line x1="2" y1="8" x2="14" y2="8" />
-          </svg>
-          Neden Ekle
-        </span>
-      </button>
+    <div>
+      <textarea
+        value={text}
+        rows={Math.max(5, items.length + 2)}
+        onChange={(e) => {
+          onChange(e.target.value.split("\n"));
+          autoResize(e.target);
+        }}
+        onInput={(e) => autoResize(e.currentTarget)}
+        className="w-full resize-none overflow-hidden rounded-xl border border-white/10 bg-slate-800 px-3 py-2.5 text-sm leading-relaxed text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:outline-none"
+        placeholder={placeholder}
+      />
+      <p className="mt-1 text-[11px] text-slate-600">{hint}</p>
     </div>
   );
 }
@@ -214,7 +137,11 @@ function IkazEditFormu({
     setYukleniyor(true);
     setHata(null);
     try {
-      await onKaydet(veri);
+      await onKaydet({
+        ...veri,
+        nedenler: veri.nedenler.filter((l) => l.trim() !== ""),
+        yapilacaklar: veri.yapilacaklar.filter((l) => l.trim() !== ""),
+      });
     } catch (e: unknown) {
       setHata(e instanceof Error ? e.message : "Kayıt hatası");
     } finally {
@@ -316,12 +243,15 @@ function IkazEditFormu({
           <div>
             <div className="mb-3 flex items-center gap-2">
               <label className="text-xs font-semibold text-slate-400">⚡ Olası Nedenler</label>
-              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] text-slate-500">{veri.nedenler.length} madde</span>
+              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] text-slate-500">
+                {veri.nedenler.filter((l) => l.trim()).length} madde
+              </span>
             </div>
-            <BulletListEditor
+            <MultilineListEditor
               items={veri.nedenler}
               onChange={(items) => setVeri({ ...veri, nedenler: items })}
-              placeholder="Bu lambanın yanma nedeni..."
+              placeholder={"Bu lambanın yanma nedeni...\nDiğer neden...\n..."}
+              hint="Her satır ayrı bir madde olur. Enter ile yeni satır ekle."
             />
           </div>
         )}
@@ -330,12 +260,15 @@ function IkazEditFormu({
           <div>
             <div className="mb-3 flex items-center gap-2">
               <label className="text-xs font-semibold text-slate-400">✅ Yapılacaklar (sıralı)</label>
-              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] text-slate-500">{veri.yapilacaklar.length} adım</span>
+              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[10px] text-slate-500">
+                {veri.yapilacaklar.filter((l) => l.trim()).length} adım
+              </span>
             </div>
-            <SiralanmisListEditor
+            <MultilineListEditor
               items={veri.yapilacaklar}
               onChange={(items) => setVeri({ ...veri, yapilacaklar: items })}
-              placeholder="Kullanıcının yapması gereken adım..."
+              placeholder={"1. adım — ne yapmalısın...\n2. adım...\n..."}
+              hint="Her satır numaralı bir adım olur. Sırası önemli."
             />
           </div>
         )}
