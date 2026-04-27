@@ -5,6 +5,7 @@ import HaberlerSlider from "@/components/haberler/HaberlerSlider";
 import SonRehberlerIstemci from "@/components/rehber/SonRehberlerIstemci";
 import YolArkadasiHero from "@/components/ui/YolArkadasiHero";
 import PanikButonu from "@/components/ui/PanikButonu";
+import HaftalikGundem from "@/components/ui/HaftalikGundem";
 
 const HIZLI_ERISIM = [
   {
@@ -59,6 +60,9 @@ export default function AnaSayfa() {
 
       {/* ── HERO ── */}
       <YolArkadasiHero rehberler={getTumRehberler()} />
+
+      {/* ── HAFTALIK GÜNDEM ── */}
+      <HaftalikGundem />
 
       {/* ── HIZLI ERİŞİM ── */}
       <section className="mx-auto max-w-5xl px-4 py-10">
