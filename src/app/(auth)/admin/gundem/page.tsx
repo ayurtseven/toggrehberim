@@ -116,6 +116,22 @@ export default function GundemAdminPage() {
     setKaydediliyor(false);
   }
 
+  async function tumunuAktifEt() {
+    const pasifler = items.filter((i) => !i.aktif);
+    if (pasifler.length === 0) return;
+    await Promise.all(
+      pasifler.map((item) =>
+        fetch("/api/gundem", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...item, aktif: true }),
+        })
+      )
+    );
+    setMesaj({ tip: "ok", metin: `${pasifler.length} öğe aktif edildi.` });
+    yukle();
+  }
+
   async function sil(id: string) {
     if (!confirm("Bu öğeyi silmek istediğine emin misin?")) return;
     const res = await fetch("/api/gundem", {
@@ -138,12 +154,22 @@ export default function GundemAdminPage() {
             <Link href="/admin" className="text-xs text-slate-500 hover:text-slate-300">← Admin</Link>
             <h1 className="mt-1 text-xl font-bold">📡 Haftalık Gündem</h1>
           </div>
-          <button
-            onClick={yeniForm}
-            className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-bold text-white hover:bg-cyan-500 transition-colors"
-          >
-            + Yeni Ekle
-          </button>
+          <div className="flex gap-2">
+            {items.some((i) => !i.aktif) && (
+              <button
+                onClick={tumunuAktifEt}
+                className="rounded-xl border border-emerald-500/30 px-3 py-2 text-sm font-semibold text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+              >
+                ✓ Tümünü Yayınla
+              </button>
+            )}
+            <button
+              onClick={yeniForm}
+              className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-bold text-white hover:bg-cyan-500 transition-colors"
+            >
+              + Yeni Ekle
+            </button>
+          </div>
         </div>
 
         {/* Hafta seçici */}

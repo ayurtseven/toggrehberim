@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/fiyat-guncelle",
       "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/gundem",
+      "schedule": "0 6 * * 1"
     }
   ]
 }
