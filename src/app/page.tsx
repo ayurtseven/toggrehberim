@@ -5,7 +5,54 @@ import HaberlerSlider from "@/components/haberler/HaberlerSlider";
 import SonRehberlerIstemci from "@/components/rehber/SonRehberlerIstemci";
 import YolArkadasiHero from "@/components/ui/YolArkadasiHero";
 import PanikButonu from "@/components/ui/PanikButonu";
-import HaftalikGundem from "@/components/ui/HaftalikGundem";
+import HaftalikGundem, { type GundemItem } from "@/components/ui/HaftalikGundem";
+import { createClient as createServiceClient } from "@supabase/supabase-js";
+
+// Gündem verisi — Supabase'den en güncel hafta
+async function gundemGetir(): Promise<{ items: GundemItem[]; haftaEtiketi: string }> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return { items: [], haftaEtiketi: "" };
+
+  try {
+    const sb = createServiceClient(url, key);
+
+    // En güncel aktif haftayı bul
+    const { data: sonHafta } = await sb
+      .from("gundem_items")
+      .select("hafta_basi")
+      .eq("aktif", true)
+      .order("hafta_basi", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (!sonHafta) return { items: [], haftaEtiketi: "" };
+
+    const { data } = await sb
+      .from("gundem_items")
+      .select("id, title, platform, summary, link, severity, hafta_basi")
+      .eq("aktif", true)
+      .eq("hafta_basi", sonHafta.hafta_basi);
+
+    if (!data || data.length === 0) return { items: [], haftaEtiketi: "" };
+
+    // Severity sıralama: high > medium > low
+    const sira: Record<string, number> = { high: 0, medium: 1, low: 2 };
+    const items = (data as GundemItem[]).sort((a, b) => sira[a.severity] - sira[b.severity]);
+
+    // Hafta etiketi: "21–27 Nisan 2026"
+    const pzt = new Date(sonHafta.hafta_basi);
+    const paz = new Date(pzt);
+    paz.setDate(pzt.getDate() + 6);
+    const fmt = (d: Date) =>
+      d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+    const haftaEtiketi = `${pzt.getDate()}–${fmt(paz)}`;
+
+    return { items, haftaEtiketi };
+  } catch {
+    return { items: [], haftaEtiketi: "" };
+  }
+}
 
 const HIZLI_ERISIM = [
   {
@@ -51,9 +98,10 @@ const SIKKONULAR = [
   { soru: "T10X mi, T10F mi almalıyım?",           href: "/modeller/karsilastir",           ikon: "⚖️" },
 ];
 
-export default function AnaSayfa() {
+export default async function AnaSayfa() {
   const sonRehberler = getTumRehberler().slice(0, 6);
   const haberler = getTumHaberler();
+  const { items: gundemItems, haftaEtiketi } = await gundemGetir();
 
   return (
     <div className="bg-slate-950 text-white">
@@ -62,7 +110,7 @@ export default function AnaSayfa() {
       <YolArkadasiHero rehberler={getTumRehberler()} />
 
       {/* ── HAFTALIK GÜNDEM ── */}
-      <HaftalikGundem />
+      <HaftalikGundem items={gundemItems} haftaEtiketi={haftaEtiketi} />
 
       {/* ── HIZLI ERİŞİM ── */}
       <section className="mx-auto max-w-5xl px-4 py-10">

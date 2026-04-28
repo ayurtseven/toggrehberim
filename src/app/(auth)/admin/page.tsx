@@ -67,6 +67,7 @@ function tumIcerikleriOku() {
 }
 
 const NAV_LINKLER = [
+  { href: "/admin/gundem", label: "Gündem", ikon: "📡", renk: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20" },
   { href: "/admin/tarama", label: "Tarama", ikon: "🔍", renk: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" },
   { href: "/admin/ikazlar", label: "İkazlar", ikon: "⚠️", renk: "text-orange-400 bg-orange-500/10 border-orange-500/20" },
   { href: "/admin/servis", label: "Servisler", ikon: "🔧", renk: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
