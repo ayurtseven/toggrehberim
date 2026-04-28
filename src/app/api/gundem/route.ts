@@ -24,26 +24,30 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const hafta = searchParams.get("hafta"); // opsiyonel filtre
 
+  // admin=true → tüm öğeler (aktif+pasif); yoksa sadece aktif
+  const adminMod = searchParams.get("admin") === "true";
+
   let query = sb
     .from("gundem_items")
     .select("id, title, platform, summary, link, severity, hafta_basi, aktif")
-    .eq("aktif", true)
-    .order("severity", { ascending: true }) // high önce (alphabetically low < medium < high — desc ile high son gelir)
     .order("created_at", { ascending: false });
 
-  // severity sıralama: custom order gerekiyor, client tarafında yapılacak
+  if (!adminMod) {
+    query = query.eq("aktif", true);
+  }
+
   if (hafta) {
     query = query.eq("hafta_basi", hafta);
   } else {
     // En güncel haftayı getir
-    const { data: sonHafta } = await sb
+    const sonHaftaQuery = sb
       .from("gundem_items")
       .select("hafta_basi")
-      .eq("aktif", true)
       .order("hafta_basi", { ascending: false })
       .limit(1)
       .single();
 
+    const { data: sonHafta } = await sonHaftaQuery;
     if (sonHafta) {
       query = query.eq("hafta_basi", sonHafta.hafta_basi);
     }

@@ -63,7 +63,7 @@ export default function GundemAdminPage() {
 
   const yukle = useCallback(async () => {
     setYukleniyor(true);
-    const res = await fetch(`/api/gundem?hafta=${hafta}`);
+    const res = await fetch(`/api/gundem?hafta=${hafta}&admin=true`);
     const data = await res.json();
     // Severity sıralama: high > medium > low
     const sira: Record<string, number> = { high: 0, medium: 1, low: 2 };
